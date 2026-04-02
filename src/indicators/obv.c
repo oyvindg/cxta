@@ -1,0 +1,30 @@
+/**
+ * @file obv.c
+ * @brief On Balance Volume helpers.
+ */
+
+#include <cxta/indicators/obv.h>
+
+double cxta_obv_step(double close, double volume, cxta_obv_state* st) {
+    if (!st) return 0.0;
+    if (st->initialized == 0.0) {
+        st->prev_close = close;
+        st->initialized = 1.0;
+        return st->value;
+    }
+    if (close > st->prev_close)      st->value += volume;
+    else if (close < st->prev_close) st->value -= volume;
+    st->prev_close = close;
+    return st->value;
+}
+
+double cxta_obv(const cxta_series_bar_view* view) {
+    if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
+
+    cxta_obv_state st = {0.0, 0.0, 0.0};
+    const size_t idx = cxta_series_clamp_index(view->size, view->index);
+    for (size_t i = 0; i <= idx; ++i) {
+        cxta_obv_step(view->bars[i].close, view->bars[i].volume, &st);
+    }
+    return st.value;
+}

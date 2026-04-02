@@ -1,5 +1,7 @@
 # cxta
 
+[![CI](https://github.com/oyvindg/cxta/actions/workflows/ci.yml/badge.svg)](https://github.com/oyvindg/cxta/actions/workflows/ci.yml)
+
 `cxta` is a standalone C11 technical-analysis library for bar-based market data.
 
 It is intended to stay engine-agnostic:

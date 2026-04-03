@@ -37,6 +37,8 @@ void cxta_test_descriptor(void) {
     const cxta_indicator_descriptor* divergence = cxta_indicator_descriptor_find("divergence");
     const cxta_indicator_descriptor* eom = cxta_indicator_descriptor_find("ease_of_movement");
     const cxta_indicator_descriptor* vwap = cxta_indicator_descriptor_find("vwap");
+    const cxta_indicator_descriptor* rolling_max =
+        cxta_indicator_descriptor_find("rolling_max");
     const cxta_indicator_descriptor* zigzag = cxta_indicator_descriptor_find("zigzag");
     const cxta_indicator_descriptor* swing_pivots = cxta_indicator_descriptor_find("swing_pivots");
     const cxta_indicator_descriptor* structure = cxta_indicator_descriptor_find("structure");
@@ -118,7 +120,7 @@ void cxta_test_descriptor(void) {
     const cxta_bollinger_output expected_bollinger = cxta_bollinger(&view, 3, 2.0);
 
     assert(descriptors);
-    assert(count == 84u);
+    assert(count == 88u);
 
     for (i = 0; i < count; ++i) {
         const cxta_indicator_descriptor* descriptor = &descriptors[i];
@@ -235,6 +237,15 @@ void cxta_test_descriptor(void) {
     assert(vwap_value);
     assert(vwap_value->offset == CXTA_FIELD_OFFSET_SCALAR);
 
+    assert(rolling_max);
+    assert(rolling_max->min_args == 1);
+    assert(rolling_max->max_args == 1);
+    assert(rolling_max->scalar_source_min_args == 1);
+    assert(rolling_max->scalar_source_max_args == 1);
+    assert((rolling_max->flags & CXTA_INDICATOR_SCALAR_SOURCE) != 0u);
+    assert(rolling_max->eval_scalar != NULL);
+    assert(rolling_max->eval_scalar_src != NULL);
+
     assert(zigzag);
     assert((zigzag->flags & CXTA_INDICATOR_REPAINTING) != 0u);
     assert(zigzag->field_count == 9u);
@@ -339,7 +350,6 @@ void cxta_test_descriptor(void) {
     assert(fabs(savwap_out.reanchor - expected_vwap.reanchor) < 1e-12);
     assert(fabs(savwap_out.anchor_price - expected_vwap.anchor_price) < 1e-12);
 
-    assert(cxta_indicator_descriptor_find("rolling_max") == NULL);
     assert(cxta_indicator_descriptor_find(NULL) == NULL);
 
     printf("  ✓ test_descriptor\n");

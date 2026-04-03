@@ -1,31 +1,43 @@
 # cxta
 
 [![CI](https://github.com/oyvindg/cxta/actions/workflows/ci.yml/badge.svg)](https://github.com/oyvindg/cxta/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-`cxta` is a standalone C11 technical-analysis library for bar-based market data.
-
-It is intended to stay engine-agnostic:
-
-- No dependency on any expression runtime
-- No dependency on any strategy engine
-- No C++ requirement
-- No host-specific registry or bridge code
-
-## Scope
-
-The library currently includes:
-
-- Math and time-series primitives
-- Bar/window helpers
-- Structure helpers such as pivots, BOS, FVG, order blocks, liquidity, SFP and anchored/session VWAP helpers
-- A large indicator surface with both scalar and structured outputs
-- Descriptor metadata for expression-facing hosts
-
-The public umbrella header is:
+`cxta` is a standalone C11 library for technical analysis on bar-based market data. It covers a broad indicator surface, market structure helpers, and time-series primitives — without a dependency on any expression runtime, strategy engine, or host-specific framework.
 
 ```c
 #include <cxta/cxta.h>
 ```
+
+## What it provides
+
+### Indicators
+
+**Moving averages:** SMA, EMA, WMA, DEMA, TEMA, HMA, RMA, KAMA, FRAMA, VIDYA, MAMA
+
+**Momentum:** RSI, Stochastic, StochRSI, MACD, ROC, CCI, CMO, TSI, Williams %R, Connors RSI, RVI, KST, TRIX, PPO, Coppock, Awesome Oscillator
+
+**Volatility:** ATR, True Range, Bollinger Bands, Keltner Channel, Std Dev, Ulcer, Choppiness, TTM Squeeze
+
+**Volume:** OBV, MFI, CMF, Chaikin, EOM, EFI, NVI, RVOL, HVOL, Volume SMA, Volume EMA, PVO
+
+**Trend and direction:** ADX, Supertrend, Aroon, Vortex, Ichimoku, PSAR, Schaff, Dominant Cycle
+
+**Price and statistical:** Typical, Weighted Close, BOP, DPO, Fisher, Donchian, Price Channel, Linear Regression, Z-Score, Mass Index, Extrema, Median
+
+**VWAP variants:** VWAP, Anchored VWAP, Session VWAP
+
+### Market structure
+
+Pivots, Pivot Points, Break of Structure (BOS), Fair Value Gap (FVG), Order Blocks, Liquidity, Swing Failure Pattern (SFP), Wedge
+
+### Time-series primitives
+
+Crossovers, smoothing, candle classification, bar patterns, rolling windows, range helpers, Fibonacci levels, trendlines, divergence, ZigZag, Volume Profile
+
+### Descriptor metadata
+
+A descriptor layer exposes stable metadata for each indicator — name, argument counts, output field names and offsets, primary field index — so a host application can build its own registry or expression integration without introducing a reverse dependency into `cxta`.
 
 ## API shape
 
@@ -33,8 +45,6 @@ Most indicators expose one or both of these forms:
 
 - A direct view-based function for "value at current bar"
 - A `_step(...)` function with explicit state for incremental updates
-
-Example:
 
 ```c
 #include <cxta/indicators/ema.h>
@@ -47,29 +57,9 @@ cxta_macd_state macd = {0};
 cxta_macd_output out = cxta_macd_step(close, 12, 26, 9, &macd);
 ```
 
-This keeps the library usable both in batch-style scans over a bar view and in incremental runtimes.
+The two forms make the library usable both in batch-style scans over a bar view and in incremental tick-by-tick runtimes.
 
-## Descriptor metadata
-
-`cxta` also exposes a descriptor layer in:
-
-```c
-#include <cxta/indicators/descriptor.h>
-```
-
-Descriptors provide stable metadata for host integrations:
-
-- Indicator name
-- Min/max argument counts
-- Scalar-source argument ranges when supported
-- Scalar vs struct capabilities
-- Output field names
-- Output field offsets
-- Primary field index for structured outputs
-
-This metadata is intentionally separate from any host bridge. A host application can build its own registry or expression integration from the descriptor inventory without introducing a dependency from `cxta` back into that host.
-
-Example:
+The descriptor API:
 
 ```c
 #include <cxta/indicators/descriptor.h>
@@ -80,8 +70,6 @@ const cxta_indicator_descriptor* macd = cxta_indicator_descriptor_find("macd");
 ```
 
 ## Build
-
-Standalone build:
 
 ```bash
 cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -95,24 +83,16 @@ cmake -S . -B build -DCXTA_BUILD_TESTS=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build build -j4
 ```
 
-This writes `compile_commands.json` to `build/`, which matches the repo's `.clangd` configuration.
-
-If you only want to refresh `compile_commands.json` for `clangd`:
-
-```bash
-cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-```
+`compile_commands.json` is written to `build/`, which matches the repo's `.clangd` configuration.
 
 ## Test
-
-Run the standalone test target:
 
 ```bash
 cmake --build build --target test_cxta -j4
 /usr/bin/ctest --test-dir build --output-on-failure
 ```
 
-If you want all test output, including `printf` from passing tests:
+With full output including `printf` from passing tests:
 
 ```bash
 cmake --build build --target test_cxta -j4
@@ -130,35 +110,13 @@ include/cxta/
   structure/
   ts/
 src/
-  indicators/
-  math/
-  series/
-  structure/
-  ts/
 tests/
-  indicators/
-  math/
-  series/
-  structure/
-  ts/
 ```
 
 ## Non-goals
 
-`cxta` does not try to own:
-
-- Expression parsing
-- Function registration in a host runtime
-- Timeframe resolution outside the data passed in
-- Symbol routing, cross-market lookups or strategy orchestration
+`cxta` does not own expression parsing, function registration in a host runtime, timeframe resolution, or symbol routing and strategy orchestration.
 
 ## Host bridge pattern
 
-If your host uses an expression runtime (such as `cxpr`), the bridge between
-`cxta` descriptors and that runtime belongs in the host — not in `cxta`.
-
-Keeping the bridge in the host preserves the standalone nature of `cxta`:
-users who do not need expression evaluation do not pull in any expression
-dependency, and the bridge can apply host-specific naming conventions (prefix
-families, timeframe suffixes, source-aware composites) without those
-conventions leaking into the library itself.
+If your host uses an expression runtime (such as `cxpr`), the bridge between `cxta` descriptors and that runtime belongs in the host — not in `cxta`. This keeps `cxta` standalone: consumers who do not need expression evaluation pull in no expression dependency, and the bridge can apply host-specific naming conventions without those leaking into the library.

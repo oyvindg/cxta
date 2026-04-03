@@ -423,6 +423,108 @@ static double cxta_desc_eval_rsi_scalar_src(const cxta_series_scalar_view* sourc
     return 100.0 - (100.0 / (1.0 + (avg_gain / avg_loss)));
 }
 
+static double cxta_desc_eval_scalar_window_extrema(const cxta_series_scalar_view* source,
+                                                   const double* args,
+                                                   size_t nargs,
+                                                   int want_max) {
+    size_t idx;
+    size_t start;
+    size_t window;
+    size_t i;
+    double value;
+
+    if (!source || !cxta_series_scalar_view_valid(source)) return 0.0;
+    idx = cxta_series_clamp_index(source->size, source->index);
+    window = (size_t)cxta_descriptor_period_arg(args, nargs, 0u, 1);
+    if (window > idx + 1u) window = idx + 1u;
+    start = idx + 1u - window;
+    value = source->values[start];
+
+    for (i = start + 1u; i <= idx; ++i) {
+        if (want_max) {
+            if (source->values[i] > value) value = source->values[i];
+        } else {
+            if (source->values[i] < value) value = source->values[i];
+        }
+    }
+
+    return value;
+}
+
+static double cxta_desc_eval_bar_window_extrema(const cxta_series_bar_view* view,
+                                                const double* args,
+                                                size_t nargs,
+                                                size_t field_offset,
+                                                int want_max) {
+    size_t idx;
+    size_t start;
+    size_t window;
+    size_t i;
+    double value;
+    const cxta_series_bar* bar;
+
+    if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
+    idx = cxta_series_clamp_index(view->size, view->index);
+    window = (size_t)cxta_descriptor_period_arg(args, nargs, 0u, 1);
+    if (window > idx + 1u) window = idx + 1u;
+    start = idx + 1u - window;
+    bar = &view->bars[start];
+    value = *(const double*)((const unsigned char*)bar + field_offset);
+
+    for (i = start + 1u; i <= idx; ++i) {
+        double sample;
+        bar = &view->bars[i];
+        sample = *(const double*)((const unsigned char*)bar + field_offset);
+        if (want_max) {
+            if (sample > value) value = sample;
+        } else {
+            if (sample < value) value = sample;
+        }
+    }
+
+    return value;
+}
+
+static double cxta_desc_eval_rolling_max(const cxta_series_bar_view* view,
+                                         const double* args,
+                                         size_t nargs) {
+    return cxta_desc_eval_bar_window_extrema(
+        view, args, nargs, offsetof(cxta_series_bar, high), 1);
+}
+
+static double cxta_desc_eval_rolling_min(const cxta_series_bar_view* view,
+                                         const double* args,
+                                         size_t nargs) {
+    return cxta_desc_eval_bar_window_extrema(
+        view, args, nargs, offsetof(cxta_series_bar, low), 0);
+}
+
+static double cxta_desc_eval_rolling_max_close(const cxta_series_bar_view* view,
+                                               const double* args,
+                                               size_t nargs) {
+    return cxta_desc_eval_bar_window_extrema(
+        view, args, nargs, offsetof(cxta_series_bar, close), 1);
+}
+
+static double cxta_desc_eval_rolling_min_close(const cxta_series_bar_view* view,
+                                               const double* args,
+                                               size_t nargs) {
+    return cxta_desc_eval_bar_window_extrema(
+        view, args, nargs, offsetof(cxta_series_bar, close), 0);
+}
+
+static double cxta_desc_eval_rolling_max_scalar_src(const cxta_series_scalar_view* source,
+                                                    const double* args,
+                                                    size_t nargs) {
+    return cxta_desc_eval_scalar_window_extrema(source, args, nargs, 1);
+}
+
+static double cxta_desc_eval_rolling_min_scalar_src(const cxta_series_scalar_view* source,
+                                                    const double* args,
+                                                    size_t nargs) {
+    return cxta_desc_eval_scalar_window_extrema(source, args, nargs, 0);
+}
+
 static double cxta_desc_midpoint_sma(const cxta_series_bar_view* view,
                                      size_t idx,
                                      int period) {
@@ -1195,6 +1297,10 @@ static const cxta_indicator_descriptor kDescriptors[] = {
     CXTA_DESCRIPTOR_SCALAR_SOURCE_STEP_EX("ema", 1, 1, 1, 1, sizeof(cxta_ema_state), cxta_desc_eval_ema, cxta_desc_eval_ema_scalar_src, cxta_desc_step_ema),
     CXTA_DESCRIPTOR_SCALAR_EX("atr", 1, 1, sizeof(cxta_atr_state), cxta_desc_eval_atr),
     CXTA_DESCRIPTOR_SCALAR_SOURCE_STEP_EX("rsi", 1, 1, 1, 1, sizeof(cxta_desc_rsi_state), cxta_desc_eval_rsi, cxta_desc_eval_rsi_scalar_src, cxta_desc_step_rsi),
+    CXTA_DESCRIPTOR_SCALAR_SOURCE_EX("rolling_max", 1, 1, 1, 1, 0u, cxta_desc_eval_rolling_max, cxta_desc_eval_rolling_max_scalar_src),
+    CXTA_DESCRIPTOR_SCALAR_SOURCE_EX("rolling_min", 1, 1, 1, 1, 0u, cxta_desc_eval_rolling_min, cxta_desc_eval_rolling_min_scalar_src),
+    CXTA_DESCRIPTOR_SCALAR_SOURCE_EX("rolling_max_close", 1, 1, 1, 1, 0u, cxta_desc_eval_rolling_max_close, cxta_desc_eval_rolling_max_scalar_src),
+    CXTA_DESCRIPTOR_SCALAR_SOURCE_EX("rolling_min_close", 1, 1, 1, 1, 0u, cxta_desc_eval_rolling_min_close, cxta_desc_eval_rolling_min_scalar_src),
     CXTA_DESCRIPTOR_STRUCT_EX("macd", 3, 3, 0, cxta_macd_output, sizeof(cxta_macd_state), kMacdFields, cxta_desc_eval_macd),
     CXTA_DESCRIPTOR_STRUCT_EX("bollinger", 2, 2, 2, cxta_bollinger_output, 0u, kBollingerFields, cxta_desc_eval_bollinger),
     CXTA_DESCRIPTOR_STRUCT_EX("adx", 1, 1, 0, cxta_adx_output, sizeof(cxta_adx_state), kAdxFields, cxta_desc_eval_adx),

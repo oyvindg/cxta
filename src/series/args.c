@@ -1,6 +1,6 @@
 /**
  * @file args.c
- * @brief Argument parsers for cxseries-related helpers.
+ * @brief Argument parsers for bar series related helpers.
  */
 
 #include <cxta/series/args.h>

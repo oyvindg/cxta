@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 /*
- * cxts rolling tests:
+ * cxta rolling tests:
  * - rolling sum/sumsq update
  * - rolling mean/variance
  */

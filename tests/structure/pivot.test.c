@@ -1,6 +1,6 @@
 /**
  * @file pivot.test.c
- * @brief Unit tests for cxseries pivot and structure helpers.
+ * @brief Unit tests for pivot and structure helpers.
  *
  * Coverage:
  * - cxta_struct_pivot_args_parse

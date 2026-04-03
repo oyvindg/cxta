@@ -1,6 +1,6 @@
 /**
  * @file view.test.c
- * @brief Unit tests for cxseries AoS/SoA view helpers.
+ * @brief Unit tests for bar series AoS/SoA view helpers.
  *
  * Coverage:
  * - cxta_series_bar_view_* helpers

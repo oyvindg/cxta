@@ -1,6 +1,6 @@
 /**
  * @file pivot.h
- * @brief Pivot helpers over cxseries bar views.
+ * @brief Pivot helpers over bar views.
  */
 
 #pragma once

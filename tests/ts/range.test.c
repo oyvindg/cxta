@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 /*
- * cxts core tests:
+ * cxta core tests:
  * - period clamp
  * - EMA/Wilder steps
  * - true range

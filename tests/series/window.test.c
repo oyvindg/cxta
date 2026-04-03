@@ -1,6 +1,6 @@
 /**
  * @file window.test.c
- * @brief Unit tests for cxseries window helpers.
+ * @brief Unit tests for window helpers.
  *
  * Coverage:
  * - cxta_series_window_highest_high

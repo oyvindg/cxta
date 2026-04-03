@@ -1,6 +1,6 @@
 /**
  * @file args.h
- * @brief Argument tuple parsers for cxseries helpers.
+ * @brief Argument tuple parsers for cxta bar series helpers.
  */
 
 #pragma once

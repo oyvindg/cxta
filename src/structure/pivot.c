@@ -1,6 +1,6 @@
 /**
  * @file pivot.c
- * @brief Pivot argument/state helpers over cxseries bar views.
+ * @brief Pivot argument/state helpers over bar views.
  */
 
 #include <cxta/structure/pivot.h>

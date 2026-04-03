@@ -1,6 +1,6 @@
 /**
  * @file args.test.c
- * @brief Unit tests for cxseries argument tuple parsers.
+ * @brief Unit tests for bar series argument tuple parsers.
  *
  * Coverage:
  * - cxta_series_bar_args_parse

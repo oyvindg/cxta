@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 /*
- * cxts pattern tests:
+ * cxta pattern tests:
  * - double top/bottom
  * - head-and-shoulders variants
  * - cup-and-handle variants

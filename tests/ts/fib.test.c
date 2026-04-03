@@ -1,6 +1,6 @@
 /**
  * @file fib.test.c
- * @brief Unit tests for cxts Fibonacci predicates.
+ * @brief Unit tests for cxta Fibonacci predicates.
  *
  * Tests covered:
  * - fib_level: boundary ratios, midpoint, edge (high == low)

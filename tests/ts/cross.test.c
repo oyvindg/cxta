@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 /*
- * cxts cross tests:
+ * cxta cross tests:
  * - three-way cross compare
  * - crossed above/below event detection
  */

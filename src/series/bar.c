@@ -5,6 +5,8 @@
 
 #include <cxta/series/bar.h>
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
 size_t cxta_series_clamp_index(size_t size, size_t index) {
     if (size == 0) return 0;
@@ -48,6 +50,54 @@ const cxta_series_bar* cxta_series_bar_view_at(const cxta_series_bar_view* view,
 const cxta_series_bar* cxta_series_bar_view_current(const cxta_series_bar_view* view) {
     if (!cxta_series_bar_view_valid(view)) return 0;
     return &view->bars[view->index];
+}
+
+void cxta_series_bar_buffer_init(cxta_series_bar_buffer* buffer) {
+    if (!buffer) return;
+    buffer->data = 0;
+    buffer->size = 0;
+    buffer->capacity = 0;
+}
+
+void cxta_series_bar_buffer_free(cxta_series_bar_buffer* buffer) {
+    if (!buffer) return;
+    free(buffer->data);
+    cxta_series_bar_buffer_init(buffer);
+}
+
+int cxta_series_bar_buffer_reserve(cxta_series_bar_buffer* buffer, size_t capacity) {
+    cxta_series_bar* next = 0;
+    if (!buffer) return 0;
+    if (capacity <= buffer->capacity) return 1;
+    next = (cxta_series_bar*)realloc(buffer->data, capacity * sizeof(cxta_series_bar));
+    if (!next) return 0;
+    buffer->data = next;
+    buffer->capacity = capacity;
+    return 1;
+}
+
+void cxta_series_bar_buffer_clear(cxta_series_bar_buffer* buffer) {
+    if (!buffer) return;
+    buffer->size = 0;
+}
+
+int cxta_series_bar_buffer_push(cxta_series_bar_buffer* buffer, cxta_series_bar bar) {
+    size_t next_capacity = 0;
+    if (!buffer) return 0;
+    if (buffer->size == buffer->capacity) {
+        next_capacity = (buffer->capacity == 0u) ? 8u : (buffer->capacity * 2u);
+        if (next_capacity < buffer->size + 1u) {
+            next_capacity = buffer->size + 1u;
+        }
+        if (!cxta_series_bar_buffer_reserve(buffer, next_capacity)) return 0;
+    }
+    buffer->data[buffer->size++] = bar;
+    return 1;
+}
+
+cxta_series_bar_view cxta_series_bar_buffer_view(const cxta_series_bar_buffer* buffer, size_t index) {
+    if (!buffer) return cxta_series_bar_view_make(0, 0, 0);
+    return cxta_series_bar_view_make(buffer->data, buffer->size, index);
 }
 
 double cxta_series_typical_price(const cxta_series_bar* bar) {

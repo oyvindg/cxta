@@ -59,6 +59,15 @@ typedef struct {
 } cxta_series_bar_view;
 
 /**
+ * @brief Owning dynamic buffer for bar series.
+ */
+typedef struct {
+    cxta_series_bar* data;
+    size_t size;
+    size_t capacity;
+} cxta_series_bar_buffer;
+
+/**
  * @brief Callback that resolves a host-issued handle to a bar-series view.
  *
  * Implemented by the host runtime and passed into cxta timeframe helpers.
@@ -114,6 +123,32 @@ const cxta_series_bar* cxta_series_bar_view_at(const cxta_series_bar_view* view,
  * @brief Read current bar from AoS view.
  */
 const cxta_series_bar* cxta_series_bar_view_current(const cxta_series_bar_view* view);
+/**
+ * @brief Initialize an empty owning bar buffer.
+ */
+void cxta_series_bar_buffer_init(cxta_series_bar_buffer* buffer);
+/**
+ * @brief Release memory held by an owning bar buffer.
+ */
+void cxta_series_bar_buffer_free(cxta_series_bar_buffer* buffer);
+/**
+ * @brief Resize capacity to at least `capacity`.
+ * @return Non-zero on success.
+ */
+int cxta_series_bar_buffer_reserve(cxta_series_bar_buffer* buffer, size_t capacity);
+/**
+ * @brief Remove all bars while keeping allocated storage.
+ */
+void cxta_series_bar_buffer_clear(cxta_series_bar_buffer* buffer);
+/**
+ * @brief Append one bar to the buffer.
+ * @return Non-zero on success.
+ */
+int cxta_series_bar_buffer_push(cxta_series_bar_buffer* buffer, cxta_series_bar bar);
+/**
+ * @brief Build a clamped view over an owning bar buffer.
+ */
+cxta_series_bar_view cxta_series_bar_buffer_view(const cxta_series_bar_buffer* buffer, size_t index);
 /**
  * @brief Compute typical price `(high + low + close) / 3` for one bar.
  */

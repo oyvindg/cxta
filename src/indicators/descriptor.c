@@ -8,6 +8,7 @@
 #include <limits.h>
 #include <math.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
 #define CXTA_ARRAY_COUNT(values) (sizeof(values) / sizeof((values)[0]))
@@ -1405,4 +1406,54 @@ const cxta_indicator_descriptor* cxta_indicator_descriptor_find(const char* name
         if (strcmp(descriptors[i].name, name) == 0) return &descriptors[i];
     }
     return NULL;
+}
+
+bool cxta_indicator_descriptor_supports_scalar_source(
+    const cxta_indicator_descriptor* descriptor) {
+    return descriptor != NULL &&
+           (descriptor->flags & CXTA_INDICATOR_SCALAR_SOURCE) != 0u &&
+           descriptor->scalar_source_min_args >= 0 &&
+           descriptor->scalar_source_max_args >= 0;
+}
+
+bool cxta_indicator_field_auto_plot(const cxta_indicator_descriptor* descriptor,
+                                    const cxta_field_descriptor* field) {
+    return descriptor != NULL &&
+           field != NULL &&
+           field->auto_plot &&
+           (descriptor->flags & CXTA_INDICATOR_REPAINTING) == 0u;
+}
+
+void cxta_name_sanitize_suffix(const char* name, char* out, size_t out_size) {
+    size_t i;
+
+    if (!out || out_size == 0u) return;
+    out[0] = '\0';
+    if (!name) return;
+
+    for (i = 0u; name[i] != '\0' && i + 1u < out_size; ++i) {
+        const char c = name[i];
+        const int is_ident =
+            (c >= 'a' && c <= 'z') ||
+            (c >= 'A' && c <= 'Z') ||
+            (c >= '0' && c <= '9') ||
+            c == '_';
+        out[i] = is_ident ? c : '_';
+    }
+    out[i] = '\0';
+}
+
+int cxta_name_build_timeframe(const char* name, char* out, size_t out_size) {
+    char suffix[256u];
+    cxta_name_sanitize_suffix(name, suffix, sizeof(suffix));
+    return snprintf(out, out_size, "%s_tf", suffix);
+}
+
+int cxta_name_build_source_aware(const char* smoothing_name,
+                                 const char* source_name,
+                                 char* out,
+                                 size_t out_size) {
+    char suffix[256u];
+    cxta_name_sanitize_suffix(source_name, suffix, sizeof(suffix));
+    return snprintf(out, out_size, "%s_src_%s", smoothing_name, suffix);
 }

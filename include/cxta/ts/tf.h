@@ -62,106 +62,58 @@ double cxta_ts_volume_tf(uint64_t handle, const cxta_series_resolver* resolver);
 uint64_t cxta_ts_timestamp_tf(uint64_t handle, const cxta_series_resolver* resolver);
 
 /**
- * @brief Read the previous open from a resolved timeframe series.
+ * @brief Read an open value at a lookback offset from a resolved timeframe series.
  * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
+ * @param[in] offset Lookback bars from the aligned current bar (`0` = current).
  * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Previous open value, or `NAN` when resolution fails.
+ * @return Open value at `offset`, or `NAN` when resolution fails.
  */
-double cxta_ts_prev_open_tf(uint64_t handle, const cxta_series_resolver* resolver);
+double cxta_ts_at_open_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver);
 
 /**
- * @brief Read the previous high from a resolved timeframe series.
+ * @brief Read a high value at a lookback offset from a resolved timeframe series.
  * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
+ * @param[in] offset Lookback bars from the aligned current bar (`0` = current).
  * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Previous high value, or `NAN` when resolution fails.
+ * @return High value at `offset`, or `NAN` when resolution fails.
  */
-double cxta_ts_prev_high_tf(uint64_t handle, const cxta_series_resolver* resolver);
+double cxta_ts_at_high_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver);
 
 /**
- * @brief Read the previous low from a resolved timeframe series.
+ * @brief Read a low value at a lookback offset from a resolved timeframe series.
  * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
+ * @param[in] offset Lookback bars from the aligned current bar (`0` = current).
  * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Previous low value, or `NAN` when resolution fails.
+ * @return Low value at `offset`, or `NAN` when resolution fails.
  */
-double cxta_ts_prev_low_tf(uint64_t handle, const cxta_series_resolver* resolver);
+double cxta_ts_at_low_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver);
 
 /**
- * @brief Read the previous close from a resolved timeframe series.
+ * @brief Read a close value at a lookback offset from a resolved timeframe series.
  * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
+ * @param[in] offset Lookback bars from the aligned current bar (`0` = current).
  * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Previous close value, or `NAN` when resolution fails.
+ * @return Close value at `offset`, or `NAN` when resolution fails.
  */
-double cxta_ts_prev_close_tf(uint64_t handle, const cxta_series_resolver* resolver);
+double cxta_ts_at_close_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver);
 
 /**
- * @brief Read the previous volume from a resolved timeframe series.
+ * @brief Read a volume value at a lookback offset from a resolved timeframe series.
  * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
+ * @param[in] offset Lookback bars from the aligned current bar (`0` = current).
  * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Previous volume value, or `NAN` when resolution fails.
+ * @return Volume value at `offset`, or `NAN` when resolution fails.
  */
-double cxta_ts_prev_volume_tf(uint64_t handle, const cxta_series_resolver* resolver);
+double cxta_ts_at_volume_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver);
 
 /**
- * @brief Read the previous timestamp from a resolved timeframe series.
+ * @brief Read a timestamp at a lookback offset from a resolved timeframe series.
  * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
+ * @param[in] offset Lookback bars from the aligned current bar (`0` = current).
  * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Previous timestamp, or `0` when resolution fails.
+ * @return Timestamp at `offset`, or `0` when resolution fails.
  */
-uint64_t cxta_ts_prev_timestamp_tf(uint64_t handle, const cxta_series_resolver* resolver);
-
-/**
- * @brief Read a lagged open from a resolved timeframe series.
- * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
- * @param[in] lag Number of bars to look back.
- * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Lagged open value, or `NAN` when resolution fails.
- */
-double cxta_ts_lag_open_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver);
-
-/**
- * @brief Read a lagged high from a resolved timeframe series.
- * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
- * @param[in] lag Number of bars to look back.
- * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Lagged high value, or `NAN` when resolution fails.
- */
-double cxta_ts_lag_high_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver);
-
-/**
- * @brief Read a lagged low from a resolved timeframe series.
- * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
- * @param[in] lag Number of bars to look back.
- * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Lagged low value, or `NAN` when resolution fails.
- */
-double cxta_ts_lag_low_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver);
-
-/**
- * @brief Read a lagged close from a resolved timeframe series.
- * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
- * @param[in] lag Number of bars to look back.
- * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Lagged close value, or `NAN` when resolution fails.
- */
-double cxta_ts_lag_close_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver);
-
-/**
- * @brief Read a lagged volume from a resolved timeframe series.
- * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
- * @param[in] lag Number of bars to look back.
- * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Lagged volume value, or `NAN` when resolution fails.
- */
-double cxta_ts_lag_volume_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver);
-
-/**
- * @brief Read a lagged timestamp from a resolved timeframe series.
- * @param[in] handle Host-issued timeframe handle. `0` may mean primary series.
- * @param[in] lag Number of bars to look back.
- * @param[in] resolver Resolver callback bundle used to map handle to a bar view.
- * @return Lagged timestamp, or `0` when resolution fails.
- */
-uint64_t cxta_ts_lag_timestamp_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver);
+uint64_t cxta_ts_at_timestamp_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver);
 
 #ifdef __cplusplus
 }

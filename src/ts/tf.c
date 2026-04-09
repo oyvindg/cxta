@@ -34,31 +34,20 @@ static const cxta_series_bar* cxta_tf_bar_at(uint64_t handle,
     return &view.bars[index];
 }
 
-static size_t cxta_tf_prev_index(size_t size, size_t index, size_t lag) {
-    (void)lag;
-    return cxta_series_prev_index(size, index);
-}
-
-static size_t cxta_tf_lag_index(size_t size, size_t index, size_t lag) {
-    return cxta_series_lag_index(size, index, lag);
-}
-
 static double cxta_tf_read_double(uint64_t handle,
                                   const cxta_series_resolver* resolver,
-                                  size_t (*index_fn)(size_t, size_t, size_t),
-                                  size_t lag,
+                                  size_t offset,
                                   cxta_tf_double_reader_fn reader) {
-    const cxta_series_bar* bar = cxta_tf_bar_at(handle, resolver, index_fn, lag);
+    const cxta_series_bar* bar = cxta_tf_bar_at(handle, resolver, cxta_series_lag_index, offset);
     if (!bar || !reader) return NAN;
     return reader(bar);
 }
 
 static uint64_t cxta_tf_read_u64(uint64_t handle,
                                  const cxta_series_resolver* resolver,
-                                 size_t (*index_fn)(size_t, size_t, size_t),
-                                 size_t lag,
+                                 size_t offset,
                                  cxta_tf_u64_reader_fn reader) {
-    const cxta_series_bar* bar = cxta_tf_bar_at(handle, resolver, index_fn, lag);
+    const cxta_series_bar* bar = cxta_tf_bar_at(handle, resolver, cxta_series_lag_index, offset);
     if (!bar || !reader) return 0u;
     return reader(bar);
 }
@@ -73,75 +62,51 @@ static uint64_t cxta_tf_read_timestamp(const cxta_series_bar* bar) {
 }
 
 double cxta_ts_open_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, NULL, 0u, cxta_tf_read_open);
+    return cxta_ts_at_open_tf(handle, 0u, resolver);
 }
 
 double cxta_ts_high_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, NULL, 0u, cxta_tf_read_high);
+    return cxta_ts_at_high_tf(handle, 0u, resolver);
 }
 
 double cxta_ts_low_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, NULL, 0u, cxta_tf_read_low);
+    return cxta_ts_at_low_tf(handle, 0u, resolver);
 }
 
 double cxta_ts_close_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, NULL, 0u, cxta_tf_read_close);
+    return cxta_ts_at_close_tf(handle, 0u, resolver);
 }
 
 double cxta_ts_volume_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, NULL, 0u, cxta_tf_read_volume);
+    return cxta_ts_at_volume_tf(handle, 0u, resolver);
 }
 
 uint64_t cxta_ts_timestamp_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_u64(handle, resolver, NULL, 0u, cxta_tf_read_timestamp);
+    return cxta_ts_at_timestamp_tf(handle, 0u, resolver);
 }
 
-double cxta_ts_prev_open_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_prev_index, 0u, cxta_tf_read_open);
+double cxta_ts_at_open_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver) {
+    return cxta_tf_read_double(handle, resolver, offset, cxta_tf_read_open);
 }
 
-double cxta_ts_prev_high_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_prev_index, 0u, cxta_tf_read_high);
+double cxta_ts_at_high_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver) {
+    return cxta_tf_read_double(handle, resolver, offset, cxta_tf_read_high);
 }
 
-double cxta_ts_prev_low_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_prev_index, 0u, cxta_tf_read_low);
+double cxta_ts_at_low_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver) {
+    return cxta_tf_read_double(handle, resolver, offset, cxta_tf_read_low);
 }
 
-double cxta_ts_prev_close_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_prev_index, 0u, cxta_tf_read_close);
+double cxta_ts_at_close_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver) {
+    return cxta_tf_read_double(handle, resolver, offset, cxta_tf_read_close);
 }
 
-double cxta_ts_prev_volume_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_prev_index, 0u, cxta_tf_read_volume);
+double cxta_ts_at_volume_tf(uint64_t handle, size_t offset, const cxta_series_resolver* resolver) {
+    return cxta_tf_read_double(handle, resolver, offset, cxta_tf_read_volume);
 }
 
-uint64_t cxta_ts_prev_timestamp_tf(uint64_t handle, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_u64(handle, resolver, cxta_tf_prev_index, 0u, cxta_tf_read_timestamp);
-}
-
-double cxta_ts_lag_open_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_lag_index, lag, cxta_tf_read_open);
-}
-
-double cxta_ts_lag_high_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_lag_index, lag, cxta_tf_read_high);
-}
-
-double cxta_ts_lag_low_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_lag_index, lag, cxta_tf_read_low);
-}
-
-double cxta_ts_lag_close_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_lag_index, lag, cxta_tf_read_close);
-}
-
-double cxta_ts_lag_volume_tf(uint64_t handle, size_t lag, const cxta_series_resolver* resolver) {
-    return cxta_tf_read_double(handle, resolver, cxta_tf_lag_index, lag, cxta_tf_read_volume);
-}
-
-uint64_t cxta_ts_lag_timestamp_tf(uint64_t handle,
-                                  size_t lag,
-                                  const cxta_series_resolver* resolver) {
-    return cxta_tf_read_u64(handle, resolver, cxta_tf_lag_index, lag, cxta_tf_read_timestamp);
+uint64_t cxta_ts_at_timestamp_tf(uint64_t handle,
+                                 size_t offset,
+                                 const cxta_series_resolver* resolver) {
+    return cxta_tf_read_u64(handle, resolver, offset, cxta_tf_read_timestamp);
 }

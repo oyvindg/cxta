@@ -38,29 +38,20 @@ void cxta_test_tf(void) {
     assert(cxta_ts_volume_tf(1u, &resolver) == 110.0);
     assert(cxta_ts_timestamp_tf(1u, &resolver) == 1060u);
 
-    assert(cxta_ts_prev_open_tf(1u, &resolver) == 1.0);
-    assert(cxta_ts_prev_high_tf(1u, &resolver) == 2.0);
-    assert(cxta_ts_prev_low_tf(1u, &resolver) == 0.5);
-    assert(cxta_ts_prev_close_tf(1u, &resolver) == 1.0);
-    assert(cxta_ts_prev_volume_tf(1u, &resolver) == 100.0);
-    assert(cxta_ts_prev_timestamp_tf(1u, &resolver) == 1000u);
-
-    assert(cxta_ts_lag_open_tf(1u, 1u, &resolver) == 1.0);
-    assert(cxta_ts_lag_high_tf(1u, 1u, &resolver) == 2.0);
-    assert(cxta_ts_lag_low_tf(1u, 1u, &resolver) == 0.5);
-    assert(cxta_ts_lag_close_tf(1u, 1u, &resolver) == 1.0);
-    assert(cxta_ts_lag_volume_tf(1u, 1u, &resolver) == 100.0);
-    assert(cxta_ts_lag_timestamp_tf(1u, 1u, &resolver) == 1000u);
+    assert(cxta_ts_at_open_tf(1u, 1u, &resolver) == 1.0);
+    assert(cxta_ts_at_high_tf(1u, 1u, &resolver) == 2.0);
+    assert(cxta_ts_at_low_tf(1u, 1u, &resolver) == 0.5);
+    assert(cxta_ts_at_close_tf(1u, 1u, &resolver) == 1.0);
+    assert(cxta_ts_at_volume_tf(1u, 1u, &resolver) == 100.0);
+    assert(cxta_ts_at_timestamp_tf(1u, 1u, &resolver) == 1000u);
 
     assert(cxta_ts_close_tf(2u, &resolver) == 15.0);
-    assert(cxta_ts_lag_close_tf(2u, 9u, &resolver) == 12.0);
+    assert(cxta_ts_at_close_tf(2u, 9u, &resolver) == 12.0);
 
     assert(isnan(cxta_ts_close_tf(99u, &resolver)));
-    assert(isnan(cxta_ts_prev_close_tf(99u, &resolver)));
-    assert(isnan(cxta_ts_lag_close_tf(99u, 1u, &resolver)));
+    assert(isnan(cxta_ts_at_close_tf(99u, 1u, &resolver)));
     assert(cxta_ts_timestamp_tf(99u, &resolver) == 0u);
-    assert(cxta_ts_prev_timestamp_tf(99u, &resolver) == 0u);
-    assert(cxta_ts_lag_timestamp_tf(99u, 1u, &resolver) == 0u);
+    assert(cxta_ts_at_timestamp_tf(99u, 1u, &resolver) == 0u);
 
     printf("  OK tf\n");
 }

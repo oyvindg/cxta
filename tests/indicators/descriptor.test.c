@@ -52,6 +52,7 @@ void cxta_test_descriptor(void) {
     const cxta_indicator_descriptor* swing_anchor_vwap =
         cxta_indicator_descriptor_find("swing_anchor_vwap");
     const cxta_indicator_descriptor* wedge = cxta_indicator_descriptor_find("wedge");
+    char generated_name[64] = {0};
     const cxta_field_descriptor* percent_b = NULL;
     const cxta_field_descriptor* vwap_value = NULL;
     const cxta_field_descriptor* pivot_points_pp = NULL;
@@ -178,6 +179,7 @@ void cxta_test_descriptor(void) {
     assert(ema->field_count == 0u);
     assert(ema->eval_scalar != NULL);
     assert(ema->eval_scalar_src != NULL);
+    assert(cxta_indicator_descriptor_supports_scalar_source(ema));
     assert(fabs(ema->eval_scalar(&view, period2, 1u) - cxta_ema(&view, 2)) < 1e-12);
     assert(fabs(ema->eval_scalar_src(&close_source, period2, 1u) - cxta_ema(&view, 2)) < 1e-12);
 
@@ -207,6 +209,7 @@ void cxta_test_descriptor(void) {
     percent_b = cxta_find_field(bollinger, "percentB");
     assert(percent_b);
     assert(percent_b->offset == offsetof(cxta_bollinger_output, percent_b));
+    assert(cxta_indicator_field_auto_plot(bollinger, percent_b));
     bollinger->eval_struct(&view, (const double[]){3.0, 2.0}, 2u, &bollinger_out);
     assert(fabs(bollinger_out.middle - expected_bollinger.middle) < 1e-12);
     assert(fabs(bollinger_out.upper - expected_bollinger.upper) < 1e-12);
@@ -305,6 +308,11 @@ void cxta_test_descriptor(void) {
     assert(swing_anchor_vwap->step_struct != NULL);
 
     assert(wedge);
+
+    assert(cxta_name_build_timeframe("macd.signal", generated_name, sizeof(generated_name)) > 0);
+    assert(strcmp(generated_name, "macd_signal_tf") == 0);
+    assert(cxta_name_build_source_aware("ema", "macd.signal", generated_name, sizeof(generated_name)) > 0);
+    assert(strcmp(generated_name, "ema_src_macd_signal") == 0);
     assert(wedge->min_args == 2);
     assert(wedge->max_args == 4);
     assert(wedge->primary_field_index == 5);

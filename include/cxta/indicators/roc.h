@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the ROC indicator. */
+static const cxta_param_descriptor cxta_roc_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for ROC. */
+static const cxta_bridge_fn_spec cxta_roc_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("roc", 1u, 1u, cxta_roc_params, 1);
+
+/** @brief Expression-facing descriptor for ROC. */
+extern const cxta_indicator_descriptor cxta_roc_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

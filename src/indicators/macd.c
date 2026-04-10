@@ -3,8 +3,89 @@
  * @brief MACD helpers.
  */
 
+#include <limits.h>
+#include <math.h>
+#include <string.h>
+
+#include <cxta/indicators/descriptor.h>
 #include <cxta/indicators/macd.h>
 #include <cxta/ts/smoothing.h>
+
+const cxta_field_descriptor cxta_macd_descriptor_fields[3] = {
+    {"line", offsetof(cxta_macd_output, line), true},
+    {"signal", offsetof(cxta_macd_output, signal), true},
+    {"histogram", offsetof(cxta_macd_output, histogram), true},
+};
+
+static int cxta_macd_descriptor_int_arg(const double* args,
+                                        size_t nargs,
+                                        size_t index,
+                                        int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return (int)llround(raw);
+}
+
+static int cxta_macd_descriptor_period_arg(const double* args,
+                                           size_t nargs,
+                                           size_t index,
+                                           int fallback) {
+    return cxta_ts_clamp_period(
+        cxta_macd_descriptor_int_arg(args, nargs, index, fallback));
+}
+
+void cxta_macd_descriptor_eval(const cxta_series_bar_view* view,
+                               const double* args,
+                               size_t nargs,
+                               void* out);
+
+const cxta_indicator_descriptor cxta_macd_descriptor = {
+    "macd",
+    3,
+    3,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_macd_output),
+    sizeof(cxta_macd_state),
+    cxta_macd_descriptor_fields,
+    3u,
+    NULL,
+    cxta_macd_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_macd_params,
+    CXTA_ARRAY_COUNT(cxta_macd_params),
+};
+
+void cxta_macd_descriptor_eval(const cxta_series_bar_view* view,
+                               const double* args,
+                               size_t nargs,
+                               void* out) {
+    int fast = cxta_macd_descriptor_period_arg(args, nargs, 0u, 12);
+    int slow = cxta_macd_descriptor_period_arg(args, nargs, 1u, 26);
+    int signal = cxta_macd_descriptor_period_arg(args, nargs, 2u, 9);
+    int swap_tmp;
+    cxta_macd_output value;
+
+    if (!out) return;
+
+    if (fast > slow) {
+        swap_tmp = fast;
+        fast = slow;
+        slow = swap_tmp;
+    }
+    value = cxta_macd(view, fast, slow, signal);
+    memcpy(out, &value, sizeof(value));
+}
 
 cxta_macd_output cxta_macd_step(double close,
                                 int fast,

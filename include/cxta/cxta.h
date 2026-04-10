@@ -6,10 +6,12 @@
 #pragma once
 
 #include "math/math.h"                  // IWYU pragma: export
+#include "signals/signals.h"            // IWYU pragma: export
 #include "ts/smoothing.h"               // IWYU pragma: export
 #include "ts/range.h"                   // IWYU pragma: export
 #include "ts/rolling.h"                 // IWYU pragma: export
 #include "ts/cross.h"                   // IWYU pragma: export
+#include "ts/pair.h"                    // IWYU pragma: export
 #include "ts/candles.h"                 // IWYU pragma: export
 #include "ts/patterns.h"                // IWYU pragma: export
 #include "ts/fib.h"                     // IWYU pragma: export
@@ -99,5 +101,6 @@
 #include "indicators/trendline.h"       // IWYU pragma: export
 #include "indicators/volume_profile.h"  // IWYU pragma: export
 #include "indicators/zigzag.h"          // IWYU pragma: export
+#include "indicators/fair_value_gap.h"  // IWYU pragma: export
 #include "indicators/divergence.h"      // IWYU pragma: export
 #include "indicators/anchored_vwap.h"   // IWYU pragma: export

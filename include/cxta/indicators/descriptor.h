@@ -32,13 +32,74 @@ typedef struct {
 } cxta_field_descriptor;
 
 /**
+ * @brief Named parameter descriptor for one indicator argument.
+ *
+ * Array index matches the corresponding positional argument index.
+ */
+typedef struct {
+    const char* name;
+} cxta_param_descriptor;
+
+/**
+ * @brief Expression-visible argument category for bridge-level rewrites.
+ */
+typedef enum {
+    CXTA_EXPR_ARG_NUMERIC = 0,
+    CXTA_EXPR_ARG_SCALAR_SOURCE = 1,
+} cxta_expr_arg_kind;
+
+/**
+ * @brief Expression-level argument descriptor for source-aware calls.
+ */
+typedef struct {
+    const char* name;
+    cxta_expr_arg_kind kind;
+    const char* default_value;
+} cxta_expr_arg_descriptor;
+
+/**
+ * @brief Bridge-facing function-signature metadata exported by cxta modules.
+ *
+ * This keeps expression-visible parameter naming close to the indicator module
+ * itself without forcing bridge-specific code into `cxpr-bridge`.
+ */
+typedef struct {
+    const char* name;                     /**< Expression-visible function name. */
+    size_t min_args;                      /**< Minimum accepted argument count. */
+    size_t max_args;                      /**< Maximum accepted argument count. */
+    const cxta_param_descriptor* params;  /**< Ordered parameter descriptors, or NULL. */
+    size_t param_count;                   /**< Number of entries in @p params. */
+    const cxta_expr_arg_descriptor* expr_args; /**< Expression args, including source args, or NULL. */
+    size_t expr_arg_count;                /**< Number of entries in @p expr_args. */
+    int has_optional_timeframe_param;     /**< Non-zero when a trailing optional timeframe is accepted. */
+} cxta_bridge_fn_spec;
+
+/** @brief Return the number of elements in a fixed-size array. */
+#define CXTA_ARRAY_COUNT(values) (sizeof(values) / sizeof((values)[0]))
+
+/**
+ * @brief Build one bridge-facing function spec from a fixed-size param array.
+ * @param name_literal Expression-visible function name.
+ * @param min_arg_count Minimum accepted argument count.
+ * @param max_arg_count Maximum accepted argument count.
+ * @param params_array Fixed-size `cxta_param_descriptor` array.
+ * @param optional_timeframe_flag Non-zero when a trailing optional timeframe is accepted.
+ */
+#define CXTA_BRIDGE_FN_SPEC(name_literal, min_arg_count, max_arg_count, params_array, optional_timeframe_flag)     {                                                                                                                  (name_literal),                                                                                                (min_arg_count),                                                                                               (max_arg_count),                                                                                               (params_array),                                                                                                CXTA_ARRAY_COUNT(params_array),                                                                                NULL,                                                                                                          0u,                                                                                                            (optional_timeframe_flag)                                                                                  }
+
+/**
+ * @brief Build one bridge-facing function spec with expression-level arg metadata.
+ */
+#define CXTA_BRIDGE_FN_SPEC_EXPR(name_literal, min_arg_count, max_arg_count, params_array, expr_args_array, optional_timeframe_flag)     {                                                                                                                                     (name_literal),                                                                                                                   (min_arg_count),                                                                                                                  (max_arg_count),                                                                                                                  (params_array),                                                                                                                   CXTA_ARRAY_COUNT(params_array),                                                                                                   (expr_args_array),                                                                                                                CXTA_ARRAY_COUNT(expr_args_array),                                                                                                (optional_timeframe_flag)                                                                                                     }
+
+/**
  * @brief Capability flags for one indicator descriptor.
  */
 typedef enum {
-    CXTA_INDICATOR_SCALAR = 1u << 0,
-    CXTA_INDICATOR_STRUCT = 1u << 1,
-    CXTA_INDICATOR_SCALAR_SOURCE = 1u << 2,
-    CXTA_INDICATOR_REPAINTING = 1u << 3,
+    CXTA_INDICATOR_SCALAR = 1u << 0,        /**< Supports scalar output via `eval_scalar` or `step_scalar`. */
+    CXTA_INDICATOR_STRUCT = 1u << 1,        /**< Supports structured output via `eval_struct` or `step_struct`. */
+    CXTA_INDICATOR_SCALAR_SOURCE = 1u << 2, /**< Supports scalar-source input via `eval_scalar_src`. */
+    CXTA_INDICATOR_REPAINTING = 1u << 3,    /**< May change previously emitted values as new bars arrive. */
 } cxta_indicator_flags;
 
 /**
@@ -94,23 +155,25 @@ typedef void (*cxta_struct_step_fn)(const cxta_series_bar_view* view,
  * @brief Metadata for one expression-facing indicator.
  */
 typedef struct {
-    const char* name;
-    int min_args;
-    int max_args;
-    int scalar_source_min_args;
-    int scalar_source_max_args;
-    int primary_field_index;
-    unsigned flags;
-    size_t output_size;
-    size_t state_size;
-    const cxta_field_descriptor* fields;
-    size_t field_count;
-    cxta_scalar_fn eval_scalar;
-    cxta_struct_fn eval_struct;
-    cxta_scalar_src_fn eval_scalar_src;
-    cxta_state_slots_fn state_slots;
-    cxta_scalar_step_fn step_scalar;
-    cxta_struct_step_fn step_struct;
+    const char* name;                     /**< Stable expression-facing indicator name. */
+    int min_args;                         /**< Minimum accepted numeric argument count. */
+    int max_args;                         /**< Maximum accepted numeric argument count. */
+    int scalar_source_min_args;           /**< Minimum args for source-aware scalar forms, or -1 when unsupported. */
+    int scalar_source_max_args;           /**< Maximum args for source-aware scalar forms, or -1 when unsupported. */
+    int primary_field_index;              /**< Preferred output field index for plotting/default selection, or -1. */
+    unsigned flags;                       /**< Indicator capability flags. */
+    size_t output_size;                   /**< Size in bytes of the scalar/struct output payload. */
+    size_t state_size;                    /**< Fixed incremental state size in bytes, or 0 when stateless/dynamic. */
+    const cxta_field_descriptor* fields;  /**< Output field descriptors for struct-capable indicators, or NULL. */
+    size_t field_count;                   /**< Number of entries in fields. */
+    cxta_scalar_fn eval_scalar;           /**< Scalar evaluation entrypoint, or NULL. */
+    cxta_struct_fn eval_struct;           /**< Struct evaluation entrypoint, or NULL. */
+    cxta_scalar_src_fn eval_scalar_src;   /**< Source-aware scalar evaluation entrypoint, or NULL. */
+    cxta_state_slots_fn state_slots;      /**< Dynamic state-slot resolver, or NULL. */
+    cxta_scalar_step_fn step_scalar;      /**< Incremental scalar step entrypoint, or NULL. */
+    cxta_struct_step_fn step_struct;      /**< Incremental struct step entrypoint, or NULL. */
+    const cxta_param_descriptor* params;  /**< Named parameter descriptors, or NULL. */
+    size_t param_count;                   /**< Number of entries in params. */
 } cxta_indicator_descriptor;
 
 /**
@@ -121,11 +184,46 @@ typedef struct {
 const cxta_indicator_descriptor* cxta_indicator_descriptors(size_t* count);
 
 /**
+ * @brief Return the bridge-facing function-spec inventory exported by cxta.
+ * @param[out] count Optional function-spec count output.
+ * @return Pointer to the static function-spec pointer array.
+ */
+const cxta_bridge_fn_spec* const* cxta_bridge_fn_specs(size_t* count);
+
+/**
+ * @brief Find one bridge-facing function spec by stable function name.
+ * @param[in] name Stable expression-facing function name.
+ * @return Matching bridge spec, or `NULL` when not found.
+ */
+const cxta_bridge_fn_spec* cxta_bridge_fn_spec_find(const char* name);
+
+/**
  * @brief Find one descriptor by stable indicator name.
  * @param[in] name Stable expression-facing indicator name.
  * @return Matching descriptor, or `NULL` when not found.
  */
 const cxta_indicator_descriptor* cxta_indicator_descriptor_find(const char* name);
+
+/**
+ * @brief Named parameter metadata for one indicator's numeric arguments.
+ *
+ * Covers only numeric (non-expression-source) parameters. Expression-level
+ * source arguments (such as series inputs to divergence) are described at
+ * the bridge layer.
+ */
+typedef struct {
+    const char* const* names;    /**< Ordered parameter names (never NULL when count > 0). */
+    size_t count;                /**< Number of entries in names. */
+    const char* const* defaults; /**< Parallel default strings (NULL entry = no default), or NULL when all required. */
+    int min_count;               /**< -1 means same as count (all required); >= 0 overrides. */
+} cxta_param_spec;
+
+/**
+ * @brief Look up named parameter metadata for one indicator.
+ * @param[in] name Stable indicator name.
+ * @return Pointer to static spec, or NULL when the indicator has no named parameters.
+ */
+const cxta_param_spec* cxta_indicator_param_spec_find(const char* name);
 
 /**
  * @brief Return whether a descriptor supports scalar-source invocation.

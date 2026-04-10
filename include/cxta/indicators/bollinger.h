@@ -6,6 +6,20 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the Bollinger indicator. */
+static const cxta_param_descriptor cxta_bollinger_params[] = {
+    {"period"},
+    {"stddev_mult"},
+};
+
+/** @brief Bridge-facing signature metadata for Bollinger. */
+static const cxta_bridge_fn_spec cxta_bollinger_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("bollinger", 2u, 2u, cxta_bollinger_params, 1);
+
+/** @brief Expression-facing descriptor for Bollinger. */
+extern const cxta_indicator_descriptor cxta_bollinger_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

@@ -6,8 +6,21 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
 
 #include <stddef.h>
+
+/** @brief Named parameters for the SMA indicator. */
+static const cxta_param_descriptor cxta_sma_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for SMA. */
+static const cxta_bridge_fn_spec cxta_sma_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("sma", 1u, 1u, cxta_sma_params, 1);
+
+/** @brief Expression-facing descriptor for SMA. */
+extern const cxta_indicator_descriptor cxta_sma_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

@@ -44,6 +44,8 @@ void cxta_test_descriptor(void) {
     const cxta_indicator_descriptor* structure = cxta_indicator_descriptor_find("structure");
     const cxta_indicator_descriptor* bos = cxta_indicator_descriptor_find("bos");
     const cxta_indicator_descriptor* fvg = cxta_indicator_descriptor_find("fvg");
+    const cxta_indicator_descriptor* fair_value_gap =
+        cxta_indicator_descriptor_find("fair_value_gap");
     const cxta_indicator_descriptor* order_block = cxta_indicator_descriptor_find("order_block");
     const cxta_indicator_descriptor* liquidity = cxta_indicator_descriptor_find("liquidity");
     const cxta_indicator_descriptor* sfp = cxta_indicator_descriptor_find("sfp");
@@ -115,13 +117,15 @@ void cxta_test_descriptor(void) {
     cxta_struct_structure_state structure_out = {0};
     cxta_struct_fvg_state expected_fvg = {0};
     cxta_struct_fvg_state fvg_out = {0};
+    cxta_fair_value_gap_output expected_fair_value_gap = {0};
+    cxta_fair_value_gap_output fair_value_gap_out = {0};
     cxta_struct_vwap_args parsed_vwap = {0};
     cxta_struct_vwap_result expected_vwap = {0};
     cxta_struct_vwap_result savwap_out = {0};
     const cxta_bollinger_output expected_bollinger = cxta_bollinger(&view, 3, 2.0);
 
     assert(descriptors);
-    assert(count == 88u);
+    assert(count == 89u);
 
     for (i = 0; i < count; ++i) {
         const cxta_indicator_descriptor* descriptor = &descriptors[i];
@@ -284,6 +288,12 @@ void cxta_test_descriptor(void) {
     assert(fvg->max_args == 1);
     assert(fvg->field_count == 5u);
 
+    assert(fair_value_gap);
+    assert(fair_value_gap->min_args == 0);
+    assert(fair_value_gap->max_args == 1);
+    assert(fair_value_gap->primary_field_index == 2);
+    assert(fair_value_gap->field_count == 5u);
+
     assert(order_block);
     assert(order_block->min_args == 2);
     assert(order_block->max_args == 3);
@@ -349,6 +359,14 @@ void cxta_test_descriptor(void) {
     assert(fabs(fvg_out.top - expected_fvg.top) < 1e-12);
     assert(fabs(fvg_out.bottom - expected_fvg.bottom) < 1e-12);
     assert(fabs(fvg_out.filled - expected_fvg.filled) < 1e-12);
+
+    expected_fair_value_gap = cxta_fair_value_gap(&fvg_view);
+    fair_value_gap->eval_struct(&fvg_view, fvg_args, 1u, &fair_value_gap_out);
+    assert(fabs(fair_value_gap_out.gap_high - expected_fair_value_gap.gap_high) < 1e-12);
+    assert(fabs(fair_value_gap_out.gap_low - expected_fair_value_gap.gap_low) < 1e-12);
+    assert(fabs(fair_value_gap_out.direction - expected_fair_value_gap.direction) < 1e-12);
+    assert(fabs(fair_value_gap_out.mitigated - expected_fair_value_gap.mitigated) < 1e-12);
+    assert(fabs(fair_value_gap_out.fill_pct - expected_fair_value_gap.fill_pct) < 1e-12);
 
     assert(cxta_struct_vwap_args_parse(savwap_args, 4u, &parsed_vwap) == 1);
     assert(cxta_struct_vwap_compute(&savwap_view, &parsed_vwap, &expected_vwap) == 1);

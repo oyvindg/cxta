@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the RSI indicator. */
+static const cxta_param_descriptor cxta_rsi_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for RSI. */
+static const cxta_bridge_fn_spec cxta_rsi_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("rsi", 1u, 1u, cxta_rsi_params, 1);
+
+/** @brief Expression-facing descriptor for RSI. */
+extern const cxta_indicator_descriptor cxta_rsi_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

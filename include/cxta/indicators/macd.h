@@ -6,6 +6,21 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the MACD indicator. */
+static const cxta_param_descriptor cxta_macd_params[] = {
+    {"fast"},
+    {"slow"},
+    {"signal"},
+};
+
+/** @brief Bridge-facing signature metadata for MACD. */
+static const cxta_bridge_fn_spec cxta_macd_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("macd", 3u, 3u, cxta_macd_params, 1);
+
+/** @brief Expression-facing descriptor for MACD. */
+extern const cxta_indicator_descriptor cxta_macd_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

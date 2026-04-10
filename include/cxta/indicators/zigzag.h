@@ -6,6 +6,20 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the ZigZag indicator. */
+static const cxta_param_descriptor cxta_zigzag_params[] = {
+    {"threshold"},
+    {"n"},
+};
+
+/** @brief Bridge-facing cxpr signature metadata for ZigZag. */
+static const cxta_bridge_fn_spec cxta_zigzag_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("zigzag", 1u, 2u, cxta_zigzag_params, 1);
+
+/** @brief Expression-facing descriptor for ZigZag. */
+extern const cxta_indicator_descriptor cxta_zigzag_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

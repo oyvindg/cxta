@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the RMA indicator. */
+static const cxta_param_descriptor cxta_rma_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for RMA. */
+static const cxta_bridge_fn_spec cxta_rma_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("rma", 1u, 1u, cxta_rma_params, 1);
+
+/** @brief Expression-facing descriptor for RMA. */
+extern const cxta_indicator_descriptor cxta_rma_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

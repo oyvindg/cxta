@@ -1,10 +1,12 @@
 #include <stdio.h>
 
 void cxta_test_math(void);
+void cxta_test_signals(void);
 void cxta_test_smoothing(void);
 void cxta_test_range(void);
 void cxta_test_rolling(void);
 void cxta_test_cross(void);
+void cxta_test_pair(void);
 void cxta_test_candles(void);
 void cxta_test_patterns(void);
 void cxta_test_fib(void);
@@ -93,16 +95,19 @@ void cxta_test_ttm_squeeze(void);
 void cxta_test_trendline(void);
 void cxta_test_volume_profile(void);
 void cxta_test_zigzag(void);
+void cxta_test_fair_value_gap(void);
 void cxta_test_divergence(void);
 void cxta_test_anchored_vwap(void);
 void cxta_test_descriptor(void);
 
 int main(void) {
     cxta_test_math();
+    cxta_test_signals();
     cxta_test_smoothing();
     cxta_test_range();
     cxta_test_rolling();
     cxta_test_cross();
+    cxta_test_pair();
     cxta_test_candles();
     cxta_test_patterns();
     cxta_test_fib();
@@ -191,6 +196,7 @@ int main(void) {
     cxta_test_trendline();
     cxta_test_volume_profile();
     cxta_test_zigzag();
+    cxta_test_fair_value_gap();
     cxta_test_divergence();
     cxta_test_anchored_vwap();
     cxta_test_descriptor();

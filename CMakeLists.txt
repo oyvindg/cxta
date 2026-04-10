@@ -5,10 +5,12 @@ enable_testing()
 
 add_library(cxta STATIC
     src/math/math.c
+    src/signals/signals.c
     src/ts/smoothing.c
     src/ts/range.c
     src/ts/rolling.c
     src/ts/cross.c
+    src/ts/pair.c
     src/ts/candles.c
     src/ts/patterns.c
     src/ts/fib.c
@@ -98,6 +100,7 @@ add_library(cxta STATIC
     src/indicators/trendline.c
     src/indicators/volume_profile.c
     src/indicators/zigzag.c
+    src/indicators/fair_value_gap.c
     src/indicators/divergence.c
     src/indicators/anchored_vwap.c
     src/indicators/descriptor.c
@@ -117,10 +120,12 @@ if(CXTA_BUILD_TESTS)
     add_executable(test_cxta
         tests/cxta.test.c
         tests/math/math.test.c
+        tests/signals/signals.test.c
         tests/ts/smoothing.test.c
         tests/ts/range.test.c
         tests/ts/rolling.test.c
         tests/ts/cross.test.c
+        tests/ts/pair.test.c
         tests/ts/candles.test.c
         tests/ts/patterns.test.c
         tests/ts/fib.test.c
@@ -209,6 +214,7 @@ if(CXTA_BUILD_TESTS)
         tests/indicators/trendline.test.c
         tests/indicators/volume_profile.test.c
         tests/indicators/zigzag.test.c
+        tests/indicators/fair_value_gap.test.c
         tests/indicators/divergence.test.c
         tests/indicators/anchored_vwap.test.c
         tests/indicators/descriptor.test.c

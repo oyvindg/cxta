@@ -11,41 +11,60 @@
 #include <stdio.h>
 #include <string.h>
 
-#define CXTA_ARRAY_COUNT(values) (sizeof(values) / sizeof((values)[0]))
-
 #define CXTA_DESCRIPTOR_SCALAR_EX(name, min_args, max_args, state_sz, eval_scalar_fn)      \
     {                                                                                       \
         (name), (min_args), (max_args), -1, -1, -1,                                        \
         CXTA_INDICATOR_SCALAR, 0u, (state_sz), NULL, 0u,                                   \
-        (eval_scalar_fn), NULL, NULL, NULL, NULL, NULL                                     \
+        (eval_scalar_fn), NULL, NULL, NULL, NULL, NULL,                                    \
+        NULL, 0u                                                                            \
+    }
+
+#define CXTA_DESCRIPTOR_SCALAR_EX_PARAMS(name, min_args, max_args, state_sz, eval_scalar_fn, params_array) \
+    {                                                                                                       \
+        (name), (min_args), (max_args), -1, -1, -1,                                                        \
+        CXTA_INDICATOR_SCALAR, 0u, (state_sz), NULL, 0u,                                                   \
+        (eval_scalar_fn), NULL, NULL, NULL, NULL, NULL,                                                    \
+        (params_array), CXTA_ARRAY_COUNT(params_array)                                                     \
     }
 
 #define CXTA_DESCRIPTOR_SCALAR_FIELD_EX(name, min_args, max_args, state_sz, fields_array, eval_scalar_fn) \
     {                                                                                                      \
         (name), (min_args), (max_args), -1, -1, -1,                                                       \
         CXTA_INDICATOR_SCALAR, 0u, (state_sz), (fields_array), CXTA_ARRAY_COUNT(fields_array),            \
-        (eval_scalar_fn), NULL, NULL, NULL, NULL, NULL                                                    \
+        (eval_scalar_fn), NULL, NULL, NULL, NULL, NULL,                                                   \
+        NULL, 0u                                                                                           \
     }
 
 #define CXTA_DESCRIPTOR_SCALAR_SOURCE_EX(name, min_args, max_args, ss_min, ss_max, state_sz, eval_scalar_fn, eval_scalar_src_fn) \
     {                                                                                                                            \
         (name), (min_args), (max_args), (ss_min), (ss_max), -1,                                                                \
         CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_SCALAR_SOURCE, 0u, (state_sz), NULL, 0u,                                       \
-        (eval_scalar_fn), NULL, (eval_scalar_src_fn), NULL, NULL, NULL                                                          \
+        (eval_scalar_fn), NULL, (eval_scalar_src_fn), NULL, NULL, NULL,                                                        \
+        NULL, 0u                                                                                                                \
     }
 
 #define CXTA_DESCRIPTOR_SCALAR_SOURCE_STEP_EX(name, min_args, max_args, ss_min, ss_max, state_sz, eval_scalar_fn, eval_scalar_src_fn, step_scalar_fn) \
     {                                                                                                                                               \
         (name), (min_args), (max_args), (ss_min), (ss_max), -1,                                                                                   \
         CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_SCALAR_SOURCE, 0u, (state_sz), NULL, 0u,                                                          \
-        (eval_scalar_fn), NULL, (eval_scalar_src_fn), NULL, (step_scalar_fn), NULL                                                                \
+        (eval_scalar_fn), NULL, (eval_scalar_src_fn), NULL, (step_scalar_fn), NULL,                                                               \
+        NULL, 0u                                                                                                                                   \
+    }
+
+#define CXTA_DESCRIPTOR_SCALAR_SOURCE_STEP_EX_PARAMS(name, min_args, max_args, ss_min, ss_max, state_sz, eval_scalar_fn, eval_scalar_src_fn, step_scalar_fn, params_array) \
+    {                                                                                                                                                                      \
+        (name), (min_args), (max_args), (ss_min), (ss_max), -1,                                                                                                          \
+        CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_SCALAR_SOURCE, 0u, (state_sz), NULL, 0u,                                                                                  \
+        (eval_scalar_fn), NULL, (eval_scalar_src_fn), NULL, (step_scalar_fn), NULL,                                                                                       \
+        (params_array), CXTA_ARRAY_COUNT(params_array)                                                                                                                    \
     }
 
 #define CXTA_DESCRIPTOR_SCALAR_SOURCE_DYNAMIC_STEP_EX(name, min_args, max_args, ss_min, ss_max, state_slots_fn, eval_scalar_fn, eval_scalar_src_fn, step_scalar_fn) \
     {                                                                                                                                                           \
         (name), (min_args), (max_args), (ss_min), (ss_max), -1,                                                                                               \
         CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_SCALAR_SOURCE, 0u, 0u, NULL, 0u,                                                                              \
-        (eval_scalar_fn), NULL, (eval_scalar_src_fn), (state_slots_fn), (step_scalar_fn), NULL                                                               \
+        (eval_scalar_fn), NULL, (eval_scalar_src_fn), (state_slots_fn), (step_scalar_fn), NULL,                                                               \
+        NULL, 0u                                                                                                                                               \
     }
 
 #define CXTA_DESCRIPTOR_STRUCT_EX(name, min_args, max_args, primary_index, type, state_sz, fields_array, eval_struct_fn) \
@@ -53,7 +72,17 @@
         (name), (min_args), (max_args), -1, -1, (primary_index),                                                         \
         CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT, sizeof(type), (state_sz),                                         \
         (fields_array), CXTA_ARRAY_COUNT(fields_array),                                                                   \
-        NULL, (eval_struct_fn), NULL, NULL, NULL, NULL                                                                    \
+        NULL, (eval_struct_fn), NULL, NULL, NULL, NULL,                                                                   \
+        NULL, 0u                                                                                                           \
+    }
+
+#define CXTA_DESCRIPTOR_STRUCT_EX_PARAMS(name, min_args, max_args, primary_index, type, state_sz, fields_array, eval_struct_fn, params_array) \
+    {                                                                                                                                          \
+        (name), (min_args), (max_args), -1, -1, (primary_index),                                                                              \
+        CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT, sizeof(type), (state_sz),                                                              \
+        (fields_array), CXTA_ARRAY_COUNT(fields_array),                                                                                        \
+        NULL, (eval_struct_fn), NULL, NULL, NULL, NULL,                                                                                        \
+        (params_array), CXTA_ARRAY_COUNT(params_array)                                                                                         \
     }
 
 #define CXTA_DESCRIPTOR_STRUCT_STEP_EX(name, min_args, max_args, primary_index, type, state_sz, fields_array, eval_struct_fn, step_struct_fn) \
@@ -61,7 +90,8 @@
         (name), (min_args), (max_args), -1, -1, (primary_index),                                                                               \
         CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT, sizeof(type), (state_sz),                                                               \
         (fields_array), CXTA_ARRAY_COUNT(fields_array),                                                                                         \
-        NULL, (eval_struct_fn), NULL, NULL, NULL, (step_struct_fn)                                                                              \
+        NULL, (eval_struct_fn), NULL, NULL, NULL, (step_struct_fn),                                                                             \
+        NULL, 0u                                                                                                                                 \
     }
 
 #define CXTA_FIELD(name, offset) {(name), (offset), true}
@@ -225,205 +255,6 @@ static void cxta_descriptor_copy_struct(void* out, const void* value, size_t siz
         cxta_descriptor_copy_struct(out, &value, sizeof(value));                              \
     }
 
-static double cxta_desc_eval_sma_scalar_src(const cxta_series_scalar_view* source,
-                                            const double* args,
-                                            size_t nargs) {
-    size_t idx;
-    size_t start;
-    size_t window;
-    size_t i;
-    double sum = 0.0;
-
-    if (!source || !cxta_series_scalar_view_valid(source)) return 0.0;
-    idx = cxta_series_clamp_index(source->size, source->index);
-    window = (size_t)cxta_descriptor_period_arg(args, nargs, 0u, 20);
-    if (window > idx + 1u) window = idx + 1u;
-    start = idx + 1u - window;
-    for (i = start; i <= idx; ++i) sum += source->values[i];
-    return cxta_sma_from_sum(sum, window);
-}
-
-static size_t cxta_desc_state_slots_sma(const double* args,
-                                        size_t nargs) {
-    return 3u + (size_t)cxta_descriptor_period_arg(args, nargs, 0u, 20);
-}
-
-static double cxta_desc_step_sma(double sample,
-                                 double prev_sample,
-                                 const double* args,
-                                 size_t nargs,
-                                 void* state) {
-    double* values = (double*)state;
-    const size_t period = (size_t)cxta_descriptor_period_arg(args, nargs, 0u, 20);
-    size_t count_value;
-    size_t pos_value;
-
-    (void)prev_sample;
-    if (!values || period == 0u) return 0.0;
-
-    count_value = (size_t)values[1];
-    pos_value = (size_t)values[2];
-
-    if (count_value < period) {
-        values[3u + count_value] = sample;
-        values[0] += sample;
-        values[1] = (double)(count_value + 1u);
-        values[2] = (double)((count_value + 1u) % period);
-        return cxta_sma_from_sum(values[0], count_value + 1u);
-    }
-
-    values[0] += sample - values[3u + pos_value];
-    values[3u + pos_value] = sample;
-    values[2] = (double)((pos_value + 1u) % period);
-    return cxta_sma_from_sum(values[0], period);
-}
-
-static double cxta_desc_eval_ema_scalar_src(const cxta_series_scalar_view* source,
-                                            const double* args,
-                                            size_t nargs) {
-    size_t idx;
-    size_t i;
-    int period;
-    cxta_ema_state st = {0.0, 0.0};
-    double out = 0.0;
-
-    if (!source || !cxta_series_scalar_view_valid(source)) return 0.0;
-    idx = cxta_series_clamp_index(source->size, source->index);
-    period = cxta_descriptor_period_arg(args, nargs, 0u, 20);
-    for (i = 0; i <= idx; ++i) {
-        out = cxta_ema_step(source->values[i], period, &st);
-    }
-    return out;
-}
-
-static double cxta_desc_eval_rma_scalar_src(const cxta_series_scalar_view* source,
-                                            const double* args,
-                                            size_t nargs) {
-    size_t idx;
-    size_t i;
-    int period;
-    cxta_rma_state st = {0.0, 0.0};
-    double out = 0.0;
-
-    if (!source || !cxta_series_scalar_view_valid(source)) return 0.0;
-    idx = cxta_series_clamp_index(source->size, source->index);
-    period = cxta_descriptor_period_arg(args, nargs, 0u, 20);
-    for (i = 0; i <= idx; ++i) {
-        out = cxta_rma_step(source->values[i], period, &st);
-    }
-    return out;
-}
-
-typedef struct {
-    double avg_gain;
-    double avg_loss;
-    double prev_value;
-    double samples_seen;
-} cxta_desc_rsi_state;
-
-static double cxta_desc_rsi_from_averages(double avg_gain,
-                                          double avg_loss) {
-    if (avg_loss < 1e-12) return 100.0;
-    return 100.0 - (100.0 / (1.0 + (avg_gain / avg_loss)));
-}
-
-static double cxta_desc_step_ema(double close,
-                                 double prev_close,
-                                 const double* args,
-                                 size_t nargs,
-                                 void* state) {
-    (void)prev_close;
-    return cxta_ema_step(
-        close,
-        cxta_descriptor_period_arg(args, nargs, 0u, 20),
-        (cxta_ema_state*)state);
-}
-
-static double cxta_desc_step_rma(double close,
-                                 double prev_close,
-                                 const double* args,
-                                 size_t nargs,
-                                 void* state) {
-    (void)prev_close;
-    return cxta_rma_step(
-        close,
-        cxta_descriptor_period_arg(args, nargs, 0u, 20),
-        (cxta_rma_state*)state);
-}
-
-static double cxta_desc_step_rsi(double close,
-                                 double prev_close,
-                                 const double* args,
-                                 size_t nargs,
-                                 void* state) {
-    cxta_desc_rsi_state* st = (cxta_desc_rsi_state*)state;
-    const int period = cxta_descriptor_period_arg(args, nargs, 0u, 14);
-    double diff;
-
-    (void)prev_close;
-    if (!st) return 50.0;
-
-    if (st->samples_seen <= 0.0) {
-        st->prev_value = close;
-        st->samples_seen = 1.0;
-        return 50.0;
-    }
-
-    diff = close - st->prev_value;
-    if (st->samples_seen <= (double)period) {
-        if (diff > 0.0) st->avg_gain += diff;
-        else st->avg_loss -= diff;
-        st->prev_value = close;
-        st->samples_seen += 1.0;
-
-        if (st->samples_seen <= (double)period) return 50.0;
-
-        st->avg_gain /= (double)period;
-        st->avg_loss /= (double)period;
-        return cxta_desc_rsi_from_averages(st->avg_gain, st->avg_loss);
-    }
-
-    cxta_ts_update_gain_loss(&st->avg_gain, &st->avg_loss, diff, period);
-    st->prev_value = close;
-    return cxta_desc_rsi_from_averages(st->avg_gain, st->avg_loss);
-}
-
-static double cxta_desc_eval_rsi_scalar_src(const cxta_series_scalar_view* source,
-                                            const double* args,
-                                            size_t nargs) {
-    size_t idx;
-    size_t i;
-    int period;
-    double avg_gain = 0.0;
-    double avg_loss = 0.0;
-
-    if (!source || !cxta_series_scalar_view_valid(source)) return 50.0;
-    idx = cxta_series_clamp_index(source->size, source->index);
-    period = cxta_descriptor_period_arg(args, nargs, 0u, 14);
-    if (idx == 0u || idx < (size_t)period) return 50.0;
-
-    for (i = 1u; i <= (size_t)period; ++i) {
-        double gain = 0.0;
-        double loss = 0.0;
-        cxta_ts_gain_loss(source->values[i] - source->values[i - 1u], &gain, &loss);
-        avg_gain += gain;
-        avg_loss += loss;
-    }
-    avg_gain /= (double)period;
-    avg_loss /= (double)period;
-
-    for (i = (size_t)period + 1u; i <= idx; ++i) {
-        cxta_ts_update_gain_loss(
-            &avg_gain,
-            &avg_loss,
-            source->values[i] - source->values[i - 1u],
-            period);
-    }
-
-    if (avg_loss < 1e-12) return 100.0;
-    return 100.0 - (100.0 / (1.0 + (avg_gain / avg_loss)));
-}
-
 static double cxta_desc_eval_scalar_window_extrema(const cxta_series_scalar_view* source,
                                                    const double* args,
                                                    size_t nargs,
@@ -540,26 +371,18 @@ static double cxta_desc_midpoint_sma(const cxta_series_bar_view* view,
     return cxta_sma_from_sum(sum, window);
 }
 
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_sma, cxta_sma, 20)
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_ema, cxta_ema, 20)
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_atr, cxta_atr, 14)
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_rsi, cxta_rsi, 14)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_volume_sma, cxta_volume_sma, 20)
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_wma, cxta_wma, 20)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_dema, cxta_dema, 20)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_tema, cxta_tema, 20)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_hma, cxta_hma, 20)
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_roc, cxta_roc, 10)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_linreg_slope, cxta_linreg_slope, 20)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_linreg_angle, cxta_linreg_angle, 20)
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_stddev, cxta_stddev, 20)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_rvol, cxta_rvol, 20)
 CXTA_WRAP_BAR_SCALAR_0(cxta_desc_eval_truerange, cxta_truerange)
 CXTA_WRAP_BAR_SCALAR_0(cxta_desc_eval_typical, cxta_typical)
 CXTA_WRAP_BAR_SCALAR_0(cxta_desc_eval_median_price, cxta_median_price)
 CXTA_WRAP_BAR_SCALAR_0(cxta_desc_eval_weighted_close, cxta_wclose)
 CXTA_WRAP_BAR_SCALAR_0(cxta_desc_eval_obv, cxta_obv)
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_zscore, cxta_zscore, 20)
 
 static double cxta_desc_eval_awesome_oscillator(const cxta_series_bar_view* view,
                                                 const double* args,
@@ -614,7 +437,6 @@ static double cxta_desc_eval_ease_of_movement(const cxta_series_bar_view* view,
 }
 
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_volume_ema, cxta_volume_ema, 20)
-CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_rma, cxta_rma, 20)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_williams_r, cxta_williamsr, 14)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_cci, cxta_cci, 20)
 CXTA_WRAP_BAR_SCALAR_1I(cxta_desc_eval_mfi, cxta_mfi, 14)
@@ -750,26 +572,6 @@ static double cxta_desc_eval_anchored_vwap(const cxta_series_bar_view* view,
     return cxta_anchored_vwap(view, anchor_bars);
 }
 
-static void cxta_desc_eval_macd(const cxta_series_bar_view* view,
-                                const double* args,
-                                size_t nargs,
-                                void* out) {
-    int fast = cxta_descriptor_period_arg(args, nargs, 0u, 12);
-    int slow = cxta_descriptor_period_arg(args, nargs, 1u, 26);
-    int signal = cxta_descriptor_period_arg(args, nargs, 2u, 9);
-    int swap_tmp;
-    cxta_macd_output value;
-
-    if (fast > slow) {
-        swap_tmp = fast;
-        fast = slow;
-        slow = swap_tmp;
-    }
-    value = cxta_macd(view, fast, slow, signal);
-    cxta_descriptor_copy_struct(out, &value, sizeof(value));
-}
-
-CXTA_WRAP_BAR_STRUCT_1I_1D(cxta_desc_eval_bollinger, cxta_bollinger_output, cxta_bollinger, 20, 2.0)
 CXTA_WRAP_BAR_STRUCT_1I(cxta_desc_eval_adx, cxta_adx_output, cxta_adx, 14)
 
 static void cxta_desc_eval_supertrend(const cxta_series_bar_view* view,
@@ -904,16 +706,6 @@ static void cxta_desc_eval_volume_profile(const cxta_series_bar_view* view,
     const int period = cxta_descriptor_period_arg(args, nargs, 0u, 20);
     const int bins = cxta_descriptor_clamp_int_arg(args, nargs, 1u, 24, 5, 200);
     const cxta_vp_output value = cxta_volume_profile(view, period, bins);
-    cxta_descriptor_copy_struct(out, &value, sizeof(value));
-}
-
-static void cxta_desc_eval_zigzag(const cxta_series_bar_view* view,
-                                  const double* args,
-                                  size_t nargs,
-                                  void* out) {
-    const double threshold = cxta_descriptor_double_arg(args, nargs, 0u, 0.03);
-    const int n = cxta_descriptor_clamp_int_arg(args, nargs, 1u, 0, 0, INT_MAX);
-    const cxta_zigzag_output value = cxta_zigzag(view, threshold, n);
     cxta_descriptor_copy_struct(out, &value, sizeof(value));
 }
 
@@ -1082,20 +874,6 @@ static const cxta_field_descriptor kVwapFields[] = {
     CXTA_FIELD("value", CXTA_FIELD_OFFSET_SCALAR),
 };
 
-static const cxta_field_descriptor kMacdFields[] = {
-    CXTA_FIELD("line", offsetof(cxta_macd_output, line)),
-    CXTA_FIELD("signal", offsetof(cxta_macd_output, signal)),
-    CXTA_FIELD("histogram", offsetof(cxta_macd_output, histogram)),
-};
-
-static const cxta_field_descriptor kBollingerFields[] = {
-    CXTA_FIELD("upper", offsetof(cxta_bollinger_output, upper)),
-    CXTA_FIELD("lower", offsetof(cxta_bollinger_output, lower)),
-    CXTA_FIELD("middle", offsetof(cxta_bollinger_output, middle)),
-    CXTA_FIELD("percentB", offsetof(cxta_bollinger_output, percent_b)),
-    CXTA_FIELD("width", offsetof(cxta_bollinger_output, bandwidth)),
-};
-
 static const cxta_field_descriptor kAdxFields[] = {
     CXTA_FIELD("adx", offsetof(cxta_adx_output, adx)),
     CXTA_FIELD("plusDI", offsetof(cxta_adx_output, plus_di)),
@@ -1179,18 +957,6 @@ static const cxta_field_descriptor kVolumeProfileFields[] = {
     CXTA_FIELD("val", offsetof(cxta_vp_output, val)),
     CXTA_FIELD("range_high", offsetof(cxta_vp_output, range_high)),
     CXTA_FIELD("range_low", offsetof(cxta_vp_output, range_low)),
-};
-
-static const cxta_field_descriptor kZigZagFields[] = {
-    CXTA_FIELD_HIDDEN("high", offsetof(cxta_zigzag_output, high)),
-    CXTA_FIELD_HIDDEN("low", offsetof(cxta_zigzag_output, low)),
-    CXTA_FIELD("line", offsetof(cxta_zigzag_output, line)),
-    CXTA_FIELD_HIDDEN("pivot_index", offsetof(cxta_zigzag_output, pivot_index)),
-    CXTA_FIELD_HIDDEN("active", offsetof(cxta_zigzag_output, active)),
-    CXTA_FIELD_HIDDEN("active_index", offsetof(cxta_zigzag_output, active_index)),
-    CXTA_FIELD_HIDDEN("direction", offsetof(cxta_zigzag_output, direction)),
-    CXTA_FIELD_HIDDEN("last", offsetof(cxta_zigzag_output, last)),
-    CXTA_FIELD_HIDDEN("is_high", offsetof(cxta_zigzag_output, is_high)),
 };
 
 static const cxta_field_descriptor kSwingPivotsFields[] = {
@@ -1280,6 +1046,63 @@ static const cxta_field_descriptor kDivergenceFields[] = {
     CXTA_FIELD("bear_segment", offsetof(cxta_divergence_output, bear_segment)),
 };
 
+static const cxta_param_descriptor kDivergenceBridgeParams[] = {
+    {"source_a"},
+    {"source_b"},
+    {"left"},
+    {"right"},
+    {"lookback"},
+};
+
+static const cxta_expr_arg_descriptor kDivergenceExprArgs[] = {
+    {"source_a", CXTA_EXPR_ARG_SCALAR_SOURCE, NULL},
+    {"source_b", CXTA_EXPR_ARG_SCALAR_SOURCE, NULL},
+    {"left", CXTA_EXPR_ARG_NUMERIC, NULL},
+    {"right", CXTA_EXPR_ARG_NUMERIC, NULL},
+    {"lookback", CXTA_EXPR_ARG_NUMERIC, "200"},
+};
+
+static const cxta_bridge_fn_spec kDivergenceBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC_EXPR(
+        "divergence",
+        4u,
+        5u,
+        kDivergenceBridgeParams,
+        kDivergenceExprArgs,
+        1);
+
+static const cxta_param_descriptor kCrossPairParams[] = {
+    {"a"},
+    {"b"},
+};
+
+static const cxta_param_descriptor kCrossPairPeriodParams[] = {
+    {"a"},
+    {"b"},
+    {"period"},
+};
+
+static const cxta_bridge_fn_spec kSpreadBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("spread", 2u, 2u, kCrossPairParams, 0);
+static const cxta_bridge_fn_spec kPairSpreadBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("pair_spread", 2u, 2u, kCrossPairParams, 0);
+static const cxta_bridge_fn_spec kCovarianceBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("covariance", 3u, 3u, kCrossPairPeriodParams, 0);
+static const cxta_bridge_fn_spec kRollingCorrBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("rolling_corr", 3u, 3u, kCrossPairPeriodParams, 0);
+static const cxta_bridge_fn_spec kRollingBetaBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("rolling_beta", 3u, 3u, kCrossPairPeriodParams, 0);
+static const cxta_bridge_fn_spec kRollingAlphaBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("rolling_alpha", 3u, 3u, kCrossPairPeriodParams, 0);
+static const cxta_bridge_fn_spec kHvRatioBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("hv_ratio", 3u, 3u, kCrossPairPeriodParams, 0);
+static const cxta_bridge_fn_spec kTrackingErrorBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("tracking_error", 3u, 3u, kCrossPairPeriodParams, 0);
+static const cxta_bridge_fn_spec kRelativeStrengthBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("relative_strength", 3u, 3u, kCrossPairPeriodParams, 0);
+static const cxta_bridge_fn_spec kZScoreBridgeFnSpec =
+    CXTA_BRIDGE_FN_SPEC("z_score", 3u, 3u, kCrossPairPeriodParams, 0);
+
 static const cxta_field_descriptor kWedgeFields[] = {
     CXTA_FIELD("upper", offsetof(cxta_struct_wedge_state, upper)),
     CXTA_FIELD("lower", offsetof(cxta_struct_wedge_state, lower)),
@@ -1293,31 +1116,22 @@ static const cxta_field_descriptor kWedgeFields[] = {
     CXTA_FIELD_HIDDEN("breakout", offsetof(cxta_struct_wedge_state, breakout)),
 };
 
-static const cxta_indicator_descriptor kDescriptors[] = {
-    CXTA_DESCRIPTOR_SCALAR_SOURCE_DYNAMIC_STEP_EX("sma", 1, 1, 1, 1, cxta_desc_state_slots_sma, cxta_desc_eval_sma, cxta_desc_eval_sma_scalar_src, cxta_desc_step_sma),
-    CXTA_DESCRIPTOR_SCALAR_SOURCE_STEP_EX("ema", 1, 1, 1, 1, sizeof(cxta_ema_state), cxta_desc_eval_ema, cxta_desc_eval_ema_scalar_src, cxta_desc_step_ema),
-    CXTA_DESCRIPTOR_SCALAR_EX("atr", 1, 1, sizeof(cxta_atr_state), cxta_desc_eval_atr),
-    CXTA_DESCRIPTOR_SCALAR_SOURCE_STEP_EX("rsi", 1, 1, 1, 1, sizeof(cxta_desc_rsi_state), cxta_desc_eval_rsi, cxta_desc_eval_rsi_scalar_src, cxta_desc_step_rsi),
+static const cxta_indicator_descriptor kCoreDescriptors[] = {
     CXTA_DESCRIPTOR_SCALAR_SOURCE_EX("rolling_max", 1, 1, 1, 1, 0u, cxta_desc_eval_rolling_max, cxta_desc_eval_rolling_max_scalar_src),
     CXTA_DESCRIPTOR_SCALAR_SOURCE_EX("rolling_min", 1, 1, 1, 1, 0u, cxta_desc_eval_rolling_min, cxta_desc_eval_rolling_min_scalar_src),
     CXTA_DESCRIPTOR_SCALAR_SOURCE_EX("rolling_max_close", 1, 1, 1, 1, 0u, cxta_desc_eval_rolling_max_close, cxta_desc_eval_rolling_max_scalar_src),
     CXTA_DESCRIPTOR_SCALAR_SOURCE_EX("rolling_min_close", 1, 1, 1, 1, 0u, cxta_desc_eval_rolling_min_close, cxta_desc_eval_rolling_min_scalar_src),
-    CXTA_DESCRIPTOR_STRUCT_EX("macd", 3, 3, 0, cxta_macd_output, sizeof(cxta_macd_state), kMacdFields, cxta_desc_eval_macd),
-    CXTA_DESCRIPTOR_STRUCT_EX("bollinger", 2, 2, 2, cxta_bollinger_output, 0u, kBollingerFields, cxta_desc_eval_bollinger),
     CXTA_DESCRIPTOR_STRUCT_EX("adx", 1, 1, 0, cxta_adx_output, sizeof(cxta_adx_state), kAdxFields, cxta_desc_eval_adx),
     CXTA_DESCRIPTOR_STRUCT_EX("supertrend", 2, 2, 0, cxta_supertrend_output, sizeof(cxta_supertrend_state), kSupertrendFields, cxta_desc_eval_supertrend),
     CXTA_DESCRIPTOR_STRUCT_EX("donchian", 1, 1, 2, cxta_channel_output, 0u, kChannelFields, cxta_desc_eval_donchian),
     CXTA_DESCRIPTOR_STRUCT_EX("keltner", 2, 3, 2, cxta_channel_output, 0u, kChannelFields, cxta_desc_eval_keltner),
     CXTA_DESCRIPTOR_STRUCT_EX("price_channel", 1, 1, 2, cxta_channel_output, 0u, kChannelFields, cxta_desc_eval_price_channel),
     CXTA_DESCRIPTOR_SCALAR_EX("volume_sma", 1, 1, 0u, cxta_desc_eval_volume_sma),
-    CXTA_DESCRIPTOR_SCALAR_EX("wma", 1, 1, 0u, cxta_desc_eval_wma),
     CXTA_DESCRIPTOR_SCALAR_EX("dema", 1, 1, sizeof(cxta_dema_state), cxta_desc_eval_dema),
     CXTA_DESCRIPTOR_SCALAR_EX("tema", 1, 1, sizeof(cxta_tema_state), cxta_desc_eval_tema),
     CXTA_DESCRIPTOR_SCALAR_EX("hma", 1, 1, 0u, cxta_desc_eval_hma),
-    CXTA_DESCRIPTOR_SCALAR_EX("roc", 1, 1, 0u, cxta_desc_eval_roc),
     CXTA_DESCRIPTOR_SCALAR_EX("linear_regression_slope", 1, 1, 0u, cxta_desc_eval_linreg_slope),
     CXTA_DESCRIPTOR_SCALAR_EX("linreg_angle", 1, 1, 0u, cxta_desc_eval_linreg_angle),
-    CXTA_DESCRIPTOR_SCALAR_EX("stddev", 1, 1, 0u, cxta_desc_eval_stddev),
     CXTA_DESCRIPTOR_SCALAR_EX("historical_volatility", 1, 2, 0u, cxta_desc_eval_historical_volatility),
     CXTA_DESCRIPTOR_SCALAR_EX("realized_volatility", 1, 1, 0u, cxta_desc_eval_rvol),
     CXTA_DESCRIPTOR_SCALAR_EX("true_range", 0, 0, 0u, cxta_desc_eval_truerange),
@@ -1325,12 +1139,10 @@ static const cxta_indicator_descriptor kDescriptors[] = {
     CXTA_DESCRIPTOR_SCALAR_EX("median_price", 0, 0, 0u, cxta_desc_eval_median_price),
     CXTA_DESCRIPTOR_SCALAR_EX("weighted_close", 0, 0, 0u, cxta_desc_eval_weighted_close),
     CXTA_DESCRIPTOR_SCALAR_EX("obv", 0, 0, sizeof(cxta_obv_state), cxta_desc_eval_obv),
-    CXTA_DESCRIPTOR_SCALAR_EX("zscore", 1, 1, 0u, cxta_desc_eval_zscore),
     CXTA_DESCRIPTOR_SCALAR_EX("awesome_oscillator", 2, 2, 0u, cxta_desc_eval_awesome_oscillator),
     CXTA_DESCRIPTOR_SCALAR_EX("bop", 0, 0, 0u, cxta_desc_eval_bop),
     CXTA_DESCRIPTOR_SCALAR_EX("ease_of_movement", 1, 1, 0u, cxta_desc_eval_ease_of_movement),
     CXTA_DESCRIPTOR_SCALAR_EX("volume_ema", 1, 1, sizeof(cxta_volume_ema_state), cxta_desc_eval_volume_ema),
-    CXTA_DESCRIPTOR_SCALAR_SOURCE_STEP_EX("rma", 1, 1, 1, 1, sizeof(cxta_rma_state), cxta_desc_eval_rma, cxta_desc_eval_rma_scalar_src, cxta_desc_step_rma),
     CXTA_DESCRIPTOR_STRUCT_EX("aroon", 1, 1, 2, cxta_aroon_output, 0u, kAroonFields, cxta_desc_eval_aroon),
     CXTA_DESCRIPTOR_SCALAR_EX("williams_r", 1, 1, 0u, cxta_desc_eval_williams_r),
     CXTA_DESCRIPTOR_SCALAR_EX("cci", 1, 1, 0u, cxta_desc_eval_cci),
@@ -1369,13 +1181,6 @@ static const cxta_indicator_descriptor kDescriptors[] = {
     CXTA_DESCRIPTOR_STRUCT_EX("ttm_squeeze", 0, 5, 2, cxta_squeeze_output, 0u, kTtmSqueezeFields, cxta_desc_eval_ttm_squeeze),
     CXTA_DESCRIPTOR_STRUCT_EX("trendline", 2, 2, 0, cxta_trendline_output, 0u, kTrendlineFields, cxta_desc_eval_trendline),
     CXTA_DESCRIPTOR_STRUCT_EX("volume_profile", 1, 2, 0, cxta_vp_output, 0u, kVolumeProfileFields, cxta_desc_eval_volume_profile),
-    {
-        "zigzag", 1, 2, -1, -1, 0,
-        CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT | CXTA_INDICATOR_REPAINTING,
-        sizeof(cxta_zigzag_output), 0u,
-        kZigZagFields, CXTA_ARRAY_COUNT(kZigZagFields),
-        NULL, cxta_desc_eval_zigzag, NULL, NULL, NULL
-    },
     CXTA_DESCRIPTOR_STRUCT_EX("swing_pivots", 2, 3, 0, cxta_struct_pivot_state, 0u, kSwingPivotsFields, cxta_desc_eval_swing_pivots),
     CXTA_DESCRIPTOR_STRUCT_EX("pivot_points", 0, 0, 0, cxta_struct_pivot_points_result, 0u, kPivotPointsFields, cxta_desc_eval_pivot_points),
     CXTA_DESCRIPTOR_STRUCT_EX("structure", 2, 3, 6, cxta_struct_structure_state, 0u, kStructureFields, cxta_desc_eval_structure),
@@ -1390,9 +1195,86 @@ static const cxta_indicator_descriptor kDescriptors[] = {
     CXTA_DESCRIPTOR_SCALAR_EX("anchored_vwap", 0, 1, 0u, cxta_desc_eval_anchored_vwap),
 };
 
+static const cxta_indicator_descriptor* const kExternalDescriptors[] = {
+    &cxta_macd_descriptor,
+    &cxta_rsi_descriptor,
+    &cxta_ema_descriptor,
+    &cxta_atr_descriptor,
+    &cxta_sma_descriptor,
+    &cxta_rma_descriptor,
+    &cxta_wma_descriptor,
+    &cxta_stddev_descriptor,
+    &cxta_zscore_descriptor,
+    &cxta_roc_descriptor,
+    &cxta_bollinger_descriptor,
+    &cxta_zigzag_descriptor,
+    &cxta_fair_value_gap_descriptor,
+};
+
+static const cxta_bridge_fn_spec* const kBridgeFnSpecs[] = {
+    &cxta_macd_bridge_fn_spec,
+    &cxta_rsi_bridge_fn_spec,
+    &cxta_ema_bridge_fn_spec,
+    &cxta_atr_bridge_fn_spec,
+    &cxta_sma_bridge_fn_spec,
+    &cxta_rma_bridge_fn_spec,
+    &cxta_wma_bridge_fn_spec,
+    &cxta_stddev_bridge_fn_spec,
+    &cxta_zscore_bridge_fn_spec,
+    &cxta_roc_bridge_fn_spec,
+    &cxta_bollinger_bridge_fn_spec,
+    &cxta_zigzag_bridge_fn_spec,
+    &cxta_fair_value_gap_bridge_fn_spec,
+    &kDivergenceBridgeFnSpec,
+    &kSpreadBridgeFnSpec,
+    &kPairSpreadBridgeFnSpec,
+    &kCovarianceBridgeFnSpec,
+    &kRollingCorrBridgeFnSpec,
+    &kRollingBetaBridgeFnSpec,
+    &kRollingAlphaBridgeFnSpec,
+    &kHvRatioBridgeFnSpec,
+    &kTrackingErrorBridgeFnSpec,
+    &kRelativeStrengthBridgeFnSpec,
+    &kZScoreBridgeFnSpec,
+};
+
 const cxta_indicator_descriptor* cxta_indicator_descriptors(size_t* count) {
-    if (count) *count = CXTA_ARRAY_COUNT(kDescriptors);
-    return kDescriptors;
+    static cxta_indicator_descriptor descriptors[
+        CXTA_ARRAY_COUNT(kCoreDescriptors) + CXTA_ARRAY_COUNT(kExternalDescriptors)];
+    static int initialized = 0;
+    size_t out_index;
+    size_t i;
+
+    if (!initialized) {
+        memcpy(descriptors, kCoreDescriptors, sizeof(kCoreDescriptors));
+        out_index = CXTA_ARRAY_COUNT(kCoreDescriptors);
+        for (i = 0u; i < CXTA_ARRAY_COUNT(kExternalDescriptors); ++i) {
+            descriptors[out_index++] = *kExternalDescriptors[i];
+        }
+        initialized = 1;
+    }
+    if (count) {
+        *count = CXTA_ARRAY_COUNT(kCoreDescriptors) + CXTA_ARRAY_COUNT(kExternalDescriptors);
+    }
+    return descriptors;
+}
+
+const cxta_bridge_fn_spec* const* cxta_bridge_fn_specs(size_t* count) {
+    if (count) *count = CXTA_ARRAY_COUNT(kBridgeFnSpecs);
+    return kBridgeFnSpecs;
+}
+
+const cxta_bridge_fn_spec* cxta_bridge_fn_spec_find(const char* name) {
+    size_t count = 0u;
+    const cxta_bridge_fn_spec* const* specs = cxta_bridge_fn_specs(&count);
+    size_t i;
+
+    if (!name) return NULL;
+    for (i = 0u; i < count; ++i) {
+        const cxta_bridge_fn_spec* spec = specs[i];
+        if (spec && spec->name && strcmp(spec->name, name) == 0) return spec;
+    }
+    return NULL;
 }
 
 const cxta_indicator_descriptor* cxta_indicator_descriptor_find(const char* name) {
@@ -1404,6 +1286,131 @@ const cxta_indicator_descriptor* cxta_indicator_descriptor_find(const char* name
 
     for (i = 0; i < count; ++i) {
         if (strcmp(descriptors[i].name, name) == 0) return &descriptors[i];
+    }
+    return NULL;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Named parameter specs                                                       */
+/* -------------------------------------------------------------------------- */
+
+static const char* const kParamPeriod[]    = {"period"};
+static const char* const kParamLookback[]  = {"lookback"};
+static const char* const kParamBand[]      = {"period", "mult"};
+static const char* const kParamHistVol[]   = {"period", "annualization"};
+static const char* const kParamVolProf[]   = {"period", "bins"};
+static const char* const kParamMama[]      = {"fast_limit", "slow_limit"};
+static const char* const kParamDomCycle[]  = {"min_period", "max_period"};
+static const char* const kParamPvo[]       = {"fast_period", "slow_period", "signal_period"};
+static const char* const kParamCrsi[]      = {"rsi_period", "streak_period", "rank_period"};
+static const char* const kParamTtm[]       = {"bb_period", "bb_mult", "kc_period", "kc_mult", "momentum_period"};
+static const char* const kParamCoppock[]   = {"wma_period", "long_roc_period", "short_roc_period"};
+static const char* const kParamIchimoku[]  = {"tenkan", "kijun", "span_b"};
+static const char* const kParamLR[]        = {"left", "right"};
+static const char* const kParamDivNum[]    = {"left", "right", "lookback"};
+static const char* const kParamDivNumDef[] = {NULL, NULL, "200"};
+static const char* const kParamWedge[]     = {"left", "right", "lookback", "max_width_ratio"};
+static const char* const kParamSaw[]       = {"swing_period", "apt", "use_adapt", "vol_bias", "atr_period", "min_apt", "max_apt"};
+static const char* const kParamSawDef[]    = {"50", "20", "0", "10", "50", "5", "300"};
+static const char* const kParamZigzag[]    = {"threshold", "n"};
+static const char* const kParamStoch[]     = {"k_period", "d_period", "smooth_k"};
+static const char* const kParamStochRsi[]  = {"rsi_period", "stoch_period", "smooth_k", "smooth_d"};
+static const char* const kParamKeltner[]   = {"ema_period", "atr_mult", "atr_period"};
+static const char* const kParamFastSlow[]  = {"fast_period", "slow_period"};
+static const char* const kParamTsi[]       = {"long_period", "short_period"};
+static const char* const kParamMassIdx[]   = {"sum_period", "ema_period"};
+static const char* const kParamKst[]       = {"roc1_period", "roc2_period", "roc3_period", "roc4_period"};
+static const char* const kParamStc[]       = {"fast_period", "slow_period", "cycle_period"};
+static const char* const kParamPsar[]      = {"step", "max_step"};
+static const char* const kParamAnchorVwap[]= {"anchor_bars"};
+
+typedef struct {
+    const char* indicator_name;
+    cxta_param_spec spec;
+} cxta_param_spec_entry;
+
+static const cxta_param_spec_entry kParamSpecTable[] = {
+    /* Single-period indicators */
+    /* sma: params live in sma.h via descriptor->params */
+    /* ema: params live in ema.h via descriptor->params */
+    /* rsi: params live in rsi.h via descriptor->params */
+    {"dema",                    {kParamPeriod,    1, NULL,             -1}},
+    {"tema",                    {kParamPeriod,    1, NULL,             -1}},
+    {"hma",                     {kParamPeriod,    1, NULL,             -1}},
+    {"realized_volatility",     {kParamPeriod,    1, NULL,             -1}},
+    {"linear_regression_slope", {kParamPeriod,    1, NULL,             -1}},
+    {"linreg_angle",            {kParamPeriod,    1, NULL,             -1}},
+    {"cci",                     {kParamPeriod,    1, NULL,             -1}},
+    {"williams_r",              {kParamPeriod,    1, NULL,             -1}},
+    {"donchian",                {kParamPeriod,    1, NULL,             -1}},
+    {"trix",                    {kParamPeriod,    1, NULL,             -1}},
+    {"dpo",                     {kParamPeriod,    1, NULL,             -1}},
+    {"ease_of_movement",        {kParamPeriod,    1, NULL,             -1}},
+    {"volume_sma",              {kParamPeriod,    1, NULL,             -1}},
+    {"volume_ema",              {kParamPeriod,    1, NULL,             -1}},
+    {"vwap",                    {kParamPeriod,    1, NULL,             -1}},
+    {"mfi",                     {kParamPeriod,    1, NULL,             -1}},
+    {"adx",                     {kParamPeriod,    1, NULL,             -1}},
+    {"kama",                    {kParamPeriod,    1, NULL,             -1}},
+    {"frama",                   {kParamPeriod,    1, NULL,             -1}},
+    {"vidya",                   {kParamPeriod,    1, NULL,             -1}},
+    {"fisher_transform",        {kParamPeriod,    1, NULL,             -1}},
+    {"choppiness_index",        {kParamPeriod,    1, NULL,             -1}},
+    {"ulcer_index",             {kParamPeriod,    1, NULL,             -1}},
+    {"rvi",                     {kParamPeriod,    1, NULL,             -1}},
+    {"cmf",                     {kParamPeriod,    1, NULL,             -1}},
+    {"vortex",                  {kParamPeriod,    1, NULL,             -1}},
+    {"aroon",                   {kParamPeriod,    1, NULL,             -1}},
+    {"cmo",                     {kParamPeriod,    1, NULL,             -1}},
+    {"price_channel",           {kParamPeriod,    1, NULL,             -1}},
+    {"elder_force",             {kParamPeriod,    1, NULL,             -1}},
+    /* "lookback" alias for single numeric arg */
+    {"fvg",                     {kParamLookback,  1, NULL,             -1}},
+    /* Two-param band indicators */
+    /* bollinger: params live in bollinger.h via descriptor->params */
+    {"supertrend",              {kParamBand,      2, NULL,             -1}},
+    /* Other multi-param indicators */
+    {"historical_volatility",   {kParamHistVol,   2, NULL,             -1}},
+    {"volume_profile",          {kParamVolProf,   2, NULL,             -1}},
+    {"mama",                    {kParamMama,      2, NULL,             -1}},
+    {"dominant_cycle_period",   {kParamDomCycle,  2, NULL,             -1}},
+    {"anchored_vwap",           {kParamAnchorVwap,1, NULL,             -1}},
+    {"pvo",                     {kParamPvo,       3, NULL,             -1}},
+    {"crsi",                    {kParamCrsi,      3, NULL,             -1}},
+    {"ttm_squeeze",             {kParamTtm,       5, NULL,             -1}},
+    {"coppock_curve",           {kParamCoppock,   3, NULL,             -1}},
+    {"ichimoku",                {kParamIchimoku,  3, NULL,             -1}},
+    /* left/right pattern indicators */
+    {"trendline",               {kParamLR,        2, NULL,             -1}},
+    {"swing_pivots",            {kParamLR,        2, NULL,             -1}},
+    {"structure",               {kParamLR,        2, NULL,             -1}},
+    {"order_block",             {kParamLR,        2, NULL,             -1}},
+    {"liquidity",               {kParamLR,        2, NULL,             -1}},
+    {"sfp",                     {kParamLR,        2, NULL,             -1}},
+    /* divergence numeric params only (bridge prepends source_a, source_b) */
+    {"divergence",              {kParamDivNum,    3, kParamDivNumDef,   2}},
+    {"wedge",                   {kParamWedge,     4, NULL,             -1}},
+    {"swing_anchor_vwap",       {kParamSaw,       7, kParamSawDef,      0}},
+    /* zigzag: params live in zigzag.h via descriptor->params */
+    {"stochastic",              {kParamStoch,     3, NULL,             -1}},
+    {"stoch_rsi",               {kParamStochRsi,  4, NULL,             -1}},
+    {"keltner",                 {kParamKeltner,   3, NULL,             -1}},
+    {"awesome_oscillator",      {kParamFastSlow,  2, NULL,             -1}},
+    {"chaikin_oscillator",      {kParamFastSlow,  2, NULL,             -1}},
+    {"ppo",                     {kParamFastSlow,  2, NULL,             -1}},
+    {"tsi",                     {kParamTsi,       2, NULL,             -1}},
+    {"mass_index",              {kParamMassIdx,   2, NULL,             -1}},
+    {"kst",                     {kParamKst,       4, NULL,             -1}},
+    {"schaff_trend_cycle",      {kParamStc,       3, NULL,             -1}},
+    {"parabolic_sar",           {kParamPsar,      2, NULL,             -1}},
+};
+
+const cxta_param_spec* cxta_indicator_param_spec_find(const char* name) {
+    size_t i;
+    if (!name) return NULL;
+    for (i = 0; i < sizeof(kParamSpecTable) / sizeof(kParamSpecTable[0]); ++i) {
+        if (strcmp(kParamSpecTable[i].indicator_name, name) == 0)
+            return &kParamSpecTable[i].spec;
     }
     return NULL;
 }

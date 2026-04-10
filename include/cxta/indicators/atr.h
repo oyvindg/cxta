@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the ATR indicator. */
+static const cxta_param_descriptor cxta_atr_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for ATR. */
+static const cxta_bridge_fn_spec cxta_atr_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("atr", 1u, 1u, cxta_atr_params, 1);
+
+/** @brief Expression-facing descriptor for ATR. */
+extern const cxta_indicator_descriptor cxta_atr_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the Z-score indicator. */
+static const cxta_param_descriptor cxta_zscore_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for Z-score. */
+static const cxta_bridge_fn_spec cxta_zscore_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("zscore", 1u, 1u, cxta_zscore_params, 1);
+
+/** @brief Expression-facing descriptor for Z-score. */
+extern const cxta_indicator_descriptor cxta_zscore_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

@@ -6,6 +6,17 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_trendline_params[] = {
+    {"left"},
+    {"right"},
+};
+
+static const cxta_bridge_fn_spec cxta_trendline_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("trendline", 2u, 2u, cxta_trendline_params, 1);
+
+extern const cxta_indicator_descriptor cxta_trendline_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

@@ -5,7 +5,59 @@
 
 #include <cxta/indicators/tsi.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
 #include <math.h>
+
+static int cxta_tsi_descriptor_int_arg(const double* args,
+                                       size_t nargs,
+                                       size_t index,
+                                       int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return (int)llround(raw);
+}
+
+static int cxta_tsi_descriptor_period_arg(const double* args,
+                                          size_t nargs,
+                                          size_t index,
+                                          int fallback) {
+    return cxta_ts_clamp_period(cxta_tsi_descriptor_int_arg(args, nargs, index, fallback));
+}
+
+static double cxta_tsi_descriptor_eval(const cxta_series_bar_view* view,
+                                       const double* args,
+                                       size_t nargs) {
+    const int long_period = cxta_tsi_descriptor_period_arg(args, nargs, 0u, 25);
+    const int short_period = cxta_tsi_descriptor_period_arg(args, nargs, 1u, 13);
+    return cxta_tsi(view, long_period, short_period);
+}
+
+const cxta_indicator_descriptor cxta_tsi_descriptor = {
+    "tsi",
+    2,
+    2,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    sizeof(cxta_tsi_state),
+    NULL,
+    0u,
+    cxta_tsi_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_tsi_params,
+    CXTA_ARRAY_COUNT(cxta_tsi_params),
+};
 
 double cxta_tsi_step(double close, int long_period, int short_period, cxta_tsi_state* st) {
     if (!st) return 0.0;

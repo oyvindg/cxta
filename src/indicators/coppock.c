@@ -42,3 +42,34 @@ double cxta_coppock(const cxta_series_bar_view* view,
         return (weight_sum > 0.0) ? (weighted_sum / weight_sum) : 0.0;
     }
 }
+
+static double cxta_coppock_curve_desc_eval(const cxta_series_bar_view* view,
+                                           const double* args,
+                                           size_t nargs) {
+    return cxta_coppock(view,
+                        cxta_descriptor_period_arg(args, nargs, 0u, 10),
+                        cxta_descriptor_period_arg(args, nargs, 1u, 14),
+                        cxta_descriptor_period_arg(args, nargs, 2u, 11));
+}
+
+const cxta_indicator_descriptor cxta_coppock_curve_descriptor = {
+    "coppock_curve",
+    0,
+    3,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_coppock_curve_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_coppock_curve_params,
+    CXTA_ARRAY_COUNT(cxta_coppock_curve_params),
+};

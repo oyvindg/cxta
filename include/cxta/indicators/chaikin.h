@@ -6,6 +6,21 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the Chaikin Oscillator. */
+static const cxta_param_descriptor cxta_chaikin_oscillator_params[] = {
+    {"fast_period"},
+    {"slow_period"},
+};
+
+/** @brief Bridge-facing signature metadata for Chaikin Oscillator. */
+static const cxta_bridge_fn_spec cxta_chaikin_oscillator_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC(
+        "chaikin_oscillator", 2u, 2u, cxta_chaikin_oscillator_params, 1);
+
+/** @brief Expression-facing descriptor for Chaikin Oscillator. */
+extern const cxta_indicator_descriptor cxta_chaikin_oscillator_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

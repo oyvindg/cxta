@@ -3,8 +3,53 @@
  * @brief Detrended Price Oscillator helpers.
  */
 
+#include <limits.h>
+#include <math.h>
+
 #include <cxta/indicators/dpo.h>
 #include <cxta/ts/smoothing.h>
+
+static int cxta_dpo_descriptor_period_arg(const double* args,
+                                          size_t nargs,
+                                          size_t index,
+                                          int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return cxta_ts_clamp_period((int)llround(raw));
+}
+
+static double cxta_dpo_descriptor_eval(const cxta_series_bar_view* view,
+                                       const double* args,
+                                       size_t nargs) {
+    return cxta_dpo(view, cxta_dpo_descriptor_period_arg(args, nargs, 0u, 20));
+}
+
+const cxta_indicator_descriptor cxta_dpo_descriptor = {
+    "dpo",
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_dpo_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_dpo_params,
+    CXTA_ARRAY_COUNT(cxta_dpo_params),
+};
 
 double cxta_dpo(const cxta_series_bar_view* view, int period) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;

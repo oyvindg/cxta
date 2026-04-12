@@ -11,7 +11,7 @@
 /** @brief Named parameters for the ZigZag indicator. */
 static const cxta_param_descriptor cxta_zigzag_params[] = {
     {"threshold"},
-    {"n"},
+    {"pivot_offset"},
 };
 
 /** @brief Bridge-facing cxpr signature metadata for ZigZag. */
@@ -44,12 +44,12 @@ typedef struct {
  * @brief Compute causal ZigZag outputs at the current view index.
  * @param[in] view Bar series view.
  * @param[in] threshold Reversal threshold as a fraction (e.g. `0.03` = 3%).
- * @param[in] n History index (`0` = newest pivot).
+ * @param[in] pivot_offset History index (`0` = newest pivot).
  * @return ZigZag outputs, or a zero-initialized struct when invalid.
  */
 cxta_zigzag_output cxta_zigzag(const cxta_series_bar_view* view,
                                double threshold,
-                               int n);
+                               int pivot_offset);
 
 #ifdef __cplusplus
 }

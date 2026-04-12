@@ -3,6 +3,7 @@
  * @brief On Balance Volume helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/obv.h>
 
 double cxta_obv_step(double close, double volume, cxta_obv_state* st) {
@@ -28,3 +29,38 @@ double cxta_obv(const cxta_series_bar_view* view) {
     }
     return st.value;
 }
+
+CXTA_WRAP_BAR_SCALAR_0(cxta_obv_desc_eval, cxta_obv)
+
+const cxta_bridge_fn_spec cxta_obv_bridge_fn_spec = {
+    "obv",
+    0u,
+    0u,
+    NULL,
+    0u,
+    NULL,
+    0u,
+    1,
+};
+
+const cxta_indicator_descriptor cxta_obv_descriptor = {
+    "obv",
+    0,
+    0,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    sizeof(cxta_obv_state),
+    NULL,
+    0u,
+    cxta_obv_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0u,
+};

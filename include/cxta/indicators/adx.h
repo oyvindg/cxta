@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for ADX. */
+static const cxta_param_descriptor cxta_adx_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for ADX. */
+static const cxta_bridge_fn_spec cxta_adx_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("adx", 1u, 1u, cxta_adx_params, 1);
+
+/** @brief Expression-facing descriptor for ADX. */
+extern const cxta_indicator_descriptor cxta_adx_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

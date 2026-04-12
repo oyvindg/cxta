@@ -5,6 +5,67 @@
 
 #include <cxta/indicators/chaikin.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
+#include <math.h>
+
+static int cxta_chaikin_descriptor_int_arg(const double* args,
+                                           size_t nargs,
+                                           size_t index,
+                                           int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return (int)llround(raw);
+}
+
+static int cxta_chaikin_descriptor_period_arg(const double* args,
+                                              size_t nargs,
+                                              size_t index,
+                                              int fallback) {
+    return cxta_ts_clamp_period(
+        cxta_chaikin_descriptor_int_arg(args, nargs, index, fallback));
+}
+
+static double cxta_chaikin_oscillator_descriptor_eval(const cxta_series_bar_view* view,
+                                                      const double* args,
+                                                      size_t nargs) {
+    int fast = cxta_chaikin_descriptor_period_arg(args, nargs, 0u, 3);
+    int slow = cxta_chaikin_descriptor_period_arg(args, nargs, 1u, 10);
+    int swap_tmp;
+
+    if (fast > slow) {
+        swap_tmp = fast;
+        fast = slow;
+        slow = swap_tmp;
+    }
+    return cxta_chaikin(view, fast, slow);
+}
+
+const cxta_indicator_descriptor cxta_chaikin_oscillator_descriptor = {
+    "chaikin_oscillator",
+    2,
+    2,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    sizeof(cxta_chaikin_state),
+    NULL,
+    0u,
+    cxta_chaikin_oscillator_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_chaikin_oscillator_params,
+    CXTA_ARRAY_COUNT(cxta_chaikin_oscillator_params),
+};
 
 static double cxta_chaikin_mfm(double high, double low, double close) {
     const double hl = high - low;

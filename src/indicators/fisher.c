@@ -3,6 +3,7 @@
  * @brief Fisher Transform helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/fisher.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
@@ -40,3 +41,27 @@ double cxta_fisher(const cxta_series_bar_view* view, int period) {
         }
     }
 }
+
+CXTA_WRAP_BAR_SCALAR_1I(cxta_fisher_desc_eval, cxta_fisher, 10)
+
+const cxta_indicator_descriptor cxta_fisher_transform_descriptor = {
+    "fisher_transform",
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_fisher_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_fisher_transform_params,
+    CXTA_ARRAY_COUNT(cxta_fisher_transform_params),
+};

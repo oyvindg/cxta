@@ -6,6 +6,21 @@
 #pragma once
 
 #include "donchian.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for Keltner channels. */
+static const cxta_param_descriptor cxta_keltner_params[] = {
+    {"ema_period"},
+    {"atr_mult"},
+    {"atr_period"},
+};
+
+/** @brief Bridge-facing signature metadata for Keltner. */
+static const cxta_bridge_fn_spec cxta_keltner_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("keltner", 2u, 3u, cxta_keltner_params, 1);
+
+/** @brief Expression-facing descriptor for Keltner. */
+extern const cxta_indicator_descriptor cxta_keltner_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

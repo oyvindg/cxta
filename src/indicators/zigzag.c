@@ -88,8 +88,9 @@ static void cxta_zigzag_descriptor_eval(const cxta_series_bar_view* view,
                                         size_t nargs,
                                         void* out) {
     const double threshold = cxta_zigzag_descriptor_double_arg(args, nargs, 0u, 0.03);
-    const int n = cxta_zigzag_descriptor_clamp_int_arg(args, nargs, 1u, 0, 0, INT_MAX);
-    const cxta_zigzag_output value = cxta_zigzag(view, threshold, n);
+    const int pivot_offset =
+        cxta_zigzag_descriptor_clamp_int_arg(args, nargs, 1u, 0, 0, INT_MAX);
+    const cxta_zigzag_output value = cxta_zigzag(view, threshold, pivot_offset);
     cxta_zigzag_descriptor_copy_struct(out, &value, sizeof(value));
 }
 
@@ -146,7 +147,7 @@ static void cxta_zigzag_push_pivot(cxta_zigzag_pivot* pivots,
 
 cxta_zigzag_output cxta_zigzag(const cxta_series_bar_view* view,
                                double threshold,
-                               int n) {
+                               int pivot_offset) {
     cxta_zigzag_output out = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     if (!view || !cxta_series_bar_view_valid(view)) return out;
 
@@ -160,7 +161,7 @@ cxta_zigzag_output cxta_zigzag(const cxta_series_bar_view* view,
         int low_count = 0;
 
         if (len < 2u || threshold <= 0.0) return out;
-        if (n < 0) n = 0;
+        if (pivot_offset < 0) pivot_offset = 0;
 
         {
             double high_extreme = view->bars[0].high;
@@ -232,7 +233,7 @@ cxta_zigzag_output cxta_zigzag(const cxta_series_bar_view* view,
                 }
             }
 
-            if (n == 0) {
+            if (pivot_offset == 0) {
                 out.direction =
                     (phase == CXTA_ZIGZAG_PHASE_UP) ? 1.0 :
                     (phase == CXTA_ZIGZAG_PHASE_DOWN) ? -1.0 : 0.0;
@@ -253,11 +254,11 @@ cxta_zigzag_output cxta_zigzag(const cxta_series_bar_view* view,
                 }
             }
 
-            if (n < high_count) out.high = highs[n];
-            if (n < low_count) out.low = lows[n];
+            if (pivot_offset < high_count) out.high = highs[pivot_offset];
+            if (pivot_offset < low_count) out.low = lows[pivot_offset];
 
-            if (n < pivot_count) {
-                const cxta_zigzag_pivot pivot = pivots[pivot_count - 1 - n];
+            if (pivot_offset < pivot_count) {
+                const cxta_zigzag_pivot pivot = pivots[pivot_count - 1 - pivot_offset];
                 out.last = pivot.price;
                 out.is_high = pivot.is_high ? 1.0 : 0.0;
                 out.line = pivot.price;

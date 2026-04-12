@@ -5,6 +5,65 @@
 
 #include <cxta/indicators/trendline.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
+#include <math.h>
+#include <stddef.h>
+#include <string.h>
+
+static const cxta_field_descriptor cxta_trendline_fields[] = {
+    {"upper", offsetof(cxta_trendline_output, upper), true},
+    {"lower", offsetof(cxta_trendline_output, lower), true},
+    {"upperSlope", offsetof(cxta_trendline_output, upper_slope), true},
+    {"lowerSlope", offsetof(cxta_trendline_output, lower_slope), true},
+};
+
+static int cxta_trendline_descriptor_period_arg(const double* args,
+                                                size_t nargs,
+                                                size_t index,
+                                                int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return cxta_ts_clamp_period((int)llround(raw));
+}
+
+static void cxta_trendline_descriptor_eval(const cxta_series_bar_view* view,
+                                           const double* args,
+                                           size_t nargs,
+                                           void* out) {
+    cxta_trendline_output value;
+    memset(&value, 0, sizeof(value));
+    value = cxta_trendline(view,
+                           cxta_trendline_descriptor_period_arg(args, nargs, 0u, 2),
+                           cxta_trendline_descriptor_period_arg(args, nargs, 1u, 2));
+    if (out) memcpy(out, &value, sizeof(value));
+}
+
+const cxta_indicator_descriptor cxta_trendline_descriptor = {
+    "trendline",
+    2,
+    2,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_trendline_output),
+    0u,
+    cxta_trendline_fields,
+    CXTA_ARRAY_COUNT(cxta_trendline_fields),
+    NULL,
+    cxta_trendline_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_trendline_params,
+    CXTA_ARRAY_COUNT(cxta_trendline_params),
+};
 
 static double cxta_trendline_project_at(size_t x1, double y1, size_t x2, double y2, size_t x) {
     if (x2 <= x1) return y2;

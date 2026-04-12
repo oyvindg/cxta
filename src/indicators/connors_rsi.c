@@ -95,3 +95,34 @@ double cxta_connors_rsi(const cxta_series_bar_view* view,
         return (close_rsi + streak_rsi + percent_rank) / 3.0;
     }
 }
+
+static double cxta_crsi_desc_eval(const cxta_series_bar_view* view,
+                                  const double* args,
+                                  size_t nargs) {
+    return cxta_connors_rsi(view,
+                            cxta_descriptor_period_arg(args, nargs, 0u, 3),
+                            cxta_descriptor_period_arg(args, nargs, 1u, 2),
+                            cxta_descriptor_period_arg(args, nargs, 2u, 100));
+}
+
+const cxta_indicator_descriptor cxta_crsi_descriptor = {
+    "crsi",
+    0,
+    3,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_crsi_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_crsi_params,
+    CXTA_ARRAY_COUNT(cxta_crsi_params),
+};

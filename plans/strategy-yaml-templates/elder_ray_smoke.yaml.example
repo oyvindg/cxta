@@ -1,0 +1,17 @@
+# Kopier til: tests/configs/strategies/cxta-indicators/elder_ray_smoke.yaml
+
+name: elder_ray_smoke
+description: Røyktest for Elder Ray bull/bear power.
+type: strategy
+
+params:
+  ema_period: 13
+
+expressions:
+  bull: elder_ray($ema_period).bull_power
+  bear: elder_ray($ema_period).bear_power
+  long_setup: bull > 0 and bear < 0 and close > ema($ema_period)
+  exit_setup: bull < bull[1] or bear > 0
+
+entry: long_setup
+exit: exit_setup

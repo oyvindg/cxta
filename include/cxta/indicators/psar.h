@@ -6,6 +6,28 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_parabolic_sar_params[] = {
+    {"step"},
+    {"max_step"},
+};
+
+/** Defaults match `CXTA_WRAP_BAR_STRUCT_2D(..., 0.02, 0.2)` in `psar.c`. */
+static const cxta_expr_arg_descriptor cxta_parabolic_sar_expr_args[] = {
+    {"step", CXTA_EXPR_ARG_NUMERIC, "0.02"},
+    {"max_step", CXTA_EXPR_ARG_NUMERIC, "0.2"},
+};
+
+static const cxta_bridge_fn_spec cxta_parabolic_sar_bridge_fn_spec = CXTA_BRIDGE_FN_SPEC_EXPR(
+    "parabolic_sar",
+    0u,
+    2u,
+    cxta_parabolic_sar_params,
+    cxta_parabolic_sar_expr_args,
+    1);
+
+extern const cxta_indicator_descriptor cxta_parabolic_sar_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

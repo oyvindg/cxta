@@ -6,6 +6,17 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_schaff_trend_cycle_params[] = {
+    {"fast_period"},
+    {"slow_period"},
+    {"cycle_period"},
+};
+static const cxta_bridge_fn_spec cxta_schaff_trend_cycle_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("schaff_trend_cycle", 3u, 3u, cxta_schaff_trend_cycle_params, 1);
+
+extern const cxta_indicator_descriptor cxta_schaff_trend_cycle_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

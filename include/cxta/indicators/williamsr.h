@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for Williams %%R. */
+static const cxta_param_descriptor cxta_williams_r_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for Williams %R. */
+static const cxta_bridge_fn_spec cxta_williams_r_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("williams_r", 1u, 1u, cxta_williams_r_params, 1);
+
+/** @brief Expression-facing descriptor for Williams %R. */
+extern const cxta_indicator_descriptor cxta_williams_r_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

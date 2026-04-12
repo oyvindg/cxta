@@ -3,6 +3,7 @@
  * @brief Triple Exponential Moving Average helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/tema.h>
 #include <cxta/ts/smoothing.h>
 
@@ -35,3 +36,27 @@ double cxta_tema(const cxta_series_bar_view* view, int period) {
     }
     return 3.0 * ema1 - 3.0 * ema2 + ema3;
 }
+
+CXTA_WRAP_BAR_SCALAR_1I(cxta_tema_desc_eval_scalar, cxta_tema, 20)
+
+const cxta_indicator_descriptor cxta_tema_descriptor = {
+    "tema",
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    sizeof(cxta_tema_state),
+    NULL,
+    0u,
+    cxta_tema_desc_eval_scalar,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_tema_params,
+    CXTA_ARRAY_COUNT(cxta_tema_params),
+};

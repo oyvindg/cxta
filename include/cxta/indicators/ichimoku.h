@@ -6,6 +6,18 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_ichimoku_params[] = {
+    {"tenkan"},
+    {"kijun"},
+    {"span_b"},
+};
+
+static const cxta_bridge_fn_spec cxta_ichimoku_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("ichimoku", 3u, 3u, cxta_ichimoku_params, 1);
+
+extern const cxta_indicator_descriptor cxta_ichimoku_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

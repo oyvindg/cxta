@@ -6,6 +6,16 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_aroon_params[] = {
+    {"period"},
+};
+
+static const cxta_bridge_fn_spec cxta_aroon_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("aroon", 1u, 1u, cxta_aroon_params, 1);
+
+extern const cxta_indicator_descriptor cxta_aroon_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

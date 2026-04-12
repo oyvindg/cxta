@@ -6,6 +6,18 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_pvo_params[] = {
+    {"fast_period"},
+    {"slow_period"},
+    {"signal_period"},
+};
+
+static const cxta_bridge_fn_spec cxta_pvo_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("pvo", 2u, 3u, cxta_pvo_params, 1);
+
+extern const cxta_indicator_descriptor cxta_pvo_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Bridge metadata for NVI (no numeric parameters). */
+extern const cxta_bridge_fn_spec cxta_nvi_bridge_fn_spec;
+
+/** @brief Bridge metadata for PVI (no numeric parameters). */
+extern const cxta_bridge_fn_spec cxta_pvi_bridge_fn_spec;
+
+/** @brief Expression-facing descriptor for NVI. */
+extern const cxta_indicator_descriptor cxta_nvi_descriptor;
+
+/** @brief Expression-facing descriptor for PVI. */
+extern const cxta_indicator_descriptor cxta_pvi_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

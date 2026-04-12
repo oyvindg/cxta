@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_stoch_rsi_params[] = {
+    {"rsi_period"},
+    {"stoch_period"},
+    {"smooth_k"},
+    {"smooth_d"},
+};
+
+static const cxta_bridge_fn_spec cxta_stoch_rsi_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("stoch_rsi", 1u, 4u, cxta_stoch_rsi_params, 1);
+
+extern const cxta_indicator_descriptor cxta_stoch_rsi_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

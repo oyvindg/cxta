@@ -3,6 +3,7 @@
  * @brief Hull Moving Average helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/hma.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
@@ -65,3 +66,27 @@ double cxta_hma(const cxta_series_bar_view* view, int period) {
     }
     return wma_array(diff, diff_len);
 }
+
+CXTA_WRAP_BAR_SCALAR_1I(cxta_hma_desc_eval_scalar, cxta_hma, 20)
+
+const cxta_indicator_descriptor cxta_hma_descriptor = {
+    "hma",
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_hma_desc_eval_scalar,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_hma_params,
+    CXTA_ARRAY_COUNT(cxta_hma_params),
+};

@@ -3,6 +3,7 @@
  * @brief Choppiness Index helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/choppiness.h>
 #include <cxta/ts/range.h>
 #include <cxta/ts/smoothing.h>
@@ -39,3 +40,27 @@ double cxta_choppiness(const cxta_series_bar_view* view, int period) {
         }
     }
 }
+
+CXTA_WRAP_BAR_SCALAR_1I(cxta_choppiness_index_desc_eval, cxta_choppiness, 14)
+
+const cxta_indicator_descriptor cxta_choppiness_index_descriptor = {
+    "choppiness_index",
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_choppiness_index_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_choppiness_index_params,
+    CXTA_ARRAY_COUNT(cxta_choppiness_index_params),
+};

@@ -5,6 +5,83 @@
 
 #include <cxta/indicators/volume_profile.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
+#include <math.h>
+#include <stddef.h>
+#include <string.h>
+
+static const cxta_field_descriptor cxta_volume_profile_fields[] = {
+    {"poc", offsetof(cxta_vp_output, poc), true},
+    {"vah", offsetof(cxta_vp_output, vah), true},
+    {"val", offsetof(cxta_vp_output, val), true},
+    {"range_high", offsetof(cxta_vp_output, range_high), true},
+    {"range_low", offsetof(cxta_vp_output, range_low), true},
+};
+
+static int cxta_volume_profile_descriptor_int_arg(const double* args,
+                                                  size_t nargs,
+                                                  size_t index,
+                                                  int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return (int)llround(raw);
+}
+
+static int cxta_volume_profile_descriptor_period_arg(const double* args,
+                                                   size_t nargs,
+                                                   size_t index,
+                                                   int fallback) {
+    return cxta_ts_clamp_period(cxta_volume_profile_descriptor_int_arg(args, nargs, index, fallback));
+}
+
+static int cxta_volume_profile_descriptor_clamp_int_arg(const double* args,
+                                                        size_t nargs,
+                                                        size_t index,
+                                                        int fallback,
+                                                        int min_value,
+                                                        int max_value) {
+    int value = cxta_volume_profile_descriptor_int_arg(args, nargs, index, fallback);
+    if (value < min_value) value = min_value;
+    if (value > max_value) value = max_value;
+    return value;
+}
+
+static void cxta_volume_profile_descriptor_eval(const cxta_series_bar_view* view,
+                                              const double* args,
+                                              size_t nargs,
+                                              void* out) {
+    const int period = cxta_volume_profile_descriptor_period_arg(args, nargs, 0u, 20);
+    const int bins = cxta_volume_profile_descriptor_clamp_int_arg(args, nargs, 1u, 24, 5, 200);
+    const cxta_vp_output value = cxta_volume_profile(view, period, bins);
+    if (out) memcpy(out, &value, sizeof(value));
+}
+
+const cxta_indicator_descriptor cxta_volume_profile_descriptor = {
+    "volume_profile",
+    1,
+    2,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_vp_output),
+    0u,
+    cxta_volume_profile_fields,
+    CXTA_ARRAY_COUNT(cxta_volume_profile_fields),
+    NULL,
+    cxta_volume_profile_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_volume_profile_params,
+    CXTA_ARRAY_COUNT(cxta_volume_profile_params),
+};
 
 static double cxta_volume_profile_max2(double a, double b) {
     return (a > b) ? a : b;

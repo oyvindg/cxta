@@ -27,3 +27,33 @@ double cxta_anchored_vwap(const cxta_series_bar_view* view, int anchor_bars) {
         return (v_sum <= 1e-12) ? 0.0 : (pv_sum / v_sum);
     }
 }
+
+static double cxta_anchored_vwap_desc_eval(const cxta_series_bar_view* view,
+                                           const double* args,
+                                           size_t nargs) {
+    int anchor_bars = cxta_descriptor_int_arg(args, nargs, 0u, 0);
+    if (anchor_bars > 0) anchor_bars = cxta_ts_clamp_period(anchor_bars);
+    return cxta_anchored_vwap(view, anchor_bars);
+}
+
+const cxta_indicator_descriptor cxta_anchored_vwap_descriptor = {
+    "anchored_vwap",
+    0,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_anchored_vwap_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_anchored_vwap_params,
+    CXTA_ARRAY_COUNT(cxta_anchored_vwap_params),
+};

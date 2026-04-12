@@ -6,6 +6,25 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_crsi_params[] = {
+    {"rsi_period"},
+    {"streak_period"},
+    {"rank_period"},
+};
+
+/** Defaults match `cxta_crsi_desc_eval` in `connors_rsi.c`. */
+static const cxta_expr_arg_descriptor cxta_crsi_expr_args[] = {
+    {"rsi_period", CXTA_EXPR_ARG_NUMERIC, "3"},
+    {"streak_period", CXTA_EXPR_ARG_NUMERIC, "2"},
+    {"rank_period", CXTA_EXPR_ARG_NUMERIC, "100"},
+};
+
+static const cxta_bridge_fn_spec cxta_crsi_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC_EXPR("crsi", 0u, 3u, cxta_crsi_params, cxta_crsi_expr_args, 1);
+
+extern const cxta_indicator_descriptor cxta_crsi_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

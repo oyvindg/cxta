@@ -6,7 +6,69 @@
 #include <cxta/indicators/adx.h>
 #include <cxta/ts/range.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
 #include <math.h>
+#include <stddef.h>
+#include <string.h>
+
+static const cxta_field_descriptor cxta_adx_fields[] = {
+    {"adx", offsetof(cxta_adx_output, adx), true},
+    {"plusDI", offsetof(cxta_adx_output, plus_di), true},
+    {"minusDI", offsetof(cxta_adx_output, minus_di), true},
+};
+
+static int cxta_adx_descriptor_int_arg(const double* args,
+                                       size_t nargs,
+                                       size_t index,
+                                       int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return (int)llround(raw);
+}
+
+static int cxta_adx_descriptor_period_arg(const double* args,
+                                          size_t nargs,
+                                          size_t index,
+                                          int fallback) {
+    return cxta_ts_clamp_period(cxta_adx_descriptor_int_arg(args, nargs, index, fallback));
+}
+
+static void cxta_adx_descriptor_eval(const cxta_series_bar_view* view,
+                                     const double* args,
+                                     size_t nargs,
+                                     void* out) {
+    cxta_adx_output value;
+    memset(&value, 0, sizeof(value));
+    value = cxta_adx(view, cxta_adx_descriptor_period_arg(args, nargs, 0u, 14));
+    if (out) memcpy(out, &value, sizeof(value));
+}
+
+const cxta_indicator_descriptor cxta_adx_descriptor = {
+    "adx",
+    1,
+    1,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_adx_output),
+    sizeof(cxta_adx_state),
+    cxta_adx_fields,
+    CXTA_ARRAY_COUNT(cxta_adx_fields),
+    NULL,
+    cxta_adx_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_adx_params,
+    CXTA_ARRAY_COUNT(cxta_adx_params),
+};
 
 cxta_adx_output cxta_adx_step(double plus_dm,
                               double minus_dm,

@@ -63,3 +63,85 @@ double cxta_pvi(const cxta_series_bar_view* view) {
     }
     return out;
 }
+
+const cxta_bridge_fn_spec cxta_nvi_bridge_fn_spec = {
+    "nvi",
+    0u,
+    0u,
+    NULL,
+    0u,
+    NULL,
+    0u,
+    1,
+};
+
+const cxta_bridge_fn_spec cxta_pvi_bridge_fn_spec = {
+    "pvi",
+    0u,
+    0u,
+    NULL,
+    0u,
+    NULL,
+    0u,
+    1,
+};
+
+static double cxta_nvi_descriptor_eval(const cxta_series_bar_view* view,
+                                       const double* args,
+                                       size_t nargs) {
+    (void)args;
+    (void)nargs;
+    return cxta_nvi(view);
+}
+
+static double cxta_pvi_descriptor_eval(const cxta_series_bar_view* view,
+                                       const double* args,
+                                       size_t nargs) {
+    (void)args;
+    (void)nargs;
+    return cxta_pvi(view);
+}
+
+const cxta_indicator_descriptor cxta_nvi_descriptor = {
+    "nvi",
+    0,
+    0,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    sizeof(cxta_nvi_state),
+    NULL,
+    0u,
+    cxta_nvi_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0u,
+};
+
+const cxta_indicator_descriptor cxta_pvi_descriptor = {
+    "pvi",
+    0,
+    0,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    sizeof(cxta_nvi_state),
+    NULL,
+    0u,
+    cxta_pvi_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0u,
+};

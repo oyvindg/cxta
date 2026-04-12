@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the CCI indicator. */
+static const cxta_param_descriptor cxta_cci_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for CCI. */
+static const cxta_bridge_fn_spec cxta_cci_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("cci", 1u, 1u, cxta_cci_params, 1);
+
+/** @brief Expression-facing descriptor for CCI. */
+extern const cxta_indicator_descriptor cxta_cci_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

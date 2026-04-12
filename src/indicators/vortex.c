@@ -6,7 +6,61 @@
 #include <cxta/indicators/vortex.h>
 #include <cxta/ts/range.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
 #include <math.h>
+#include <stddef.h>
+#include <string.h>
+
+static const cxta_field_descriptor cxta_vortex_fields[] = {
+    {"plusVI", offsetof(cxta_vortex_output, vi_plus), true},
+    {"minusVI", offsetof(cxta_vortex_output, vi_minus), true},
+};
+
+static int cxta_vortex_descriptor_period_arg(const double* args,
+                                             size_t nargs,
+                                             size_t index,
+                                             int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return cxta_ts_clamp_period((int)llround(raw));
+}
+
+static void cxta_vortex_descriptor_eval(const cxta_series_bar_view* view,
+                                        const double* args,
+                                        size_t nargs,
+                                        void* out) {
+    cxta_vortex_output value;
+    memset(&value, 0, sizeof(value));
+    value = cxta_vortex(view, cxta_vortex_descriptor_period_arg(args, nargs, 0u, 14));
+    if (out) memcpy(out, &value, sizeof(value));
+}
+
+const cxta_indicator_descriptor cxta_vortex_descriptor = {
+    "vortex",
+    1,
+    1,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_vortex_output),
+    0u,
+    cxta_vortex_fields,
+    CXTA_ARRAY_COUNT(cxta_vortex_fields),
+    NULL,
+    cxta_vortex_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_vortex_params,
+    CXTA_ARRAY_COUNT(cxta_vortex_params),
+};
 
 cxta_vortex_output cxta_vortex(const cxta_series_bar_view* view, int period) {
     cxta_vortex_output out = {0.0, 0.0, 0.0};

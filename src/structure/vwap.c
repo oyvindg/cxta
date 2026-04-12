@@ -114,13 +114,13 @@ int cxta_struct_vwap_args_parse(const double* args,
                                      cxta_struct_vwap_args* out) {
     if (!out) return 0;
 
-    out->swing_period = 50;
-    out->apt = 20.0;
-    out->use_adapt = 0;
-    out->vol_bias = 10.0;
-    out->atr_period = 50;
-    out->min_apt = 5.0;
-    out->max_apt = 300.0;
+    out->swing_period = CXTA_STRUCT_VWAP_DEFAULT_SWING_PERIOD;
+    out->apt = CXTA_STRUCT_VWAP_DEFAULT_APT;
+    out->use_adapt = CXTA_STRUCT_VWAP_DEFAULT_USE_ADAPT;
+    out->vol_bias = CXTA_STRUCT_VWAP_DEFAULT_VOL_BIAS;
+    out->atr_period = CXTA_STRUCT_VWAP_DEFAULT_ATR_PERIOD;
+    out->min_apt = CXTA_STRUCT_VWAP_DEFAULT_MIN_APT;
+    out->max_apt = CXTA_STRUCT_VWAP_DEFAULT_MAX_APT;
     if (!args || nargs == 0) return 1;
 
     if (nargs >= 1 && isfinite(args[0])) {

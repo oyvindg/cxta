@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for Elder Force Index (`elder_force`). */
+static const cxta_param_descriptor cxta_elder_force_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for Elder Force Index. */
+static const cxta_bridge_fn_spec cxta_elder_force_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("elder_force", 0u, 1u, cxta_elder_force_params, 1);
+
+/** @brief Expression-facing descriptor for Elder Force Index. */
+extern const cxta_indicator_descriptor cxta_elder_force_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

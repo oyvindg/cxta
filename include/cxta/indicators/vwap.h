@@ -6,6 +6,16 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_vwap_params[] = {
+    {"period"},
+};
+
+static const cxta_bridge_fn_spec cxta_vwap_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("vwap", 0u, 1u, cxta_vwap_params, 1);
+
+extern const cxta_indicator_descriptor cxta_vwap_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

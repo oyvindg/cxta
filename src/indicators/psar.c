@@ -3,7 +3,9 @@
  * @brief Parabolic SAR helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/psar.h>
+#include <string.h>
 
 static double cxta_psar_max2(double a, double b) {
     return (a > b) ? a : b;
@@ -73,3 +75,32 @@ cxta_psar_output cxta_psar(const cxta_series_bar_view* view,
     }
     return out;
 }
+
+static const cxta_field_descriptor cxta_psar_output_fields[] = {
+    CXTA_DESC_FIELD("value", offsetof(cxta_psar_output, value)),
+    CXTA_DESC_FIELD("direction", offsetof(cxta_psar_output, direction)),
+};
+
+CXTA_WRAP_BAR_STRUCT_2D(cxta_parabolic_sar_desc_eval, cxta_psar_output, cxta_psar, 0.02, 0.2)
+
+const cxta_indicator_descriptor cxta_parabolic_sar_descriptor = {
+    "parabolic_sar",
+    0,
+    2,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_psar_output),
+    sizeof(cxta_psar_state),
+    cxta_psar_output_fields,
+    CXTA_ARRAY_COUNT(cxta_psar_output_fields),
+    NULL,
+    cxta_parabolic_sar_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_parabolic_sar_params,
+    CXTA_ARRAY_COUNT(cxta_parabolic_sar_params),
+};

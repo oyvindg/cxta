@@ -3,11 +3,13 @@
  * @brief Supertrend helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/supertrend.h>
 #include <cxta/math/math.h>
 #include <cxta/ts/range.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
+#include <stddef.h>
 
 cxta_supertrend_output cxta_supertrend_step(double high,
                                             double low,
@@ -81,3 +83,41 @@ cxta_supertrend_output cxta_supertrend(const cxta_series_bar_view* view,
     }
     return out;
 }
+
+static const cxta_field_descriptor cxta_supertrend_output_fields[] = {
+    CXTA_DESC_FIELD("value", offsetof(cxta_supertrend_output, value)),
+    CXTA_DESC_FIELD("direction", offsetof(cxta_supertrend_output, direction)),
+    CXTA_DESC_FIELD("strength", offsetof(cxta_supertrend_output, strength)),
+};
+
+static void cxta_supertrend_desc_eval_struct(const cxta_series_bar_view* view,
+                                             const double* args,
+                                             size_t nargs,
+                                             void* out) {
+    const int period = cxta_descriptor_period_arg(args, nargs, 0u, 10);
+    const double multiplier = cxta_descriptor_double_arg(args, nargs, 1u, 3.0);
+    const cxta_supertrend_output value = cxta_supertrend(view, period, multiplier);
+    cxta_descriptor_copy_struct(out, &value, sizeof(value));
+}
+
+const cxta_indicator_descriptor cxta_supertrend_descriptor = {
+    "supertrend",
+    2,
+    2,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_supertrend_output),
+    sizeof(cxta_supertrend_state),
+    cxta_supertrend_output_fields,
+    CXTA_ARRAY_COUNT(cxta_supertrend_output_fields),
+    NULL,
+    cxta_supertrend_desc_eval_struct,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_supertrend_params,
+    CXTA_ARRAY_COUNT(cxta_supertrend_params),
+};

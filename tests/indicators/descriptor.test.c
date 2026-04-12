@@ -253,6 +253,44 @@ void cxta_test_descriptor(void) {
     assert(rolling_max->eval_scalar != NULL);
     assert(rolling_max->eval_scalar_src != NULL);
 
+    {
+        const cxta_indicator_descriptor* highest =
+            cxta_indicator_descriptor_find("highest");
+        const cxta_indicator_descriptor* lowest =
+            cxta_indicator_descriptor_find("lowest");
+
+        assert(highest);
+        assert(highest->min_args == 1);
+        assert(highest->max_args == 1);
+        assert(highest->scalar_source_min_args == 1);
+        assert(highest->scalar_source_max_args == 1);
+        assert((highest->flags & CXTA_INDICATOR_SCALAR_SOURCE) != 0u);
+        assert(highest->eval_scalar != NULL);
+        assert(highest->eval_scalar_src != NULL);
+        assert(fabs(highest->eval_scalar(&view, period2, 1u) -
+                    rolling_max->eval_scalar(&view, period2, 1u)) < 1e-12);
+        assert(fabs(highest->eval_scalar_src(&close_source, period2, 1u) -
+                    rolling_max->eval_scalar_src(&close_source, period2, 1u)) < 1e-12);
+
+        assert(lowest);
+        assert(lowest->min_args == 1);
+        assert(lowest->max_args == 1);
+        assert(lowest->scalar_source_min_args == 1);
+        assert(lowest->scalar_source_max_args == 1);
+        assert((lowest->flags & CXTA_INDICATOR_SCALAR_SOURCE) != 0u);
+        assert(lowest->eval_scalar != NULL);
+        assert(lowest->eval_scalar_src != NULL);
+        {
+            const cxta_indicator_descriptor* rolling_min_desc =
+                cxta_indicator_descriptor_find("rolling_min");
+            assert(rolling_min_desc);
+            assert(fabs(lowest->eval_scalar(&view, period2, 1u) -
+                        rolling_min_desc->eval_scalar(&view, period2, 1u)) < 1e-12);
+            assert(fabs(lowest->eval_scalar_src(&close_source, period2, 1u) -
+                        rolling_min_desc->eval_scalar_src(&close_source, period2, 1u)) < 1e-12);
+        }
+    }
+
     assert(zigzag);
     assert((zigzag->flags & CXTA_INDICATOR_REPAINTING) != 0u);
     assert(zigzag->field_count == 9u);

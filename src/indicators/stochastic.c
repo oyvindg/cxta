@@ -5,6 +5,63 @@
 
 #include <cxta/indicators/stochastic.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
+#include <math.h>
+#include <stddef.h>
+#include <string.h>
+
+static const cxta_field_descriptor cxta_stochastic_fields[] = {
+    {"k", offsetof(cxta_stoch_output, k), true},
+    {"d", offsetof(cxta_stoch_output, d), true},
+};
+
+static int cxta_stochastic_descriptor_period_arg(const double* args,
+                                                 size_t nargs,
+                                                 size_t index,
+                                                 int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return cxta_ts_clamp_period((int)llround(raw));
+}
+
+static void cxta_stochastic_descriptor_eval(const cxta_series_bar_view* view,
+                                            const double* args,
+                                            size_t nargs,
+                                            void* out) {
+    const cxta_stoch_output value =
+        cxta_stochastic(view,
+                        cxta_stochastic_descriptor_period_arg(args, nargs, 0u, 14),
+                        cxta_stochastic_descriptor_period_arg(args, nargs, 1u, 3),
+                        cxta_stochastic_descriptor_period_arg(args, nargs, 2u, 3));
+    if (out) memcpy(out, &value, sizeof(value));
+}
+
+const cxta_indicator_descriptor cxta_stochastic_descriptor = {
+    "stochastic",
+    1,
+    3,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_stoch_output),
+    0u,
+    cxta_stochastic_fields,
+    CXTA_ARRAY_COUNT(cxta_stochastic_fields),
+    NULL,
+    cxta_stochastic_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_stochastic_params,
+    CXTA_ARRAY_COUNT(cxta_stochastic_params),
+};
 
 static double cxta_stochastic_raw_k(const cxta_series_bar_view* view, size_t idx, int k_period) {
     const size_t k = (size_t)cxta_ts_clamp_period(k_period);

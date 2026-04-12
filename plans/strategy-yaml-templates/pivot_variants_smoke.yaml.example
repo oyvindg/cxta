@@ -1,0 +1,19 @@
+# Kopier til: tests/configs/strategies/cxta-indicators/pivot_variants_smoke.yaml
+# Feltnavn (r3, s1, …) må matche descriptor når implementert.
+
+name: pivot_variants_smoke
+description: Røyktest for Camarilla / Woodie / DeMark pivot-nivåer.
+type: strategy
+
+params:
+  dummy: 1
+
+expressions:
+  cam_r3: pivot_camarilla().r3
+  wood_p: pivot_woodie().pivot
+  dem_p: pivot_demark().pivot
+  long_setup: close > cam_r3
+  exit_setup: close < wood_p
+
+entry: long_setup
+exit: exit_setup

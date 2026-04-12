@@ -120,3 +120,25 @@ tests/
 ## Host bridge pattern
 
 If your host uses an expression runtime (such as `cxpr`), the bridge between `cxta` descriptors and that runtime belongs in the host — not in `cxta`. This keeps `cxta` standalone: consumers who do not need expression evaluation pull in no expression dependency, and the bridge can apply host-specific naming conventions without those leaking into the library.
+
+### Named arguments and default strings (`CXTA_BRIDGE_FN_SPEC_EXPR`)
+
+Some hosts rewrite **named** calls such as `indicator(foo=1, bar=2)` into positional form. When a function accepts **zero required** arguments but has **multiple optional** slots, omitting leading parameters only works if the bridge can supply a **default string per slot** (same values the indicator’s descriptor `eval` path uses when arguments are missing).
+
+- Use **`CXTA_BRIDGE_FN_SPEC`** when there are no named-arg default slots, or only a single optional parameter (no “partial name” problem).
+- Use **`CXTA_BRIDGE_FN_SPEC_EXPR`** with a parallel `cxta_expr_arg_descriptor[]` when `min_args == 0` and `param_count >= 2`. Each entry’s `default_value` must stay in sync with the corresponding `cxta_descriptor_*_arg` / `eval` fallbacks in the `.c` file.
+
+Indicators that ship expression defaults in-tree (multi-slot optional APIs) include:
+
+| Function | Default strings (in parameter order) |
+|----------|----------------------------------------|
+| `swing_anchor_vwap` | See `CXTA_STRUCT_VWAP_DEFAULT_*_STR` in `include/cxta/structure/vwap.h` |
+| `ttm_squeeze` | `20`, `2`, `20`, `1.5`, `20` |
+| `kst` | `10`, `15`, `20`, `30` |
+| `coppock_curve` | `10`, `14`, `11` |
+| `crsi` | `3`, `2`, `100` |
+| `mama` | `0.5`, `0.05` |
+| `parabolic_sar` | `0.02`, `0.2` |
+| `dominant_cycle_period` | `10`, `40` |
+
+`divergence` already used `CXTA_BRIDGE_FN_SPEC_EXPR` (mixed numeric and scalar-source args). When adding a new optional multi-argument indicator, either add an `expr_args` row with defaults aligned to the eval path or document that the host must pass positional arguments only.

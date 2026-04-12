@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "bos.h"
-
+#include "cxta/series/bar.h"
+#include "cxta/structure/pivot.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

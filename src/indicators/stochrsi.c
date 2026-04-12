@@ -6,6 +6,63 @@
 #include <cxta/indicators/stochrsi.h>
 #include <cxta/indicators/rsi.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
+#include <math.h>
+#include <stddef.h>
+#include <string.h>
+
+static const cxta_field_descriptor cxta_stoch_rsi_fields[] = {
+    {"k", offsetof(cxta_stochrsi_output, k), true},
+    {"d", offsetof(cxta_stochrsi_output, d), true},
+};
+
+static int cxta_stoch_rsi_descriptor_period_arg(const double* args,
+                                              size_t nargs,
+                                              size_t index,
+                                              int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return cxta_ts_clamp_period((int)llround(raw));
+}
+
+static void cxta_stoch_rsi_descriptor_eval(const cxta_series_bar_view* view,
+                                           const double* args,
+                                           size_t nargs,
+                                           void* out) {
+    int rsi_period = cxta_stoch_rsi_descriptor_period_arg(args, nargs, 0u, 14);
+    int stoch_period = cxta_stoch_rsi_descriptor_period_arg(args, nargs, 1u, rsi_period);
+    int smooth_k = cxta_stoch_rsi_descriptor_period_arg(args, nargs, 2u, 3);
+    int smooth_d = cxta_stoch_rsi_descriptor_period_arg(args, nargs, 3u, 3);
+    cxta_stochrsi_output value = cxta_stochrsi(view, rsi_period, stoch_period, smooth_k, smooth_d);
+    if (out) memcpy(out, &value, sizeof(value));
+}
+
+const cxta_indicator_descriptor cxta_stoch_rsi_descriptor = {
+    "stoch_rsi",
+    1,
+    4,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_stochrsi_output),
+    0u,
+    cxta_stoch_rsi_fields,
+    CXTA_ARRAY_COUNT(cxta_stoch_rsi_fields),
+    NULL,
+    cxta_stoch_rsi_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_stoch_rsi_params,
+    CXTA_ARRAY_COUNT(cxta_stoch_rsi_params),
+};
 
 static double cxta_stochrsi_rsi_at(const cxta_series_bar_view* view, size_t idx, int period) {
     const cxta_series_bar_view sub = {view->bars, idx + 1, idx};

@@ -41,3 +41,33 @@ double cxta_mass_index(const cxta_series_bar_view* view, int sum_period, int ema
         return sum;
     }
 }
+
+static double cxta_mass_index_desc_eval(const cxta_series_bar_view* view,
+                                        const double* args,
+                                        size_t nargs) {
+    return cxta_mass_index(view,
+                           cxta_descriptor_period_arg(args, nargs, 0u, 25),
+                           cxta_descriptor_period_arg(args, nargs, 1u, 9));
+}
+
+const cxta_indicator_descriptor cxta_mass_index_descriptor = {
+    "mass_index",
+    1,
+    2,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_mass_index_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_mass_index_params,
+    CXTA_ARRAY_COUNT(cxta_mass_index_params),
+};

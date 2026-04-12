@@ -6,6 +6,15 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_anchored_vwap_params[] = {
+    {"anchor_bars"},
+};
+static const cxta_bridge_fn_spec cxta_anchored_vwap_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("anchored_vwap", 0u, 1u, cxta_anchored_vwap_params, 1);
+
+extern const cxta_indicator_descriptor cxta_anchored_vwap_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

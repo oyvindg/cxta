@@ -6,6 +6,18 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_stochastic_params[] = {
+    {"k_period"},
+    {"d_period"},
+    {"smooth_k"},
+};
+
+static const cxta_bridge_fn_spec cxta_stochastic_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("stochastic", 1u, 3u, cxta_stochastic_params, 1);
+
+extern const cxta_indicator_descriptor cxta_stochastic_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

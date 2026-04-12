@@ -74,3 +74,35 @@ double cxta_dominant_cycle(const cxta_series_bar_view* view,
         }
     }
 }
+
+static double cxta_dominant_cycle_period_desc_eval(const cxta_series_bar_view* view,
+                                                   const double* args,
+                                                   size_t nargs) {
+    int min_period = cxta_descriptor_period_arg(args, nargs, 0u, 10);
+    int max_period = cxta_descriptor_period_arg(args, nargs, 1u, 40);
+    if (min_period < 5) min_period = 5;
+    if (max_period < min_period + 2) max_period = min_period + 2;
+    return cxta_dominant_cycle(view, min_period, max_period);
+}
+
+const cxta_indicator_descriptor cxta_dominant_cycle_period_descriptor = {
+    "dominant_cycle_period",
+    0,
+    2,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_dominant_cycle_period_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_dominant_cycle_period_params,
+    CXTA_ARRAY_COUNT(cxta_dominant_cycle_period_params),
+};

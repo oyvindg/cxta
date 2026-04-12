@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "descriptor.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,6 +56,11 @@ cxta_divergence_output cxta_divergence(const cxta_series_scalar_view* primary,
                                        int left,
                                        int right,
                                        int lookback);
+
+/** @brief Expression-facing descriptor for divergence (evaluated via bridge sources). */
+extern const cxta_indicator_descriptor cxta_divergence_descriptor;
+/** @brief Bridge metadata for source-aware divergence calls. */
+extern const cxta_bridge_fn_spec cxta_divergence_bridge_fn_spec;
 
 #ifdef __cplusplus
 }

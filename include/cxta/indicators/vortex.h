@@ -6,6 +6,16 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_vortex_params[] = {
+    {"period"},
+};
+
+static const cxta_bridge_fn_spec cxta_vortex_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("vortex", 1u, 1u, cxta_vortex_params, 1);
+
+extern const cxta_indicator_descriptor cxta_vortex_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

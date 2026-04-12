@@ -35,7 +35,6 @@ void cxta_test_supertrend(void);
 void cxta_test_donchian(void);
 void cxta_test_keltner(void);
 void cxta_test_price_channel(void);
-void cxta_test_volume_sma(void);
 void cxta_test_wma(void);
 void cxta_test_dema(void);
 void cxta_test_tema(void);
@@ -55,7 +54,6 @@ void cxta_test_extrema(void);
 void cxta_test_ao(void);
 void cxta_test_bop(void);
 void cxta_test_eom(void);
-void cxta_test_volume_ema(void);
 void cxta_test_rma(void);
 void cxta_test_aroon(void);
 void cxta_test_williamsr(void);
@@ -86,7 +84,7 @@ void cxta_test_schaff(void);
 void cxta_test_choppiness(void);
 void cxta_test_ulcer(void);
 void cxta_test_rvi(void);
-void cxta_test_vwap(void);
+void cxta_test_swing_anchor_vwap(void);
 void cxta_test_vortex(void);
 void cxta_test_dominant_cycle(void);
 void cxta_test_ichimoku(void);
@@ -99,7 +97,6 @@ void cxta_test_fair_value_gap(void);
 void cxta_test_divergence(void);
 void cxta_test_anchored_vwap(void);
 void cxta_test_descriptor(void);
-
 int main(void) {
     cxta_test_math();
     cxta_test_signals();
@@ -136,7 +133,6 @@ int main(void) {
     cxta_test_donchian();
     cxta_test_keltner();
     cxta_test_price_channel();
-    cxta_test_volume_sma();
     cxta_test_wma();
     cxta_test_dema();
     cxta_test_tema();
@@ -156,7 +152,6 @@ int main(void) {
     cxta_test_ao();
     cxta_test_bop();
     cxta_test_eom();
-    cxta_test_volume_ema();
     cxta_test_rma();
     cxta_test_aroon();
     cxta_test_williamsr();
@@ -187,7 +182,7 @@ int main(void) {
     cxta_test_choppiness();
     cxta_test_ulcer();
     cxta_test_rvi();
-    cxta_test_vwap();
+    cxta_test_swing_anchor_vwap();
     cxta_test_vortex();
     cxta_test_dominant_cycle();
     cxta_test_ichimoku();

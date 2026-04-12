@@ -67,67 +67,67 @@ These are low-risk and mostly remove repetitive parameter metadata from central 
 - [x] `roc`
 - [x] `stddev`
 - [x] `zscore`
-- [ ] `cci`
-- [ ] `williams_r`
-- [ ] `mfi`
-- [ ] `dpo`
-- [ ] `trix`
-- [ ] `kama`
-- [ ] `frama`
-- [ ] `vidya`
-- [ ] `ulcer_index`
-- [ ] `rvi`
+- [x] `cci`
+- [x] `williams_r`
+- [x] `mfi`
+- [x] `dpo`
+- [x] `trix`
+- [x] `kama`
+- [x] `frama`
+- [x] `vidya`
+- [x] `ulcer_index`
+- [x] `rvi`
 
 ### Wave 2: Scalar-source and step-enabled indicators
 
 These benefit more from co-locating adapters with the implementation.
 
-- [ ] `rolling_max`
-- [ ] `rolling_min`
-- [ ] `volume_sma`
-- [ ] `volume_ema`
-- [ ] `ppo`
-- [ ] `tsi`
-- [ ] `elder_force`
-- [ ] `nvi`
-- [ ] `pvi`
-- [ ] `chaikin_oscillator`
+- [x] `rolling_max` (includes `rolling_max_close` / `rolling_min` / `rolling_min_close` in `rolling_extrema.c`)
+- [x] `rolling_min`
+- [x] ~~`volume_sma`~~ / ~~`volume_ema`~~ — removed; use `sma` / `ema` with `volume` source
+- [x] `ppo`
+- [x] `tsi`
+- [x] `elder_force`
+- [x] `nvi`
+- [x] `pvi`
+- [x] `chaikin_oscillator`
 
 ### Wave 3: Struct-output indicators
 
 These remove field arrays and primary-field wiring from `descriptor.c`.
 
-- [ ] `adx`
+- [x] `adx`
 - [x] `bollinger`
-- [ ] `keltner`
-- [ ] `donchian`
-- [ ] `stochastic`
-- [ ] `stoch_rsi`
-- [ ] `aroon`
-- [ ] `ichimoku`
-- [ ] `vortex`
-- [ ] `vwap`
-- [ ] `pvo`
-- [ ] `mama`
-- [ ] `trendline`
-- [ ] `ttm_squeeze`
-- [ ] `volume_profile`
+- [x] `keltner`
+- [x] `donchian`
+- [x] `price_channel`
+- [x] `stochastic`
+- [x] `stoch_rsi`
+- [x] `aroon`
+- [x] `ichimoku`
+- [x] `vortex`
+- [x] `vwap`
+- [x] `pvo`
+- [x] `mama`
+- [x] `trendline`
+- [x] `ttm_squeeze`
+- [x] `volume_profile`
 
 ### Wave 4: Structure-heavy and bridge-special cases
 
 These should move last because they either have more orchestration or more bridge-specific behavior.
 
-- [ ] `pivot_points`
-- [ ] `swing_pivots`
-- [ ] `structure`
-- [ ] `bos`
-- [ ] `fvg`
-- [ ] `order_block`
-- [ ] `liquidity`
-- [ ] `sfp`
-- [ ] `wedge`
-- [ ] `swing_anchor_vwap`
-- [ ] `divergence`
+- [x] `pivot_points`
+- [x] `swing_pivots`
+- [x] `structure`
+- [x] `bos`
+- [x] `fvg`
+- [x] `order_block`
+- [x] `liquidity`
+- [x] `sfp`
+- [x] `wedge`
+- [x] `swing_anchor_vwap`
+- [x] `divergence`
 - [x] `zigzag`
 
 ## Descriptor Simplification Targets
@@ -204,14 +204,12 @@ A migration is complete when all of these are true:
 
 ## Next Recommended Migrations
 
-The next three indicators should be:
+Wave 1 single-period scalars listed above are complete. Good next targets:
 
-1. `cci`
-2. `williams_r`
-3. `adx`
+1. `adx` — struct-output indicator; removes `kAdxFields` and struct eval wiring from `descriptor.c`.
+2. `fisher_transform` or `cmo` — remaining simple scalars still using central `CXTA_WRAP_BAR_SCALAR_1I` / `kParamSpecTable`.
 
 Reasoning:
 
-- `cci` and `williams_r` keep momentum in Wave 1 and remove more single-period duplication from `descriptor.c`.
-- `adx` still exercises the struct-output path and remains a good first non-trivial struct migration.
-- Together they continue reducing central registry noise while covering both scalar and struct descriptor shapes.
+- `adx` exercises the struct-output path and is the highest-value remaining central entry in that category.
+- Picking off another wrap-based scalar keeps shrinking `descriptor.c` before larger Wave 2 refactors.

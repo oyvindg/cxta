@@ -1,0 +1,20 @@
+# Kopier til: tests/configs/strategies/cxta-indicators/stoch_momentum_smoke.yaml
+# Krever: stoch_momentum(...) registrert i cxpr/cxta.
+
+name: stoch_momentum_smoke
+description: Røyktest for stoch_momentum (SMI) multi-output og enkle gates.
+type: strategy
+
+params:
+  k_period: 20
+  d_period: 5
+  signal_period: 5
+
+expressions:
+  smi_fast: stoch_momentum($k_period, $d_period, $signal_period).smi
+  smi_sig: stoch_momentum($k_period, $d_period, $signal_period).signal
+  long_setup: smi_fast > smi_sig and smi_fast < 40
+  exit_setup: smi_fast < smi_sig or smi_fast > 80
+
+entry: long_setup
+exit: exit_setup

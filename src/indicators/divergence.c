@@ -6,6 +6,62 @@
 #include <cxta/indicators/divergence.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
+#include <stddef.h>
+
+#define CXTA_DIV_FIELD(name, off) {(name), (off), true}
+
+static const cxta_field_descriptor cxta_divergence_fields[] = {
+    CXTA_DIV_FIELD("bullish", offsetof(cxta_divergence_output, bullish)),
+    CXTA_DIV_FIELD("bearish", offsetof(cxta_divergence_output, bearish)),
+    CXTA_DIV_FIELD("bull_segment", offsetof(cxta_divergence_output, bull_segment)),
+    CXTA_DIV_FIELD("bear_segment", offsetof(cxta_divergence_output, bear_segment)),
+};
+
+static const cxta_param_descriptor cxta_divergence_params[] = {
+    {"source_a"},
+    {"source_b"},
+    {"left"},
+    {"right"},
+    {"lookback"},
+};
+
+static const cxta_expr_arg_descriptor cxta_divergence_expr_args[] = {
+    {"source_a", CXTA_EXPR_ARG_SCALAR_SOURCE, NULL},
+    {"source_b", CXTA_EXPR_ARG_SCALAR_SOURCE, NULL},
+    {"left", CXTA_EXPR_ARG_NUMERIC, NULL},
+    {"right", CXTA_EXPR_ARG_NUMERIC, NULL},
+    {"lookback", CXTA_EXPR_ARG_NUMERIC, "200"},
+};
+
+const cxta_bridge_fn_spec cxta_divergence_bridge_fn_spec = CXTA_BRIDGE_FN_SPEC_EXPR(
+    "divergence",
+    4u,
+    5u,
+    cxta_divergence_params,
+    cxta_divergence_expr_args,
+    1);
+
+const cxta_indicator_descriptor cxta_divergence_descriptor = {
+    "divergence",
+    2,
+    3,
+    -1,
+    -1,
+    0,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_divergence_output),
+    0u,
+    cxta_divergence_fields,
+    CXTA_ARRAY_COUNT(cxta_divergence_fields),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_divergence_params,
+    CXTA_ARRAY_COUNT(cxta_divergence_params),
+};
 
 typedef struct {
     size_t index;

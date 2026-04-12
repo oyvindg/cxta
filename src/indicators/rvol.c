@@ -3,6 +3,7 @@
  * @brief Realized volatility helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/rvol.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
@@ -27,3 +28,27 @@ double cxta_rvol(const cxta_series_bar_view* view, int period) {
     }
     return sqrt(sum_sq);
 }
+
+CXTA_WRAP_BAR_SCALAR_1I(cxta_realized_volatility_desc_eval, cxta_rvol, 20)
+
+const cxta_indicator_descriptor cxta_realized_volatility_descriptor = {
+    "realized_volatility",
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_realized_volatility_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_realized_volatility_params,
+    CXTA_ARRAY_COUNT(cxta_realized_volatility_params),
+};

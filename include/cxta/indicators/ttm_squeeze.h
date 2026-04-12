@@ -6,6 +6,34 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_ttm_squeeze_params[] = {
+    {"bb_period"},
+    {"bb_mult"},
+    {"kc_period"},
+    {"kc_mult"},
+    {"momentum_period"},
+};
+
+/** Defaults match `cxta_ttm_squeeze_descriptor_eval` fallbacks in `ttm_squeeze.c`. */
+static const cxta_expr_arg_descriptor cxta_ttm_squeeze_expr_args[] = {
+    {"bb_period", CXTA_EXPR_ARG_NUMERIC, "20"},
+    {"bb_mult", CXTA_EXPR_ARG_NUMERIC, "2"},
+    {"kc_period", CXTA_EXPR_ARG_NUMERIC, "20"},
+    {"kc_mult", CXTA_EXPR_ARG_NUMERIC, "1.5"},
+    {"momentum_period", CXTA_EXPR_ARG_NUMERIC, "20"},
+};
+
+static const cxta_bridge_fn_spec cxta_ttm_squeeze_bridge_fn_spec = CXTA_BRIDGE_FN_SPEC_EXPR(
+    "ttm_squeeze",
+    0u,
+    5u,
+    cxta_ttm_squeeze_params,
+    cxta_ttm_squeeze_expr_args,
+    1);
+
+extern const cxta_indicator_descriptor cxta_ttm_squeeze_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

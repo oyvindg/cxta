@@ -41,12 +41,15 @@
 #include "indicators/donchian.h"        // IWYU pragma: export
 #include "indicators/keltner.h"         // IWYU pragma: export
 #include "indicators/price_channel.h"   // IWYU pragma: export
-#include "indicators/volume_sma.h"      // IWYU pragma: export
+#include "indicators/channel.h"         // IWYU pragma: export
+#include "indicators/highest.h"         // IWYU pragma: export
+#include "indicators/lowest.h"          // IWYU pragma: export
 #include "indicators/wma.h"             // IWYU pragma: export
 #include "indicators/dema.h"            // IWYU pragma: export
 #include "indicators/tema.h"            // IWYU pragma: export
 #include "indicators/hma.h"             // IWYU pragma: export
 #include "indicators/roc.h"             // IWYU pragma: export
+#include "indicators/rolling_extrema.h" // IWYU pragma: export
 #include "indicators/linreg.h"          // IWYU pragma: export
 #include "indicators/stddev.h"          // IWYU pragma: export
 #include "indicators/hvol.h"            // IWYU pragma: export
@@ -61,7 +64,6 @@
 #include "indicators/ao.h"              // IWYU pragma: export
 #include "indicators/bop.h"             // IWYU pragma: export
 #include "indicators/eom.h"             // IWYU pragma: export
-#include "indicators/volume_ema.h"      // IWYU pragma: export
 #include "indicators/rma.h"             // IWYU pragma: export
 #include "indicators/aroon.h"           // IWYU pragma: export
 #include "indicators/williamsr.h"       // IWYU pragma: export
@@ -103,4 +105,5 @@
 #include "indicators/zigzag.h"          // IWYU pragma: export
 #include "indicators/fair_value_gap.h"  // IWYU pragma: export
 #include "indicators/divergence.h"      // IWYU pragma: export
+#include "indicators/structure.h" // IWYU pragma: export
 #include "indicators/anchored_vwap.h"   // IWYU pragma: export

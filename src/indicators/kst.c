@@ -3,6 +3,7 @@
  * @brief KST helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/kst.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
@@ -41,3 +42,27 @@ double cxta_kst(const cxta_series_bar_view* view, int p1, int p2, int p3, int p4
         return rcma1 + 2.0 * rcma2 + 3.0 * rcma3 + 4.0 * rcma4;
     }
 }
+
+CXTA_WRAP_BAR_SCALAR_4I(cxta_kst_desc_eval, cxta_kst, 10, 15, 20, 30)
+
+const cxta_indicator_descriptor cxta_kst_descriptor = {
+    "kst",
+    0,
+    4,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_kst_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_kst_params,
+    CXTA_ARRAY_COUNT(cxta_kst_params),
+};

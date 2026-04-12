@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the MFI indicator. */
+static const cxta_param_descriptor cxta_mfi_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for MFI. */
+static const cxta_bridge_fn_spec cxta_mfi_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("mfi", 1u, 1u, cxta_mfi_params, 1);
+
+/** @brief Expression-facing descriptor for MFI. */
+extern const cxta_indicator_descriptor cxta_mfi_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

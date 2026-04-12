@@ -1,0 +1,19 @@
+# Kopier til: tests/configs/strategies/cxta-indicators/ohlc_vol_smoke.yaml
+# Dekker parkinson / garman_klass / rogers_satchell / yang_zhang etter hvert som de lander.
+
+name: ohlc_vol_smoke
+description: Røyktest for OHLC-baserte vol-estimatorer (skaleringskontrakt må dokumenteres i cxta).
+type: strategy
+
+params:
+  period: 20
+
+expressions:
+  pv: parkinson_vol($period)
+  gk: garman_klass_vol($period)
+  rs: rogers_satchell_vol($period)
+  long_setup: pv < pv[5] and gk < gk[5]
+  exit_setup: rs > rs[1]
+
+entry: long_setup
+exit: exit_setup

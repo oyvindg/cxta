@@ -6,6 +6,16 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_supertrend_params[] = {
+    {"period"},
+    {"mult"},
+};
+static const cxta_bridge_fn_spec cxta_supertrend_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("supertrend", 2u, 2u, cxta_supertrend_params, 1);
+
+extern const cxta_indicator_descriptor cxta_supertrend_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

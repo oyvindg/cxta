@@ -3,6 +3,7 @@
  * @brief Schaff Trend Cycle helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/schaff.h>
 #include <cxta/ts/smoothing.h>
 #include <stdlib.h>
@@ -88,3 +89,27 @@ double cxta_schaff(const cxta_series_bar_view* view, int fast, int slow, int cyc
         return out;
     }
 }
+
+CXTA_WRAP_BAR_SCALAR_3I(cxta_schaff_trend_cycle_desc_eval, cxta_schaff, 23, 50, 10)
+
+const cxta_indicator_descriptor cxta_schaff_trend_cycle_descriptor = {
+    "schaff_trend_cycle",
+    3,
+    3,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_schaff_trend_cycle_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_schaff_trend_cycle_params,
+    CXTA_ARRAY_COUNT(cxta_schaff_trend_cycle_params),
+};

@@ -6,6 +6,22 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_linear_regression_slope_params[] = {
+    {"period"},
+};
+static const cxta_bridge_fn_spec cxta_linear_regression_slope_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("linear_regression_slope", 1u, 1u, cxta_linear_regression_slope_params, 1);
+
+static const cxta_param_descriptor cxta_linreg_angle_params[] = {
+    {"period"},
+};
+static const cxta_bridge_fn_spec cxta_linreg_angle_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("linreg_angle", 1u, 1u, cxta_linreg_angle_params, 1);
+
+extern const cxta_indicator_descriptor cxta_linear_regression_slope_descriptor;
+extern const cxta_indicator_descriptor cxta_linreg_angle_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

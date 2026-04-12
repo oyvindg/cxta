@@ -3,6 +3,7 @@
  * @brief Double Exponential Moving Average helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/dema.h>
 #include <cxta/ts/smoothing.h>
 
@@ -31,3 +32,27 @@ double cxta_dema(const cxta_series_bar_view* view, int period) {
     }
     return 2.0 * ema1 - ema2;
 }
+
+CXTA_WRAP_BAR_SCALAR_1I(cxta_dema_desc_eval_scalar, cxta_dema, 20)
+
+const cxta_indicator_descriptor cxta_dema_descriptor = {
+    "dema",
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    sizeof(cxta_dema_state),
+    NULL,
+    0u,
+    cxta_dema_desc_eval_scalar,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_dema_params,
+    CXTA_ARRAY_COUNT(cxta_dema_params),
+};

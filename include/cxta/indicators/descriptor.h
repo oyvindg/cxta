@@ -9,6 +9,7 @@
 #include <stddef.h>
 
 #include <cxta/series/bar.h>
+#include <cxta/structure/pivot.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,9 +27,9 @@ extern "C" {
  * @brief Metadata for one exposed indicator field.
  */
 typedef struct {
-    const char* name;
-    size_t offset;
-    bool auto_plot;
+    const char* name;   /**< Stable field name for expressions and plotting. */
+    size_t offset;      /**< Byte offset into the output struct, or `CXTA_FIELD_OFFSET_SCALAR`. */
+    bool auto_plot;     /**< When true, hosts may include this field in default charts. */
 } cxta_field_descriptor;
 
 /**
@@ -37,24 +38,24 @@ typedef struct {
  * Array index matches the corresponding positional argument index.
  */
 typedef struct {
-    const char* name;
+    const char* name;   /**< Stable parameter name for bridge/codegen. */
 } cxta_param_descriptor;
 
 /**
  * @brief Expression-visible argument category for bridge-level rewrites.
  */
 typedef enum {
-    CXTA_EXPR_ARG_NUMERIC = 0,
-    CXTA_EXPR_ARG_SCALAR_SOURCE = 1,
+    CXTA_EXPR_ARG_NUMERIC = 0,        ///< Ordinary numeric parameter.
+    CXTA_EXPR_ARG_SCALAR_SOURCE = 1, ///< Series or scalar source binding.
 } cxta_expr_arg_kind;
 
 /**
  * @brief Expression-level argument descriptor for source-aware calls.
  */
 typedef struct {
-    const char* name;
-    cxta_expr_arg_kind kind;
-    const char* default_value;
+    const char* name;          /**< Argument name for diagnostics and bridge metadata. */
+    cxta_expr_arg_kind kind;    /**< Numeric vs scalar-source argument. */
+    const char* default_value; /**< Default string when optional, or NULL. */
 } cxta_expr_arg_descriptor;
 
 /**
@@ -62,6 +63,12 @@ typedef struct {
  *
  * This keeps expression-visible parameter naming close to the indicator module
  * itself without forcing bridge-specific code into `cxpr-bridge`.
+ *
+ * @note Use `CXTA_BRIDGE_FN_SPEC_EXPR` when a function has multiple optional
+ *       positional parameters and hosts need **partial named-argument** rewrite
+ *       (default strings per slot). `CXTA_BRIDGE_FN_SPEC` alone supplies names
+ *       but not defaults; without `expr_args`, adapters cannot fill omitted
+ *       leading parameters for named-only tails.
  */
 typedef struct {
     const char* name;                     /**< Expression-visible function name. */
@@ -84,11 +91,21 @@ typedef struct {
  * @param max_arg_count Maximum accepted argument count.
  * @param params_array Fixed-size `cxta_param_descriptor` array.
  * @param optional_timeframe_flag Non-zero when a trailing optional timeframe is accepted.
+ *
+ * @note For optional multi-argument functions that use named-arg sugar with
+ *       omitted leading parameters, prefer `CXTA_BRIDGE_FN_SPEC_EXPR` with
+ *       defaults aligned to the indicator parse path.
  */
 #define CXTA_BRIDGE_FN_SPEC(name_literal, min_arg_count, max_arg_count, params_array, optional_timeframe_flag)     {                                                                                                                  (name_literal),                                                                                                (min_arg_count),                                                                                               (max_arg_count),                                                                                               (params_array),                                                                                                CXTA_ARRAY_COUNT(params_array),                                                                                NULL,                                                                                                          0u,                                                                                                            (optional_timeframe_flag)                                                                                  }
 
 /**
  * @brief Build one bridge-facing function spec with expression-level arg metadata.
+ * @param name_literal Expression-visible function name.
+ * @param min_arg_count Minimum accepted argument count.
+ * @param max_arg_count Maximum accepted argument count.
+ * @param params_array Fixed-size `cxta_param_descriptor` array.
+ * @param expr_args_array Fixed-size `cxta_expr_arg_descriptor` array.
+ * @param optional_timeframe_flag Non-zero when a trailing optional timeframe is accepted.
  */
 #define CXTA_BRIDGE_FN_SPEC_EXPR(name_literal, min_arg_count, max_arg_count, params_array, expr_args_array, optional_timeframe_flag)     {                                                                                                                                     (name_literal),                                                                                                                   (min_arg_count),                                                                                                                  (max_arg_count),                                                                                                                  (params_array),                                                                                                                   CXTA_ARRAY_COUNT(params_array),                                                                                                   (expr_args_array),                                                                                                                CXTA_ARRAY_COUNT(expr_args_array),                                                                                                (optional_timeframe_flag)                                                                                                     }
 
@@ -96,10 +113,10 @@ typedef struct {
  * @brief Capability flags for one indicator descriptor.
  */
 typedef enum {
-    CXTA_INDICATOR_SCALAR = 1u << 0,        /**< Supports scalar output via `eval_scalar` or `step_scalar`. */
-    CXTA_INDICATOR_STRUCT = 1u << 1,        /**< Supports structured output via `eval_struct` or `step_struct`. */
-    CXTA_INDICATOR_SCALAR_SOURCE = 1u << 2, /**< Supports scalar-source input via `eval_scalar_src`. */
-    CXTA_INDICATOR_REPAINTING = 1u << 3,    /**< May change previously emitted values as new bars arrive. */
+    CXTA_INDICATOR_SCALAR = 1u << 0,        ///< Supports scalar output via `eval_scalar` or `step_scalar`.
+    CXTA_INDICATOR_STRUCT = 1u << 1,        ///< Supports structured output via `eval_struct` or `step_struct`.
+    CXTA_INDICATOR_SCALAR_SOURCE = 1u << 2, ///< Supports scalar-source input via `eval_scalar_src`.
+    CXTA_INDICATOR_REPAINTING = 1u << 3,    ///< May change previously emitted values as new bars arrive.
 } cxta_indicator_flags;
 
 /**
@@ -271,6 +288,74 @@ int cxta_name_build_source_aware(const char* smoothing_name,
                                  const char* source_name,
                                  char* out,
                                  size_t out_size);
+
+/**
+ * @brief Copy one struct output payload into the evaluator output buffer.
+ * @param[out] out Destination buffer.
+ * @param[in] value Source struct address.
+ * @param[in] size Copy size in bytes.
+ */
+void cxta_descriptor_copy_struct(void* out, const void* value, size_t size);
+
+/**
+ * @brief Parse swing/pivot numeric args using the current bar index as context.
+ * @param[in] view Bar series view (used for current index when resolving relative pivots).
+ * @param[in] args Positional numeric arguments from the expression call.
+ * @param[in] nargs Length of @p args.
+ * @param[out] out Parsed pivot arguments.
+ * @return Non-zero when parsing succeeds.
+ */
+int cxta_descriptor_parse_pivot_args(const cxta_series_bar_view* view,
+                                     const double* args,
+                                     size_t nargs,
+                                     cxta_struct_pivot_args* out);
+
+/**
+ * @brief Read one integer argument from a numeric argument list, with fallback.
+ * @param[in] args Argument array, or NULL.
+ * @param[in] nargs Number of entries in @p args.
+ * @param[in] index Zero-based index of the argument to read.
+ * @param[in] fallback Value used when @p args is NULL, @p index is out of range, or the value is non-finite.
+ * @return Rounded integer in `[INT_MIN, INT_MAX]`, or @p fallback when unavailable.
+ */
+int cxta_descriptor_int_arg(const double* args, size_t nargs, size_t index, int fallback);
+
+/**
+ * @brief Read one period-style integer argument, clamped via `cxta_ts_clamp_period`.
+ * @param[in] args Argument array, or NULL.
+ * @param[in] nargs Number of entries in @p args.
+ * @param[in] index Zero-based index of the argument to read.
+ * @param[in] fallback Value passed to `cxta_descriptor_int_arg` when the slot is missing or invalid.
+ * @return Clamped positive period suitable for indicator windows.
+ */
+int cxta_descriptor_period_arg(const double* args, size_t nargs, size_t index, int fallback);
+
+/**
+ * @brief Read one floating-point argument from a numeric argument list, with fallback.
+ * @param[in] args Argument array, or NULL.
+ * @param[in] nargs Number of entries in @p args.
+ * @param[in] index Zero-based index of the argument to read.
+ * @param[in] fallback Value used when @p args is NULL, @p index is out of range, or the value is non-finite.
+ * @return Finite double, or @p fallback.
+ */
+double cxta_descriptor_double_arg(const double* args, size_t nargs, size_t index, double fallback);
+
+/**
+ * @brief Read one integer argument and clamp it to an inclusive range.
+ * @param[in] args Argument array, or NULL.
+ * @param[in] nargs Number of entries in @p args.
+ * @param[in] index Zero-based index of the argument to read.
+ * @param[in] fallback Base value from `cxta_descriptor_int_arg` before clamping.
+ * @param[in] min_value Minimum allowed result (inclusive).
+ * @param[in] max_value Maximum allowed result (inclusive).
+ * @return Clamped integer in `[min_value, max_value]`.
+ */
+int cxta_descriptor_clamp_int_arg(const double* args,
+                                  size_t nargs,
+                                  size_t index,
+                                  int fallback,
+                                  int min_value,
+                                  int max_value);
 
 #ifdef __cplusplus
 }

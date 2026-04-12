@@ -1,0 +1,19 @@
+# Kopier til: tests/configs/strategies/cxta-indicators/vwap_bands_smoke.yaml
+
+name: vwap_bands_smoke
+description: Røyktest for VWAP-bånd (mid/upper/lower); juster parametre mot faktisk API.
+type: strategy
+
+params:
+  std_period: 20
+  mult: 2.0
+
+expressions:
+  upper: vwap_bands($std_period, $mult).upper
+  lower: vwap_bands($std_period, $mult).lower
+  mid: vwap_bands($std_period, $mult).mid
+  long_setup: close > lower and close < upper and close > mid
+  exit_setup: close > upper or close < lower
+
+entry: long_setup
+exit: exit_setup

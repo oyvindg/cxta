@@ -6,6 +6,27 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_kst_params[] = {
+    {"roc1_period"},
+    {"roc2_period"},
+    {"roc3_period"},
+    {"roc4_period"},
+};
+
+/** Defaults match `CXTA_WRAP_BAR_SCALAR_4I(..., 10, 15, 20, 30)` in `kst.c`. */
+static const cxta_expr_arg_descriptor cxta_kst_expr_args[] = {
+    {"roc1_period", CXTA_EXPR_ARG_NUMERIC, "10"},
+    {"roc2_period", CXTA_EXPR_ARG_NUMERIC, "15"},
+    {"roc3_period", CXTA_EXPR_ARG_NUMERIC, "20"},
+    {"roc4_period", CXTA_EXPR_ARG_NUMERIC, "30"},
+};
+
+static const cxta_bridge_fn_spec cxta_kst_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC_EXPR("kst", 0u, 4u, cxta_kst_params, cxta_kst_expr_args, 1);
+
+extern const cxta_indicator_descriptor cxta_kst_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

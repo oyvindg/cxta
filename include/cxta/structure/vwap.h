@@ -25,6 +25,32 @@ typedef struct {
 } cxta_struct_vwap_args;
 
 /**
+ * @name swing_anchor_vwap default parameters
+ *
+ * Single source of truth for `cxta_struct_vwap_args_parse` when no arguments
+ * are passed, and for `CXTA_BRIDGE_FN_SPEC_EXPR` default strings consumed by
+ * cxpr-bridge / strategy named-arg rewrite. Keep numeric and `_STR` pairs aligned.
+ *
+ * @{
+ */
+#define CXTA_STRUCT_VWAP_DEFAULT_SWING_PERIOD 50
+#define CXTA_STRUCT_VWAP_DEFAULT_APT 20.0
+#define CXTA_STRUCT_VWAP_DEFAULT_USE_ADAPT 0
+#define CXTA_STRUCT_VWAP_DEFAULT_VOL_BIAS 10.0
+#define CXTA_STRUCT_VWAP_DEFAULT_ATR_PERIOD 50
+#define CXTA_STRUCT_VWAP_DEFAULT_MIN_APT 5.0
+#define CXTA_STRUCT_VWAP_DEFAULT_MAX_APT 300.0
+
+#define CXTA_STRUCT_VWAP_DEFAULT_SWING_PERIOD_STR "50"
+#define CXTA_STRUCT_VWAP_DEFAULT_APT_STR "20"
+#define CXTA_STRUCT_VWAP_DEFAULT_USE_ADAPT_STR "0"
+#define CXTA_STRUCT_VWAP_DEFAULT_VOL_BIAS_STR "10"
+#define CXTA_STRUCT_VWAP_DEFAULT_ATR_PERIOD_STR "50"
+#define CXTA_STRUCT_VWAP_DEFAULT_MIN_APT_STR "5"
+#define CXTA_STRUCT_VWAP_DEFAULT_MAX_APT_STR "300"
+/** @} */
+
+/**
  * @brief Multi-output result for swing-anchor adaptive VWAP.
  */
 typedef struct {

@@ -5,6 +5,62 @@
 
 #include <cxta/indicators/aroon.h>
 #include <cxta/ts/smoothing.h>
+#include <limits.h>
+#include <math.h>
+#include <stddef.h>
+#include <string.h>
+
+static const cxta_field_descriptor cxta_aroon_fields[] = {
+    {"up", offsetof(cxta_aroon_output, up), true},
+    {"down", offsetof(cxta_aroon_output, down), true},
+    {"oscillator", offsetof(cxta_aroon_output, oscillator), true},
+};
+
+static int cxta_aroon_descriptor_period_arg(const double* args,
+                                             size_t nargs,
+                                             size_t index,
+                                             int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return cxta_ts_clamp_period((int)llround(raw));
+}
+
+static void cxta_aroon_descriptor_eval(const cxta_series_bar_view* view,
+                                       const double* args,
+                                       size_t nargs,
+                                       void* out) {
+    cxta_aroon_output value;
+    memset(&value, 0, sizeof(value));
+    value = cxta_aroon(view, cxta_aroon_descriptor_period_arg(args, nargs, 0u, 14));
+    if (out) memcpy(out, &value, sizeof(value));
+}
+
+const cxta_indicator_descriptor cxta_aroon_descriptor = {
+    "aroon",
+    1,
+    1,
+    -1,
+    -1,
+    2,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_aroon_output),
+    0u,
+    cxta_aroon_fields,
+    CXTA_ARRAY_COUNT(cxta_aroon_fields),
+    NULL,
+    cxta_aroon_descriptor_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_aroon_params,
+    CXTA_ARRAY_COUNT(cxta_aroon_params),
+};
 
 cxta_aroon_output cxta_aroon(const cxta_series_bar_view* view, int period) {
     cxta_aroon_output out = {0.0, 0.0, 0.0};

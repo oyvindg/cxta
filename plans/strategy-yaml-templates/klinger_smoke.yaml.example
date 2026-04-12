@@ -1,0 +1,20 @@
+# Kopier til: tests/configs/strategies/cxta-indicators/klinger_smoke.yaml
+
+name: klinger_smoke
+description: Røyktest for klinger oscillator (KVO / signal / histogram).
+type: strategy
+
+params:
+  fast: 34
+  slow: 55
+  signal: 13
+
+expressions:
+  kvo: klinger($fast, $slow, $signal).kvo
+  ksig: klinger($fast, $slow, $signal).signal
+  kh: klinger($fast, $slow, $signal).histogram
+  long_setup: kh > 0 and kvo > ksig
+  exit_setup: kh < 0 or cross_below(kvo, ksig)
+
+entry: long_setup
+exit: exit_setup

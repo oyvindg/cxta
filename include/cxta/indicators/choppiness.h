@@ -6,6 +6,15 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_choppiness_index_params[] = {
+    {"period"},
+};
+static const cxta_bridge_fn_spec cxta_choppiness_index_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("choppiness_index", 1u, 1u, cxta_choppiness_index_params, 1);
+
+extern const cxta_indicator_descriptor cxta_choppiness_index_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

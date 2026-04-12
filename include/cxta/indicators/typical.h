@@ -6,6 +6,10 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+extern const cxta_bridge_fn_spec cxta_typical_price_bridge_fn_spec;
+extern const cxta_indicator_descriptor cxta_typical_price_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

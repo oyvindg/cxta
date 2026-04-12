@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the TRIX indicator. */
+static const cxta_param_descriptor cxta_trix_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for TRIX. */
+static const cxta_bridge_fn_spec cxta_trix_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("trix", 1u, 1u, cxta_trix_params, 1);
+
+/** @brief Expression-facing descriptor for TRIX. */
+extern const cxta_indicator_descriptor cxta_trix_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

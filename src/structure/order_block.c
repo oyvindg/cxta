@@ -3,6 +3,7 @@
  * @brief Order Block helpers built on top of BOS and pivots.
  */
 
+#include <cxta/structure/bos.h>
 #include <cxta/structure/order_block.h>
 #include <math.h>
 

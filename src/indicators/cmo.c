@@ -3,6 +3,7 @@
  * @brief Chande Momentum Oscillator helpers.
  */
 
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/cmo.h>
 #include <cxta/ts/smoothing.h>
 
@@ -32,3 +33,27 @@ double cxta_cmo(const cxta_series_bar_view* view, int period) {
         }
     }
 }
+
+CXTA_WRAP_BAR_SCALAR_1I(cxta_cmo_desc_eval, cxta_cmo, 14)
+
+const cxta_indicator_descriptor cxta_cmo_descriptor = {
+    "cmo",
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    CXTA_INDICATOR_SCALAR,
+    0u,
+    0u,
+    NULL,
+    0u,
+    cxta_cmo_desc_eval,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    cxta_cmo_params,
+    CXTA_ARRAY_COUNT(cxta_cmo_params),
+};

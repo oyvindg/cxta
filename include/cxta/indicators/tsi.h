@@ -6,6 +6,20 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the TSI indicator. */
+static const cxta_param_descriptor cxta_tsi_params[] = {
+    {"long_period"},
+    {"short_period"},
+};
+
+/** @brief Bridge-facing signature metadata for TSI. */
+static const cxta_bridge_fn_spec cxta_tsi_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("tsi", 2u, 2u, cxta_tsi_params, 1);
+
+/** @brief Expression-facing descriptor for TSI. */
+extern const cxta_indicator_descriptor cxta_tsi_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

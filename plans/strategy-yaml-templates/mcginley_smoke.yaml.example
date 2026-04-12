@@ -1,0 +1,17 @@
+# Kopier til: tests/configs/strategies/cxta-indicators/mcginley_smoke.yaml
+
+name: mcginley_smoke
+description: Røyktest for McGinley Dynamic.
+type: strategy
+
+params:
+  period: 20
+  k: 0.6
+
+expressions:
+  mg: mcginley($period, $k)
+  long_setup: close > mg and mg > mg[1]
+  exit_setup: close < mg
+
+entry: long_setup
+exit: exit_setup

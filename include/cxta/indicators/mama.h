@@ -6,6 +6,23 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_mama_params[] = {
+    {"fast_limit"},
+    {"slow_limit"},
+};
+
+/** Defaults match `cxta_mama_descriptor_eval` in `mama.c` (before internal clamping). */
+static const cxta_expr_arg_descriptor cxta_mama_expr_args[] = {
+    {"fast_limit", CXTA_EXPR_ARG_NUMERIC, "0.5"},
+    {"slow_limit", CXTA_EXPR_ARG_NUMERIC, "0.05"},
+};
+
+static const cxta_bridge_fn_spec cxta_mama_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC_EXPR("mama", 0u, 2u, cxta_mama_params, cxta_mama_expr_args, 1);
+
+extern const cxta_indicator_descriptor cxta_mama_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

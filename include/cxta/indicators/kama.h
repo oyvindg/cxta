@@ -6,6 +6,19 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+/** @brief Named parameters for the KAMA indicator. */
+static const cxta_param_descriptor cxta_kama_params[] = {
+    {"period"},
+};
+
+/** @brief Bridge-facing signature metadata for KAMA. */
+static const cxta_bridge_fn_spec cxta_kama_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("kama", 1u, 1u, cxta_kama_params, 1);
+
+/** @brief Expression-facing descriptor for KAMA. */
+extern const cxta_indicator_descriptor cxta_kama_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

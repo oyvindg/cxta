@@ -6,6 +6,15 @@
 #pragma once
 
 #include "../series/bar.h"
+#include "../indicators/descriptor.h"
+
+static const cxta_param_descriptor cxta_realized_volatility_params[] = {
+    {"period"},
+};
+static const cxta_bridge_fn_spec cxta_realized_volatility_bridge_fn_spec =
+    CXTA_BRIDGE_FN_SPEC("realized_volatility", 1u, 1u, cxta_realized_volatility_params, 1);
+
+extern const cxta_indicator_descriptor cxta_realized_volatility_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

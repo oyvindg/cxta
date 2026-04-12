@@ -40,12 +40,12 @@ add_library(cxta STATIC
     src/indicators/donchian.c
     src/indicators/keltner.c
     src/indicators/price_channel.c
-    src/indicators/volume_sma.c
     src/indicators/wma.c
     src/indicators/dema.c
     src/indicators/tema.c
     src/indicators/hma.c
     src/indicators/roc.c
+    src/indicators/rolling_extrema.c
     src/indicators/linreg.c
     src/indicators/stddev.c
     src/indicators/hvol.c
@@ -60,7 +60,6 @@ add_library(cxta STATIC
     src/indicators/ao.c
     src/indicators/bop.c
     src/indicators/eom.c
-    src/indicators/volume_ema.c
     src/indicators/rma.c
     src/indicators/aroon.c
     src/indicators/williamsr.c
@@ -101,7 +100,10 @@ add_library(cxta STATIC
     src/indicators/volume_profile.c
     src/indicators/zigzag.c
     src/indicators/fair_value_gap.c
+    src/indicators/highest.c
+    src/indicators/lowest.c
     src/indicators/divergence.c
+    src/indicators/structure.c
     src/indicators/anchored_vwap.c
     src/indicators/descriptor.c
 )
@@ -154,7 +156,6 @@ if(CXTA_BUILD_TESTS)
         tests/indicators/donchian.test.c
         tests/indicators/keltner.test.c
         tests/indicators/price_channel.test.c
-        tests/indicators/volume_sma.test.c
         tests/indicators/wma.test.c
         tests/indicators/dema.test.c
         tests/indicators/tema.test.c
@@ -174,7 +175,6 @@ if(CXTA_BUILD_TESTS)
         tests/indicators/ao.test.c
         tests/indicators/bop.test.c
         tests/indicators/eom.test.c
-        tests/indicators/volume_ema.test.c
         tests/indicators/rma.test.c
         tests/indicators/aroon.test.c
         tests/indicators/williamsr.test.c

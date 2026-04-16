@@ -104,6 +104,10 @@ add_library(cxta STATIC
     src/indicators/lowest.c
     src/indicators/divergence.c
     src/indicators/structure.c
+    src/indicators/structures/pivots.c
+    src/indicators/structures/trend.c
+    src/indicators/structures/zones.c
+    src/indicators/structures/patterns.c
     src/indicators/anchored_vwap.c
     src/indicators/descriptor.c
 )

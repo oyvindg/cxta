@@ -11,11 +11,41 @@
 #include <string.h>
 
 static const cxta_field_descriptor cxta_ichimoku_fields[] = {
-    {"tenkan", offsetof(cxta_ichimoku_output, tenkan), true},
-    {"kijun", offsetof(cxta_ichimoku_output, kijun), true},
-    {"senkouA", offsetof(cxta_ichimoku_output, senkou_a), true},
-    {"senkouB", offsetof(cxta_ichimoku_output, senkou_b), true},
-    {"chikou", offsetof(cxta_ichimoku_output, chikou), true},
+    {"tenkan", offsetof(cxta_ichimoku_output, tenkan), false},
+    {"kijun", offsetof(cxta_ichimoku_output, kijun), false},
+    {"senkouA", offsetof(cxta_ichimoku_output, senkou_a), false},
+    {"senkouB", offsetof(cxta_ichimoku_output, senkou_b), false},
+    {"chikou", offsetof(cxta_ichimoku_output, chikou), false},
+};
+
+static const cxta_plot_field_descriptor cxta_ichimoku_plot_fields[] = {
+    {"tenkan", true, "Tenkan", "ichimoku", "#f59e0b", "line", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "Conversion line: midpoint of the highest high and lowest low over the Tenkan period.",
+     "Often used as the faster trend line; crosses against Kijun can signal timing shifts."},
+    {"kijun", true, "Kijun", "ichimoku", "#38bdf8", "line", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "Base line: midpoint of the highest high and lowest low over the Kijun period.",
+     "Used as a slower trend reference and support/resistance guide."},
+    {"senkouA", true, "Senkou A", "ichimoku", "#22c55e", "line", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "Leading Span A: midpoint between Tenkan and Kijun.",
+     "Together with Senkou B, forms the cloud; price above the cloud is typically bullish."},
+    {"senkouB", true, "Senkou B", "ichimoku", "#ef4444", "line", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "Leading Span B: midpoint of the highest high and lowest low over the Span B period.",
+     "The distance between Senkou A and B describes cloud thickness and potential support/resistance."},
+    {"chikou", true, "Chikou", "ichimoku", "#a78bfa", "line", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "Lagging span value represented by the current close.",
+     "Compare against prior price action to confirm whether current momentum has cleared historical resistance/support."},
+};
+
+const cxta_indicator_plot_descriptor cxta_ichimoku_plot_descriptor = {
+    "ichimoku",
+    NULL,
+    cxta_ichimoku_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_ichimoku_plot_fields),
 };
 
 static int cxta_ichimoku_descriptor_int_arg(const double* args,
@@ -79,6 +109,8 @@ const cxta_indicator_descriptor cxta_ichimoku_descriptor = {
     NULL,
     cxta_ichimoku_params,
     CXTA_ARRAY_COUNT(cxta_ichimoku_params),
+    "ichimoku",
+    &cxta_ichimoku_plot_descriptor,
 };
 
 static double cxta_ichimoku_midpoint_window(const cxta_series_bar_view* view,

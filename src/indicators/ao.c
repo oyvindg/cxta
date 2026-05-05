@@ -4,7 +4,16 @@
  */
 
 #include <cxta/indicators/ao.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_awesome_oscillator_scalar_plot =
+    CXTA_SCALAR_PLOT("Awesome Oscillator", "momentum", "#22d3ee", "histogram", "momentum",
+                     "Fast minus slow midpoint SMA oscillator.",
+                     "Zero-line crosses and histogram expansion indicate momentum shifts.");
+
+static const cxta_indicator_plot_descriptor cxta_awesome_oscillator_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("awesome_oscillator", cxta_awesome_oscillator_scalar_plot);
 
 static double midpoint_sma(const cxta_series_bar* bars, size_t start, size_t end) {
     double sum = 0.0;
@@ -81,4 +90,6 @@ const cxta_indicator_descriptor cxta_awesome_oscillator_descriptor = {
     NULL,
     cxta_awesome_oscillator_params,
     CXTA_ARRAY_COUNT(cxta_awesome_oscillator_params),
+    "momentum",
+    &cxta_awesome_oscillator_plot_descriptor,
 };

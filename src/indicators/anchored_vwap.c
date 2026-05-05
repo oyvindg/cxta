@@ -4,7 +4,16 @@
  */
 
 #include <cxta/indicators/anchored_vwap.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_anchored_vwap_scalar_plot =
+    CXTA_SCALAR_PLOT("Anchored VWAP", "price", "#f59e0b", "line", "price",
+                     "VWAP anchored to a fixed lookback.",
+                     "Use as event/lookback fair-value reference; price acceptance around it can define bias.");
+
+static const cxta_indicator_plot_descriptor cxta_anchored_vwap_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("anchored_vwap", cxta_anchored_vwap_scalar_plot);
 
 double cxta_anchored_vwap(const cxta_series_bar_view* view, int anchor_bars) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
@@ -56,4 +65,6 @@ const cxta_indicator_descriptor cxta_anchored_vwap_descriptor = {
     NULL,
     cxta_anchored_vwap_params,
     CXTA_ARRAY_COUNT(cxta_anchored_vwap_params),
+    "price",
+    &cxta_anchored_vwap_plot_descriptor,
 };

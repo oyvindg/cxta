@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/vwap.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
@@ -11,6 +12,18 @@
 
 static const cxta_field_descriptor cxta_vwap_fields[] = {
     {"value", CXTA_FIELD_OFFSET_SCALAR, true},
+};
+
+static const cxta_plot_field_descriptor cxta_vwap_plot_fields[] = {
+    CXTA_FIELD_PLOT("value", true, "VWAP", "price", "#f59e0b", "line", "price",
+                    "Volume Weighted Average Price overlay.",
+                    "Use as intraday/session fair-value reference; price acceptance above or below can define bias."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_vwap_plot_descriptor = {
+    .indicator_name = "vwap",
+    .fields = cxta_vwap_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_vwap_plot_fields),
 };
 
 static int cxta_vwap_descriptor_int_arg(const double* args,
@@ -55,6 +68,8 @@ const cxta_indicator_descriptor cxta_vwap_descriptor = {
     NULL,
     cxta_vwap_params,
     CXTA_ARRAY_COUNT(cxta_vwap_params),
+    "price",
+    &cxta_vwap_plot_descriptor,
 };
 
 double cxta_vwap_step(double typical_price, double volume, cxta_vwap_state* st) {

@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/divergence.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
 #include <stddef.h>
@@ -15,6 +16,19 @@ static const cxta_field_descriptor cxta_divergence_fields[] = {
     CXTA_DIV_FIELD("bearish", offsetof(cxta_divergence_output, bearish)),
     CXTA_DIV_FIELD("bull_segment", offsetof(cxta_divergence_output, bull_segment)),
     CXTA_DIV_FIELD("bear_segment", offsetof(cxta_divergence_output, bear_segment)),
+};
+
+static const cxta_plot_field_descriptor cxta_divergence_plot_fields[] = {
+    CXTA_FIELD_PLOT("bullish", true, "Bullish Divergence", "divergence", "#22c55e", "hidden", "divergence", "Bullish divergence signal flag.", "Use transitions as reversal/continuation confirmation with price context."),
+    CXTA_FIELD_PLOT("bearish", true, "Bearish Divergence", "divergence", "#ef4444", "hidden", "divergence", "Bearish divergence signal flag.", "Use transitions as reversal/continuation confirmation with price context."),
+    CXTA_FIELD_PLOT("bull_segment", true, "Bull Segment", "divergence", "#22c55e", "line", "divergence", "Bullish divergence segment marker.", "Use to visualize the active bullish divergence span."),
+    CXTA_FIELD_PLOT("bear_segment", true, "Bear Segment", "divergence", "#ef4444", "line", "divergence", "Bearish divergence segment marker.", "Use to visualize the active bearish divergence span."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_divergence_plot_descriptor = {
+    .indicator_name = "divergence",
+    .fields = cxta_divergence_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_divergence_plot_fields),
 };
 
 static const cxta_param_descriptor cxta_divergence_params[] = {
@@ -61,6 +75,8 @@ const cxta_indicator_descriptor cxta_divergence_descriptor = {
     NULL,
     cxta_divergence_params,
     CXTA_ARRAY_COUNT(cxta_divergence_params),
+    "divergence",
+    &cxta_divergence_plot_descriptor,
 };
 
 typedef struct {

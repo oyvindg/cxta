@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/rma.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_rma_scalar_plot =
+    CXTA_SCALAR_PLOT("RMA", "price", "#60a5fa", "line", "price",
+                     "Wilder-style moving average price overlay.",
+                     "Use as a smoother trend baseline or as Wilder smoothing for source-aware expressions.");
+
+static const cxta_indicator_plot_descriptor cxta_rma_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("rma", cxta_rma_scalar_plot);
 
 static int cxta_rma_descriptor_period_arg(const double* args,
                                           size_t nargs,
@@ -79,6 +88,8 @@ const cxta_indicator_descriptor cxta_rma_descriptor = {
     NULL,
     cxta_rma_params,
     CXTA_ARRAY_COUNT(cxta_rma_params),
+    "price",
+    &cxta_rma_plot_descriptor,
 };
 
 double cxta_rma_step(double sample, int period, cxta_rma_state* st) {

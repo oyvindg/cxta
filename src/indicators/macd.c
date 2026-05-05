@@ -12,9 +12,31 @@
 #include <cxta/ts/smoothing.h>
 
 const cxta_field_descriptor cxta_macd_descriptor_fields[3] = {
-    {"line", offsetof(cxta_macd_output, line), true},
-    {"signal", offsetof(cxta_macd_output, signal), true},
-    {"histogram", offsetof(cxta_macd_output, histogram), true},
+    {"line", offsetof(cxta_macd_output, line), false},
+    {"signal", offsetof(cxta_macd_output, signal), false},
+    {"histogram", offsetof(cxta_macd_output, histogram), false},
+};
+
+static const cxta_plot_field_descriptor cxta_macd_plot_fields[] = {
+    {"line", true, "MACD Line", "macd", "#22d3ee", "line", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "Difference between the fast and slow EMA inputs.",
+     "Positive values indicate fast EMA strength over the slow EMA; crosses against the signal line are common momentum triggers."},
+    {"signal", true, "Signal Line", "macd", "#f97316", "line", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "EMA-smoothed MACD line used as the trigger/reference line.",
+     "Use line/signal crosses to confirm momentum shifts, or compare distance between the lines for acceleration."},
+    {"histogram", true, "Histogram", "macd", "#a855f7", "histogram", NULL, "#22c55e", "#ef4444",
+     NULL, NULL, NULL, NULL, false, false,
+     "Difference between the MACD line and signal line.",
+     "Expanding bars show increasing momentum spread; zero-line crosses mark line/signal crossovers."},
+};
+
+const cxta_indicator_plot_descriptor cxta_macd_plot_descriptor = {
+    "macd",
+    NULL,
+    cxta_macd_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_macd_plot_fields),
 };
 
 static int cxta_macd_descriptor_int_arg(const double* args,
@@ -64,6 +86,8 @@ const cxta_indicator_descriptor cxta_macd_descriptor = {
     NULL,
     cxta_macd_params,
     CXTA_ARRAY_COUNT(cxta_macd_params),
+    "macd",
+    &cxta_macd_plot_descriptor,
 };
 
 void cxta_macd_descriptor_eval(const cxta_series_bar_view* view,

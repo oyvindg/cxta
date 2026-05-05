@@ -15,9 +15,16 @@ static const cxta_param_descriptor cxta_macd_params[] = {
     {"signal"},
 };
 
+static const cxta_expr_arg_descriptor cxta_macd_expr_args[] = {
+    {"source", CXTA_EXPR_ARG_SCALAR_SOURCE, "close", "Optional input price/series used to compute the fast and slow EMAs; implicit when omitted."},
+    {"fast", CXTA_EXPR_ARG_NUMERIC, "12", "Fast EMA period. Lower values make MACD react faster."},
+    {"slow", CXTA_EXPR_ARG_NUMERIC, "26", "Slow EMA period. Higher values smooth the baseline trend more."},
+    {"signal", CXTA_EXPR_ARG_NUMERIC, "9", "Signal EMA period applied to the MACD line."},
+};
+
 /** @brief Bridge-facing signature metadata for MACD. */
 static const cxta_bridge_fn_spec cxta_macd_bridge_fn_spec =
-    CXTA_BRIDGE_FN_SPEC("macd", 3u, 3u, cxta_macd_params, 1);
+    CXTA_BRIDGE_FN_SPEC_EXPR("macd", 3u, 3u, cxta_macd_params, cxta_macd_expr_args, 1);
 
 /** @brief Expression-facing descriptor for MACD. */
 extern const cxta_indicator_descriptor cxta_macd_descriptor;

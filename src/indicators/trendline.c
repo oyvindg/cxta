@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/trendline.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
@@ -15,6 +16,19 @@ static const cxta_field_descriptor cxta_trendline_fields[] = {
     {"lower", offsetof(cxta_trendline_output, lower), true},
     {"upperSlope", offsetof(cxta_trendline_output, upper_slope), true},
     {"lowerSlope", offsetof(cxta_trendline_output, lower_slope), true},
+};
+
+static const cxta_plot_field_descriptor cxta_trendline_plot_fields[] = {
+    CXTA_FIELD_PLOT("upper", true, "Upper Trendline", "price", "#22c55e", "line", "price", "Projected upper pivot trendline.", "Use as dynamic resistance and breakout reference."),
+    CXTA_FIELD_PLOT("lower", true, "Lower Trendline", "price", "#ef4444", "line", "price", "Projected lower pivot trendline.", "Use as dynamic support and breakdown reference."),
+    CXTA_FIELD_PLOT("upperSlope", false, "Upper Slope", "trendline", "#22c55e", "line", "trendline", "Slope of the upper trendline.", "Use slope sign/magnitude to classify trendline pressure."),
+    CXTA_FIELD_PLOT("lowerSlope", false, "Lower Slope", "trendline", "#ef4444", "line", "trendline", "Slope of the lower trendline.", "Use slope sign/magnitude to classify trendline pressure."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_trendline_plot_descriptor = {
+    .indicator_name = "trendline",
+    .fields = cxta_trendline_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_trendline_plot_fields),
 };
 
 static int cxta_trendline_descriptor_period_arg(const double* args,
@@ -63,6 +77,8 @@ const cxta_indicator_descriptor cxta_trendline_descriptor = {
     NULL,
     cxta_trendline_params,
     CXTA_ARRAY_COUNT(cxta_trendline_params),
+    "price",
+    &cxta_trendline_plot_descriptor,
 };
 
 static double cxta_trendline_project_at(size_t x1, double y1, size_t x2, double y2, size_t x) {

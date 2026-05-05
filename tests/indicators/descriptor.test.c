@@ -28,6 +28,7 @@ static int cxta_descriptor_is_dispatch_exception(const cxta_indicator_descriptor
 void cxta_test_descriptor(void) {
     size_t count = 0;
     size_t i;
+    size_t missing_plot_count = 0;
     const cxta_indicator_descriptor* descriptors = cxta_indicator_descriptors(&count);
     const cxta_indicator_descriptor* sma = cxta_indicator_descriptor_find("sma");
     const cxta_indicator_descriptor* ema = cxta_indicator_descriptor_find("ema");
@@ -54,6 +55,8 @@ void cxta_test_descriptor(void) {
     const cxta_indicator_descriptor* swing_anchor_vwap =
         cxta_indicator_descriptor_find("swing_anchor_vwap");
     const cxta_indicator_descriptor* wedge = cxta_indicator_descriptor_find("wedge");
+    const cxta_scalar_plot_descriptor* volume_plot =
+        cxta_builtin_plot_descriptor_find("volume");
     char generated_name[64] = {0};
     const cxta_field_descriptor* percent_b = NULL;
     const cxta_field_descriptor* vwap_value = NULL;
@@ -126,6 +129,14 @@ void cxta_test_descriptor(void) {
 
     assert(descriptors);
     assert(count == 89u);
+    assert(volume_plot);
+    assert(volume_plot->auto_plot);
+    assert(strcmp(volume_plot->label, "Volume") == 0);
+    assert(strcmp(volume_plot->pane, "volume") == 0);
+    assert(strcmp(volume_plot->style, "histogram") == 0);
+    assert(strcmp(volume_plot->scale, "volume") == 0);
+    assert(strcmp(volume_plot->positive_color, "#22c55e") == 0);
+    assert(strcmp(volume_plot->negative_color, "#ef4444") == 0);
 
     for (i = 0; i < count; ++i) {
         const cxta_indicator_descriptor* descriptor = &descriptors[i];
@@ -155,10 +166,45 @@ void cxta_test_descriptor(void) {
             assert(descriptor->eval_scalar != NULL || descriptor->eval_struct != NULL);
         }
 
+        if (!descriptor->plot) {
+            fprintf(stderr, "missing plot descriptor: %s\n", descriptor->name);
+            missing_plot_count++;
+        }
+
         if (is_scalar && !is_struct) {
             assert(descriptor->eval_scalar != NULL);
         }
+
+        if (descriptor->field_count == 0u) {
+            const cxta_scalar_plot_descriptor* plot =
+                cxta_indicator_scalar_plot_descriptor_find(descriptor->name);
+            assert(plot);
+            assert(plot->label && plot->label[0] != '\0');
+            assert(plot->pane && plot->pane[0] != '\0');
+            assert(plot->color && plot->color[0] != '\0');
+            assert(plot->style && plot->style[0] != '\0');
+            assert(plot->scale && plot->scale[0] != '\0');
+            assert(plot->hover_summary && plot->hover_summary[0] != '\0');
+            assert(plot->hover_indication && plot->hover_indication[0] != '\0');
+        } else {
+            size_t field_index;
+            for (field_index = 0u; field_index < descriptor->field_count; ++field_index) {
+                const cxta_plot_field_descriptor* plot =
+                    cxta_indicator_plot_field_descriptor_find(
+                        descriptor->name,
+                        descriptor->fields[field_index].name);
+                assert(plot);
+                assert(plot->label && plot->label[0] != '\0');
+                assert(plot->pane && plot->pane[0] != '\0');
+                assert(plot->color && plot->color[0] != '\0');
+                assert(plot->style && plot->style[0] != '\0');
+                assert(plot->scale && plot->scale[0] != '\0');
+                assert(plot->hover_summary && plot->hover_summary[0] != '\0');
+                assert(plot->hover_indication && plot->hover_indication[0] != '\0');
+            }
+        }
     }
+    assert(missing_plot_count == 0u);
 
     assert(sma);
     assert(sma->min_args == 1);
@@ -197,6 +243,21 @@ void cxta_test_descriptor(void) {
     assert(rsi->state_size > 0u);
     assert(fabs(rsi->eval_scalar(&view, period2, 1u) - cxta_rsi(&view, 2)) < 1e-12);
     assert(fabs(rsi->eval_scalar_src(&close_source, period2, 1u) - cxta_rsi(&view, 2)) < 1e-12);
+    {
+        const cxta_indicator_plot_descriptor* rsi_plot =
+            cxta_indicator_plot_descriptor_find("rsi");
+        const cxta_scalar_plot_descriptor* rsi_scalar_plot =
+            cxta_indicator_scalar_plot_descriptor_find("rsi");
+        assert(rsi_plot);
+        assert(rsi_plot->scalar != NULL);
+        assert(rsi_plot->field_count == 0u);
+        assert(rsi_scalar_plot);
+        assert(rsi_scalar_plot->auto_plot);
+        assert(strcmp(rsi_scalar_plot->label, "RSI") == 0);
+        assert(strcmp(rsi_scalar_plot->pane, "rsi") == 0);
+        assert(strcmp(rsi_scalar_plot->style, "line") == 0);
+        assert(strcmp(rsi_scalar_plot->scale, "rsi") == 0);
+    }
 
     assert(ao);
     assert(ao->eval_scalar != NULL);
@@ -213,7 +274,23 @@ void cxta_test_descriptor(void) {
     percent_b = cxta_find_field(bollinger, "percentB");
     assert(percent_b);
     assert(percent_b->offset == offsetof(cxta_bollinger_output, percent_b));
-    assert(cxta_indicator_field_auto_plot(bollinger, percent_b));
+    assert(!cxta_indicator_field_auto_plot(bollinger, percent_b));
+    {
+        const cxta_indicator_plot_descriptor* bollinger_plot =
+            cxta_indicator_plot_descriptor_find("bollinger");
+        const cxta_plot_field_descriptor* bollinger_upper =
+            cxta_indicator_plot_field_descriptor_find("bollinger", "upper");
+        const cxta_plot_field_descriptor* bollinger_percent_b =
+            cxta_indicator_plot_field_descriptor_find("bollinger", "percentB");
+        assert(bollinger_plot);
+        assert(bollinger_plot->field_count == 5u);
+        assert(bollinger_upper);
+        assert(bollinger_upper->auto_plot);
+        assert(strcmp(bollinger_upper->pane, "price") == 0);
+        assert(bollinger_percent_b);
+        assert(!bollinger_percent_b->auto_plot);
+        assert(strcmp(bollinger_percent_b->pane, "price") == 0);
+    }
     bollinger->eval_struct(&view, (const double[]){3.0, 2.0}, 2u, &bollinger_out);
     assert(fabs(bollinger_out.middle - expected_bollinger.middle) < 1e-12);
     assert(fabs(bollinger_out.upper - expected_bollinger.upper) < 1e-12);
@@ -294,6 +371,19 @@ void cxta_test_descriptor(void) {
     assert(zigzag);
     assert((zigzag->flags & CXTA_INDICATOR_REPAINTING) != 0u);
     assert(zigzag->field_count == 9u);
+    {
+        const cxta_indicator_plot_descriptor* zigzag_plot =
+            cxta_indicator_plot_descriptor_find("zigzag");
+        const cxta_plot_field_descriptor* zigzag_line =
+            cxta_indicator_plot_field_descriptor_find("zigzag", "line");
+        assert(zigzag_plot);
+        assert(zigzag_plot->field_count == 1u);
+        assert(zigzag_line);
+        assert(zigzag_line->auto_plot);
+        assert(strcmp(zigzag_line->pane, "zigzag") == 0);
+        assert(strcmp(zigzag_line->style, "zigzag") == 0);
+        assert(zigzag_line->show_price);
+    }
 
     assert(swing_pivots);
     assert(swing_pivots->min_args == 2);
@@ -359,8 +449,6 @@ void cxta_test_descriptor(void) {
 
     assert(cxta_name_build_timeframe("macd.signal", generated_name, sizeof(generated_name)) > 0);
     assert(strcmp(generated_name, "macd_signal_tf") == 0);
-    assert(cxta_name_build_source_aware("ema", "macd.signal", generated_name, sizeof(generated_name)) > 0);
-    assert(strcmp(generated_name, "ema_src_macd_signal") == 0);
     assert(wedge->min_args == 2);
     assert(wedge->max_args == 4);
     assert(wedge->primary_field_index == 5);

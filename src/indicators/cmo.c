@@ -7,6 +7,14 @@
 #include <cxta/indicators/cmo.h>
 #include <cxta/ts/smoothing.h>
 
+static const cxta_scalar_plot_descriptor cxta_cmo_scalar_plot =
+    CXTA_SCALAR_PLOT("CMO", "momentum", "#22d3ee", "line", "momentum",
+                     "Chande Momentum Oscillator.",
+                     "Positive values favor upside momentum; negative values favor downside momentum.");
+
+static const cxta_indicator_plot_descriptor cxta_cmo_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("cmo", cxta_cmo_scalar_plot);
+
 double cxta_cmo(const cxta_series_bar_view* view, int period) {
     if (!view || !cxta_series_bar_view_valid(view) || view->size < 2) return 0.0;
 
@@ -56,4 +64,6 @@ const cxta_indicator_descriptor cxta_cmo_descriptor = {
     NULL,
     cxta_cmo_params,
     CXTA_ARRAY_COUNT(cxta_cmo_params),
+    "momentum",
+    &cxta_cmo_plot_descriptor,
 };

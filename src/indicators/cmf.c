@@ -7,6 +7,14 @@
 #include <cxta/indicators/cmf.h>
 #include <cxta/ts/smoothing.h>
 
+static const cxta_scalar_plot_descriptor cxta_cmf_scalar_plot =
+    CXTA_SCALAR_PLOT("CMF", "volume", "#22d3ee", "line", "volume",
+                     "Chaikin Money Flow accumulation/distribution oscillator.",
+                     "Positive values indicate buying pressure; negative values indicate selling pressure.");
+
+static const cxta_indicator_plot_descriptor cxta_cmf_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("cmf", cxta_cmf_scalar_plot);
+
 double cxta_cmf(const cxta_series_bar_view* view, int period) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
 
@@ -53,4 +61,6 @@ const cxta_indicator_descriptor cxta_cmf_descriptor = {
     NULL,
     cxta_cmf_params,
     CXTA_ARRAY_COUNT(cxta_cmf_params),
+    "volume",
+    &cxta_cmf_plot_descriptor,
 };

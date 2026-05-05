@@ -4,9 +4,18 @@
  */
 
 #include <cxta/indicators/mass_index.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
 #include <stdlib.h>
+
+static const cxta_scalar_plot_descriptor cxta_mass_index_scalar_plot =
+    CXTA_SCALAR_PLOT("Mass Index", "volatility", "#f97316", "line", "volatility",
+                     "Range-expansion indicator based on high-low movement.",
+                     "Rising values highlight range expansion and possible reversal-risk conditions.");
+
+static const cxta_indicator_plot_descriptor cxta_mass_index_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("mass_index", cxta_mass_index_scalar_plot);
 
 double cxta_mass_index(const cxta_series_bar_view* view, int sum_period, int ema_period) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
@@ -70,4 +79,6 @@ const cxta_indicator_descriptor cxta_mass_index_descriptor = {
     NULL,
     cxta_mass_index_params,
     CXTA_ARRAY_COUNT(cxta_mass_index_params),
+    "volatility",
+    &cxta_mass_index_plot_descriptor,
 };

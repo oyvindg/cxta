@@ -9,7 +9,7 @@ The end state should be:
 - each indicator owns its own descriptor metadata
 - each indicator exports bridge-facing named-arg metadata locally
 - `src/indicators/descriptor.c` becomes a small registry and shared-helper file
-- `cxpr-bridge/src/bridge/registry.c` becomes a generic bridge with minimal indicator-specific branching
+- `cxpr/src/bridge/registry.c` becomes a generic bridge with minimal indicator-specific branching
 
 ## Working Pattern
 
@@ -22,15 +22,15 @@ Each migrated indicator should follow this shape:
 5. Move any indicator-specific descriptor eval wrappers into `<name>.c`.
 6. Remove the inline descriptor entry from `kCoreDescriptors[]`.
 7. Add `&cxta_<name>_descriptor` to `kExternalDescriptors[]`.
-8. If the indicator should expose named args through `cxpr-bridge`, register its local `cxta_<name>_bridge_fn_spec` in `cxpr-bridge/src/bridge/registry.c`.
-9. Compile-check `cxta` and `cxpr-bridge` consumers after the move.
+8. If the indicator should expose named args through `cxpr`, register its local `cxta_<name>_bridge_fn_spec` in `cxpr/src/bridge/registry.c`.
+9. Compile-check `cxta` and `cxpr` consumers after the move.
 
 ## Per-Indicator Checklist
 
 Use this checklist for every migration:
 
 - [ ] Add `cxta_<name>_params[]` if the indicator exposes named parameters.
-- [ ] Add `cxta_<name>_bridge_fn_spec` if the indicator should support named args in `cxpr` via `cxpr-bridge`.
+- [ ] Add `cxta_<name>_bridge_fn_spec` if the indicator should support named args in `cxpr` via `cxpr`.
 - [ ] Add `extern const cxta_indicator_descriptor cxta_<name>_descriptor;` in the indicator header.
 - [ ] Move field arrays into the indicator module if they are indicator-specific.
 - [ ] Move eval adapters into the indicator module if they are indicator-specific.
@@ -41,10 +41,10 @@ Use this checklist for every migration:
 - [ ] Remove the inline descriptor entry from `kCoreDescriptors[]`.
 - [ ] Add the descriptor pointer to `kExternalDescriptors[]`.
 - [ ] Remove dead indicator-specific helper code from `descriptor.c`.
-- [ ] Register the indicator through `cxpr_bridge_register_cxta_fn_spec(...)` if named args should be exposed.
+- [ ] Register the indicator through `cxpr_register_cxta_fn_spec(...)` if named args should be exposed.
 - [ ] Compile-check `src/indicators/<name>.c`.
 - [ ] Compile-check `src/indicators/descriptor.c`.
-- [ ] Compile-check `cxpr-bridge/src/bridge/registry.c`.
+- [ ] Compile-check `cxpr/src/bridge/registry.c`.
 
 ## Migration Order
 
@@ -164,13 +164,13 @@ After most descriptors are local:
 
 ## Bridge Simplification Targets
 
-`cxpr-bridge/src/bridge/registry.c` should also simplify in stages.
+`cxpr/src/bridge/registry.c` should also simplify in stages.
 
 ### Stage 1
 
 Current acceptable state:
 
-- use generic `cxpr_bridge_register_cxta_fn_spec(...)`
+- use generic `cxpr_register_cxta_fn_spec(...)`
 - branch for indicators that already export local bridge specs
 - fall back to generic signature-family registration for the rest
 
@@ -199,8 +199,8 @@ A migration is complete when all of these are true:
 - `descriptor.c` no longer contains indicator-specific eval logic for that indicator
 - `descriptor.c` no longer contains an inline descriptor entry for that indicator
 - the descriptor is listed through `kExternalDescriptors[]`
-- `cxpr-bridge` uses local bridge metadata when named args should be exposed
-- compile-checks pass for the touched `cxta` and `cxpr-bridge` files
+- `cxpr` uses local bridge metadata when named args should be exposed
+- compile-checks pass for the touched `cxta` and `cxpr` files
 
 ## Next Recommended Migrations
 

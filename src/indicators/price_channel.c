@@ -4,13 +4,27 @@
  */
 
 #include <cxta/indicators/channel.h>
+#include <cxta/indicators/extrema.h>
 #include <cxta/indicators/price_channel.h>
-#include <cxta/indicators/donchian.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
 #include <stddef.h>
 #include <string.h>
+
+static const cxta_plot_field_descriptor cxta_price_channel_plot_fields[] = {
+    CXTA_FIELD_PLOT("upper", true, "Price Channel Upper", "price", "#22c55e", "line", "price", "Rolling upper price channel boundary.", "Use as breakout resistance or trailing upper boundary."),
+    CXTA_FIELD_PLOT("lower", true, "Price Channel Lower", "price", "#ef4444", "line", "price", "Rolling lower price channel boundary.", "Use as breakdown support or trailing lower boundary."),
+    CXTA_FIELD_PLOT("middle", true, "Price Channel Middle", "price", "#f59e0b", "line", "price", "Midpoint between price channel boundaries.", "Use as channel mean/reference."),
+    CXTA_FIELD_PLOT("width", false, "Price Channel Width", "channel", "#38bdf8", "line", "channel", "Distance between upper and lower channel.", "Expansion indicates wider range; contraction indicates compression."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_price_channel_plot_descriptor = {
+    .indicator_name = "price_channel",
+    .fields = cxta_price_channel_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_price_channel_plot_fields),
+};
 
 static int cxta_price_channel_descriptor_period_arg(const double* args,
                                                     size_t nargs,
@@ -57,8 +71,20 @@ const cxta_indicator_descriptor cxta_price_channel_descriptor = {
     NULL,
     cxta_price_channel_params,
     CXTA_ARRAY_COUNT(cxta_price_channel_params),
+    "price",
+    &cxta_price_channel_plot_descriptor,
 };
 
 cxta_channel_output cxta_price_channel(const cxta_series_bar_view* view, int period) {
-    return cxta_donchian(view, period);
+    cxta_channel_output out = {0.0, 0.0, 0.0, 0.0};
+    cxta_extrema_output extrema;
+
+    if (!view || !cxta_series_bar_view_valid(view)) return out;
+
+    extrema = cxta_extrema(view, period);
+    out.upper = extrema.high;
+    out.lower = extrema.low;
+    out.middle = extrema.mid;
+    out.width = out.upper - out.lower;
+    return out;
 }

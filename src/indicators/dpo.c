@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/dpo.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_dpo_scalar_plot =
+    CXTA_SCALAR_PLOT("DPO", "momentum", "#38bdf8", "line", "momentum",
+                     "Detrended Price Oscillator.",
+                     "Use oscillation around zero to inspect cycle pressure after removing trend.");
+
+static const cxta_indicator_plot_descriptor cxta_dpo_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("dpo", cxta_dpo_scalar_plot);
 
 static int cxta_dpo_descriptor_period_arg(const double* args,
                                           size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_dpo_descriptor = {
     NULL,
     cxta_dpo_params,
     CXTA_ARRAY_COUNT(cxta_dpo_params),
+    "momentum",
+    &cxta_dpo_plot_descriptor,
 };
 
 double cxta_dpo(const cxta_series_bar_view* view, int period) {

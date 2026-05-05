@@ -13,6 +13,22 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+static const cxta_scalar_plot_descriptor cxta_linreg_slope_scalar_plot =
+    CXTA_SCALAR_PLOT("Linear Regression Slope", "momentum", "#38bdf8", "line", "momentum",
+                     "Slope of the rolling linear regression line.",
+                     "Positive slope indicates upward drift; negative slope indicates downward drift.");
+
+static const cxta_indicator_plot_descriptor cxta_linreg_slope_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("linear_regression_slope", cxta_linreg_slope_scalar_plot);
+
+static const cxta_scalar_plot_descriptor cxta_linreg_angle_scalar_plot =
+    CXTA_SCALAR_PLOT("LinReg Angle", "momentum", "#22d3ee", "line", "momentum",
+                     "Angle of the rolling linear regression slope in degrees.",
+                     "Use sign and steepness to filter weak or strong trend conditions.");
+
+static const cxta_indicator_plot_descriptor cxta_linreg_angle_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("linreg_angle", cxta_linreg_angle_scalar_plot);
+
 double cxta_linreg_slope(const cxta_series_bar_view* view, int period) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
 
@@ -65,6 +81,8 @@ const cxta_indicator_descriptor cxta_linear_regression_slope_descriptor = {
     NULL,
     cxta_linear_regression_slope_params,
     CXTA_ARRAY_COUNT(cxta_linear_regression_slope_params),
+    "momentum",
+    &cxta_linreg_slope_plot_descriptor,
 };
 
 const cxta_indicator_descriptor cxta_linreg_angle_descriptor = {
@@ -87,4 +105,6 @@ const cxta_indicator_descriptor cxta_linreg_angle_descriptor = {
     NULL,
     cxta_linreg_angle_params,
     CXTA_ARRAY_COUNT(cxta_linreg_angle_params),
+    "momentum",
+    &cxta_linreg_angle_plot_descriptor,
 };

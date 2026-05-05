@@ -29,7 +29,7 @@ typedef struct {
  *
  * Single source of truth for `cxta_struct_vwap_args_parse` when no arguments
  * are passed, and for `CXTA_BRIDGE_FN_SPEC_EXPR` default strings consumed by
- * cxpr-bridge / strategy named-arg rewrite. Keep numeric and `_STR` pairs aligned.
+ * cxpr / strategy named-arg rewrite. Keep numeric and `_STR` pairs aligned.
  *
  * @{
  */

@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/efi.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_elder_force_scalar_plot =
+    CXTA_SCALAR_PLOT("Elder Force", "volume", "#22d3ee", "line", "volume",
+                     "Elder Force Index volume-price pressure series.",
+                     "Use sign and spikes to identify volume-backed directional force.");
+
+static const cxta_indicator_plot_descriptor cxta_elder_force_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("elder_force", cxta_elder_force_scalar_plot);
 
 static int cxta_elder_force_descriptor_period_arg(const double* args,
                                                   size_t nargs,
@@ -50,6 +59,8 @@ const cxta_indicator_descriptor cxta_elder_force_descriptor = {
     NULL,
     cxta_elder_force_params,
     CXTA_ARRAY_COUNT(cxta_elder_force_params),
+    "volume",
+    &cxta_elder_force_plot_descriptor,
 };
 
 double cxta_efi_step(double close, double volume, int period, cxta_efi_state* st) {

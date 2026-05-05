@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/stochastic.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
@@ -13,6 +14,17 @@
 static const cxta_field_descriptor cxta_stochastic_fields[] = {
     {"k", offsetof(cxta_stoch_output, k), true},
     {"d", offsetof(cxta_stoch_output, d), true},
+};
+
+static const cxta_plot_field_descriptor cxta_stochastic_plot_fields[] = {
+    CXTA_FIELD_PLOT("k", true, "%K", "rsi", "#22d3ee", "line", "rsi", "Fast stochastic %K line.", "Use overbought/oversold levels and crosses against %D."),
+    CXTA_FIELD_PLOT("d", true, "%D", "rsi", "#f97316", "line", "rsi", "Smoothed stochastic %D signal line.", "Use %K/%D crosses to time momentum turns."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_stochastic_plot_descriptor = {
+    .indicator_name = "stochastic",
+    .fields = cxta_stochastic_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_stochastic_plot_fields),
 };
 
 static int cxta_stochastic_descriptor_period_arg(const double* args,
@@ -61,6 +73,8 @@ const cxta_indicator_descriptor cxta_stochastic_descriptor = {
     NULL,
     cxta_stochastic_params,
     CXTA_ARRAY_COUNT(cxta_stochastic_params),
+    "rsi",
+    &cxta_stochastic_plot_descriptor,
 };
 
 static double cxta_stochastic_raw_k(const cxta_series_bar_view* view, size_t idx, int k_period) {

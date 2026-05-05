@@ -12,8 +12,14 @@ static const cxta_param_descriptor cxta_supertrend_params[] = {
     {"period"},
     {"mult"},
 };
+
+static const cxta_expr_arg_descriptor cxta_supertrend_expr_args[] = {
+    {"period", CXTA_EXPR_ARG_NUMERIC, "10", "ATR lookback period used to build the Supertrend bands."},
+    {"mult", CXTA_EXPR_ARG_NUMERIC, "3.0", "ATR multiplier applied to the midpoint band distance."},
+};
+
 static const cxta_bridge_fn_spec cxta_supertrend_bridge_fn_spec =
-    CXTA_BRIDGE_FN_SPEC("supertrend", 2u, 2u, cxta_supertrend_params, 1);
+    CXTA_BRIDGE_FN_SPEC_EXPR("supertrend", 2u, 2u, cxta_supertrend_params, cxta_supertrend_expr_args, 1);
 
 extern const cxta_indicator_descriptor cxta_supertrend_descriptor;
 

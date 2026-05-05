@@ -4,9 +4,18 @@
  */
 
 #include <cxta/indicators/tsi.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
+
+static const cxta_scalar_plot_descriptor cxta_tsi_scalar_plot =
+    CXTA_SCALAR_PLOT("TSI", "momentum", "#22d3ee", "line", "momentum",
+                     "True Strength Index double-smoothed momentum oscillator.",
+                     "Use sign, slope, and turns for smoothed momentum confirmation.");
+
+static const cxta_indicator_plot_descriptor cxta_tsi_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("tsi", cxta_tsi_scalar_plot);
 
 static int cxta_tsi_descriptor_int_arg(const double* args,
                                        size_t nargs,
@@ -57,6 +66,8 @@ const cxta_indicator_descriptor cxta_tsi_descriptor = {
     NULL,
     cxta_tsi_params,
     CXTA_ARRAY_COUNT(cxta_tsi_params),
+    "momentum",
+    &cxta_tsi_plot_descriptor,
 };
 
 double cxta_tsi_step(double close, int long_period, int short_period, cxta_tsi_state* st) {

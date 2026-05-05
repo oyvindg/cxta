@@ -12,9 +12,52 @@
 #include <string.h>
 
 static const cxta_field_descriptor cxta_adx_fields[] = {
-    {"adx", offsetof(cxta_adx_output, adx), true},
-    {"plusDI", offsetof(cxta_adx_output, plus_di), true},
-    {"minusDI", offsetof(cxta_adx_output, minus_di), true},
+    {"adx", offsetof(cxta_adx_output, adx), false},
+    {"plusDI", offsetof(cxta_adx_output, plus_di), false},
+    {"minusDI", offsetof(cxta_adx_output, minus_di), false},
+};
+
+static const cxta_plot_field_descriptor cxta_adx_plot_fields[] = {
+    {
+        .field_name = "adx",
+        .auto_plot = true,
+        .label = "ADX",
+        .pane = "adx",
+        .color = "#f97316",
+        .style = "line",
+        .scale = "adx",
+        .hover_summary = "Average Directional Index trend-strength line.",
+        .hover_indication = "Rising ADX indicates stronger trend conditions; use with +DI/-DI for direction.",
+    },
+    {
+        .field_name = "plusDI",
+        .auto_plot = true,
+        .label = "+DI",
+        .pane = "adx",
+        .color = "#22c55e",
+        .style = "line",
+        .scale = "adx",
+        .hover_summary = "Positive Directional Indicator component.",
+        .hover_indication = "A +DI lead over -DI favors bullish directional pressure.",
+    },
+    {
+        .field_name = "minusDI",
+        .auto_plot = true,
+        .label = "-DI",
+        .pane = "adx",
+        .color = "#ef4444",
+        .style = "line",
+        .scale = "adx",
+        .hover_summary = "Negative Directional Indicator component.",
+        .hover_indication = "A -DI lead over +DI favors bearish directional pressure.",
+    },
+};
+
+const cxta_indicator_plot_descriptor cxta_adx_plot_descriptor = {
+    "adx",
+    NULL,
+    cxta_adx_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_adx_plot_fields),
 };
 
 static int cxta_adx_descriptor_int_arg(const double* args,
@@ -68,6 +111,8 @@ const cxta_indicator_descriptor cxta_adx_descriptor = {
     NULL,
     cxta_adx_params,
     CXTA_ARRAY_COUNT(cxta_adx_params),
+    "adx",
+    &cxta_adx_plot_descriptor,
 };
 
 cxta_adx_output cxta_adx_step(double plus_dm,

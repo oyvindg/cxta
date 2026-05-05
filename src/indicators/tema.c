@@ -7,6 +7,14 @@
 #include <cxta/indicators/tema.h>
 #include <cxta/ts/smoothing.h>
 
+static const cxta_scalar_plot_descriptor cxta_tema_scalar_plot =
+    CXTA_SCALAR_PLOT("TEMA", "price", "#14b8a6", "line", "price",
+                     "Triple Exponential Moving Average price overlay.",
+                     "A faster low-lag trend line; watch price crosses and slope changes.");
+
+static const cxta_indicator_plot_descriptor cxta_tema_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("tema", cxta_tema_scalar_plot);
+
 double cxta_tema_step(double close, int period, cxta_tema_state* st) {
     if (!st) return 0.0;
     if (st->initialized == 0.0) {
@@ -59,4 +67,6 @@ const cxta_indicator_descriptor cxta_tema_descriptor = {
     NULL,
     cxta_tema_params,
     CXTA_ARRAY_COUNT(cxta_tema_params),
+    "price",
+    &cxta_tema_plot_descriptor,
 };

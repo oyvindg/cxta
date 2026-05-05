@@ -4,9 +4,18 @@
  */
 
 #include <cxta/indicators/ppo.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
+
+static const cxta_scalar_plot_descriptor cxta_ppo_scalar_plot =
+    CXTA_SCALAR_PLOT("PPO", "momentum", "#22d3ee", "line", "momentum",
+                     "Percentage Price Oscillator.",
+                     "Use zero-line behavior and slope to compare fast/slow EMA momentum in percent terms.");
+
+static const cxta_indicator_plot_descriptor cxta_ppo_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("ppo", cxta_ppo_scalar_plot);
 
 static int cxta_ppo_descriptor_int_arg(const double* args,
                                        size_t nargs,
@@ -64,6 +73,8 @@ const cxta_indicator_descriptor cxta_ppo_descriptor = {
     NULL,
     cxta_ppo_params,
     CXTA_ARRAY_COUNT(cxta_ppo_params),
+    "momentum",
+    &cxta_ppo_plot_descriptor,
 };
 
 double cxta_ppo_step(double close, int fast, int slow, cxta_ppo_state* st) {

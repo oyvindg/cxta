@@ -14,10 +14,12 @@ extern "C" {
 extern const cxta_indicator_descriptor cxta_fvg_descriptor;
 extern const cxta_indicator_descriptor cxta_order_block_descriptor;
 extern const cxta_indicator_descriptor cxta_liquidity_descriptor;
+extern const cxta_indicator_descriptor cxta_liquidity_pools_descriptor;
 
 extern const cxta_bridge_fn_spec cxta_fvg_bridge_fn_spec;
 extern const cxta_bridge_fn_spec cxta_order_block_bridge_fn_spec;
 extern const cxta_bridge_fn_spec cxta_liquidity_bridge_fn_spec;
+extern const cxta_bridge_fn_spec cxta_liquidity_pools_bridge_fn_spec;
 
 #ifdef __cplusplus
 }

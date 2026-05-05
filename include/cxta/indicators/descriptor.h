@@ -33,6 +33,67 @@ typedef struct {
 } cxta_field_descriptor;
 
 /**
+ * @brief Optional GUI plot metadata for one exposed indicator field.
+ *
+ * Hosts may use this to pre-populate plot specs instead of relying on
+ * indicator-name heuristics for pane, color, and style selection.
+ */
+typedef struct {
+    const char* field_name;       /**< Stable output field name. */
+    bool auto_plot;               /**< When true, hosts may include this field in default charts. */
+    const char* label;            /**< Default chart label, or NULL. */
+    const char* pane;             /**< Default pane name, or NULL. */
+    const char* color;            /**< Primary series color, or NULL. */
+    const char* style;            /**< Plot style ("line", "histogram", ...), or NULL. */
+    const char* scale;            /**< Optional scale name, or NULL. */
+    const char* positive_color;   /**< Optional positive histogram color, or NULL. */
+    const char* negative_color;   /**< Optional negative histogram color, or NULL. */
+    const char* pivot_value_field;  /**< Optional sparse-geometry pivot value field, or NULL. */
+    const char* pivot_index_field;  /**< Optional sparse-geometry pivot index field, or NULL. */
+    const char* active_value_field; /**< Optional sparse-geometry active value field, or NULL. */
+    const char* active_index_field; /**< Optional sparse-geometry active index field, or NULL. */
+    bool pivot_zero_is_missing;     /**< Treat zero pivot value as missing geometry. */
+    bool active_zero_is_missing;    /**< Treat zero active value as missing geometry. */
+    const char* hover_summary;      /**< Optional concise hover summary, or NULL. */
+    const char* hover_indication;   /**< Optional usage guidance for editor hover, or NULL. */
+    bool show_price;                /**< When true, hosts may draw price candles in this field's pane. */
+} cxta_plot_field_descriptor;
+
+/**
+ * @brief Optional GUI plot metadata for one scalar indicator output.
+ */
+typedef struct {
+    bool auto_plot;               /**< When true, hosts may include this indicator in default charts. */
+    const char* label;            /**< Default chart label, or NULL. */
+    const char* pane;             /**< Default pane name, or NULL. */
+    const char* color;            /**< Primary series color, or NULL. */
+    const char* style;            /**< Plot style ("line", "histogram", ...), or NULL. */
+    const char* scale;            /**< Optional scale name, or NULL. */
+    const char* positive_color;   /**< Optional positive histogram color, or NULL. */
+    const char* negative_color;   /**< Optional negative histogram color, or NULL. */
+    const char* hover_summary;    /**< Optional concise hover summary, or NULL. */
+    const char* hover_indication; /**< Optional usage guidance for editor hover, or NULL. */
+} cxta_scalar_plot_descriptor;
+
+/**
+ * @brief Find optional GUI plot metadata for one built-in market-data series.
+ * @param[in] name Stable series name such as "close" or "volume".
+ * @return Matching scalar plot metadata, or `NULL` when none is defined.
+ */
+const cxta_scalar_plot_descriptor* cxta_builtin_plot_descriptor_find(
+    const char* name);
+
+/**
+ * @brief Optional GUI plot metadata for one indicator family.
+ */
+typedef struct {
+    const char* indicator_name;                     /**< Stable indicator name. */
+    const cxta_scalar_plot_descriptor* scalar;      /**< Optional scalar output metadata. */
+    const cxta_plot_field_descriptor* fields;       /**< Optional per-field metadata. */
+    size_t field_count;                             /**< Number of entries in @p fields. */
+} cxta_indicator_plot_descriptor;
+
+/**
  * @brief Named parameter descriptor for one indicator argument.
  *
  * Array index matches the corresponding positional argument index.
@@ -56,13 +117,14 @@ typedef struct {
     const char* name;          /**< Argument name for diagnostics and bridge metadata. */
     cxta_expr_arg_kind kind;    /**< Numeric vs scalar-source argument. */
     const char* default_value; /**< Default string when optional, or NULL. */
+    const char* hover_summary; /**< Optional concise hover summary, or NULL. */
 } cxta_expr_arg_descriptor;
 
 /**
  * @brief Bridge-facing function-signature metadata exported by cxta modules.
  *
  * This keeps expression-visible parameter naming close to the indicator module
- * itself without forcing bridge-specific code into `cxpr-bridge`.
+ * itself without forcing bridge-specific code into `cxpr`.
  *
  * @note Use `CXTA_BRIDGE_FN_SPEC_EXPR` when a function has multiple optional
  *       positional parameters and hosts need **partial named-argument** rewrite
@@ -191,6 +253,8 @@ typedef struct {
     cxta_struct_step_fn step_struct;      /**< Incremental struct step entrypoint, or NULL. */
     const cxta_param_descriptor* params;  /**< Named parameter descriptors, or NULL. */
     size_t param_count;                   /**< Number of entries in params. */
+    const char* default_pane;             /**< Default chart pane, or NULL to let hosts fall back to "price". */
+    const cxta_indicator_plot_descriptor* plot; /**< Optional indicator-owned plot metadata. */
 } cxta_indicator_descriptor;
 
 /**
@@ -260,6 +324,32 @@ bool cxta_indicator_field_auto_plot(const cxta_indicator_descriptor* descriptor,
                                     const cxta_field_descriptor* field);
 
 /**
+ * @brief Find optional GUI plot metadata for one indicator.
+ * @param[in] indicator_name Stable expression-facing indicator name.
+ * @return Matching plot descriptor, or `NULL` when none is defined.
+ */
+const cxta_indicator_plot_descriptor* cxta_indicator_plot_descriptor_find(
+    const char* indicator_name);
+
+/**
+ * @brief Find optional GUI plot metadata for one scalar indicator output.
+ * @param[in] indicator_name Stable expression-facing indicator name.
+ * @return Matching scalar plot descriptor, or `NULL` when none is defined.
+ */
+const cxta_scalar_plot_descriptor* cxta_indicator_scalar_plot_descriptor_find(
+    const char* indicator_name);
+
+/**
+ * @brief Find optional GUI plot metadata for one indicator field.
+ * @param[in] indicator_name Stable expression-facing indicator name.
+ * @param[in] field_name Stable output field name.
+ * @return Matching field plot descriptor, or `NULL` when none is defined.
+ */
+const cxta_plot_field_descriptor* cxta_indicator_plot_field_descriptor_find(
+    const char* indicator_name,
+    const char* field_name);
+
+/**
  * @brief Sanitize a suffix so it is safe in generated function names.
  * @param[in] name Input suffix.
  * @param[out] out Target buffer for the sanitized string.
@@ -275,19 +365,6 @@ void cxta_name_sanitize_suffix(const char* name, char* out, size_t out_size);
  * @return `snprintf`-style written length.
  */
 int cxta_name_build_timeframe(const char* name, char* out, size_t out_size);
-
-/**
- * @brief Build the generated source-aware smoothing function name.
- * @param[in] smoothing_name Consumer indicator name.
- * @param[in] source_name Source indicator or field name.
- * @param[out] out Target buffer for the generated name.
- * @param[in] out_size Size of `out` in bytes.
- * @return `snprintf`-style written length.
- */
-int cxta_name_build_source_aware(const char* smoothing_name,
-                                 const char* source_name,
-                                 char* out,
-                                 size_t out_size);
 
 /**
  * @brief Copy one struct output payload into the evaluator output buffer.

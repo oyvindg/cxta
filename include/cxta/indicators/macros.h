@@ -12,6 +12,39 @@
 /** @brief One output field for struct indicators (all auto-plot). */
 #define CXTA_DESC_FIELD(name, offset) {(name), (offset), true}
 
+#define CXTA_SCALAR_PLOT(label_value, pane_value, color_value, style_value, scale_value, summary_value, indication_value) \
+    {                                                                                                                    \
+        .auto_plot = true,                                                                                               \
+        .label = (label_value),                                                                                          \
+        .pane = (pane_value),                                                                                            \
+        .color = (color_value),                                                                                          \
+        .style = (style_value),                                                                                          \
+        .scale = (scale_value),                                                                                          \
+        .hover_summary = (summary_value),                                                                                 \
+        .hover_indication = (indication_value),                                                                           \
+    }
+
+#define CXTA_INDICATOR_SCALAR_PLOT(indicator_name_value, scalar_plot_value) \
+    {                                                                      \
+        .indicator_name = (indicator_name_value),                           \
+        .scalar = &(scalar_plot_value),                                     \
+        .fields = NULL,                                                     \
+        .field_count = 0u,                                                  \
+    }
+
+#define CXTA_FIELD_PLOT(field_name_value, auto_plot_value, label_value, pane_value, color_value, style_value, scale_value, summary_value, indication_value) \
+    {                                                                                                                                                      \
+        .field_name = (field_name_value),                                                                                                                   \
+        .auto_plot = (auto_plot_value),                                                                                                                     \
+        .label = (label_value),                                                                                                                            \
+        .pane = (pane_value),                                                                                                                              \
+        .color = (color_value),                                                                                                                            \
+        .style = (style_value),                                                                                                                            \
+        .scale = (scale_value),                                                                                                                            \
+        .hover_summary = (summary_value),                                                                                                                   \
+        .hover_indication = (indication_value),                                                                                                             \
+    }
+
 #define CXTA_WRAP_BAR_SCALAR_0(wrapper, fn)                                                   \
     static double wrapper(const cxta_series_bar_view* view, const double* args, size_t nargs) { \
         (void)args;                                                                             \

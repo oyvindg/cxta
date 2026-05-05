@@ -5,6 +5,14 @@
 
 #include <cxta/indicators/macros.h>
 #include <cxta/indicators/psar.h>
+
+static const cxta_scalar_plot_descriptor cxta_psar_scalar_plot =
+    CXTA_SCALAR_PLOT("Parabolic SAR", "price", "#f59e0b", "points", "price",
+                     "Parabolic SAR trailing stop and trend marker.",
+                     "Use flips and distance from price as trailing-stop and regime context.");
+
+static const cxta_indicator_plot_descriptor cxta_psar_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("parabolic_sar", cxta_psar_scalar_plot);
 #include <string.h>
 
 static double cxta_psar_max2(double a, double b) {
@@ -103,4 +111,6 @@ const cxta_indicator_descriptor cxta_parabolic_sar_descriptor = {
     NULL,
     cxta_parabolic_sar_params,
     CXTA_ARRAY_COUNT(cxta_parabolic_sar_params),
+    "price",
+    &cxta_psar_plot_descriptor,
 };

@@ -7,8 +7,17 @@
 #include <math.h>
 
 #include <cxta/indicators/atr.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/range.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_atr_scalar_plot =
+    CXTA_SCALAR_PLOT("ATR", "volatility", "#fb7185", "line", "volatility",
+                     "Average True Range volatility series.",
+                     "Use rising ATR for expanding risk/range and falling ATR for compression.");
+
+static const cxta_indicator_plot_descriptor cxta_atr_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("atr", cxta_atr_scalar_plot);
 
 static int cxta_atr_descriptor_period_arg(const double* args,
                                           size_t nargs,
@@ -50,6 +59,8 @@ const cxta_indicator_descriptor cxta_atr_descriptor = {
     NULL,
     cxta_atr_params,
     CXTA_ARRAY_COUNT(cxta_atr_params),
+    "atr",
+    &cxta_atr_plot_descriptor,
 };
 
 double cxta_atr_step(double high, double low, double close, int period, cxta_atr_state* st) {

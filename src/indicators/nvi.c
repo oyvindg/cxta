@@ -4,7 +4,22 @@
  */
 
 #include <cxta/indicators/nvi.h>
+#include <cxta/indicators/macros.h>
 #include <math.h>
+
+static const cxta_scalar_plot_descriptor cxta_nvi_scalar_plot =
+    CXTA_SCALAR_PLOT("NVI", "volume", "#38bdf8", "line", "volume",
+                     "Negative Volume Index cumulative price-flow line.",
+                     "Moves on lower-volume bars; use trend and divergence for participation context.");
+static const cxta_indicator_plot_descriptor cxta_nvi_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("nvi", cxta_nvi_scalar_plot);
+
+static const cxta_scalar_plot_descriptor cxta_pvi_scalar_plot =
+    CXTA_SCALAR_PLOT("PVI", "volume", "#f59e0b", "line", "volume",
+                     "Positive Volume Index cumulative price-flow line.",
+                     "Moves on higher-volume bars; use trend and divergence for participation context.");
+static const cxta_indicator_plot_descriptor cxta_pvi_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("pvi", cxta_pvi_scalar_plot);
 
 static double cxta_volume_index_step(double close,
                                      double volume,
@@ -122,6 +137,8 @@ const cxta_indicator_descriptor cxta_nvi_descriptor = {
     NULL,
     NULL,
     0u,
+    "volume",
+    &cxta_nvi_plot_descriptor,
 };
 
 const cxta_indicator_descriptor cxta_pvi_descriptor = {
@@ -144,4 +161,6 @@ const cxta_indicator_descriptor cxta_pvi_descriptor = {
     NULL,
     NULL,
     0u,
+    "volume",
+    &cxta_pvi_plot_descriptor,
 };

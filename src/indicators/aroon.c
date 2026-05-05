@@ -16,6 +16,49 @@ static const cxta_field_descriptor cxta_aroon_fields[] = {
     {"oscillator", offsetof(cxta_aroon_output, oscillator), true},
 };
 
+static const cxta_plot_field_descriptor cxta_aroon_plot_fields[] = {
+    {
+        .field_name = "up",
+        .auto_plot = true,
+        .label = "Aroon Up",
+        .pane = "aroon",
+        .color = "#22c55e",
+        .style = "line",
+        .scale = "aroon",
+        .hover_summary = "Bars-since-high strength line.",
+        .hover_indication = "High values show recent highs; use against Aroon Down for trend direction.",
+    },
+    {
+        .field_name = "down",
+        .auto_plot = true,
+        .label = "Aroon Down",
+        .pane = "aroon",
+        .color = "#ef4444",
+        .style = "line",
+        .scale = "aroon",
+        .hover_summary = "Bars-since-low strength line.",
+        .hover_indication = "High values show recent lows; use against Aroon Up for trend direction.",
+    },
+    {
+        .field_name = "oscillator",
+        .auto_plot = true,
+        .label = "Aroon Oscillator",
+        .pane = "aroon",
+        .color = "#22d3ee",
+        .style = "line",
+        .scale = "aroon",
+        .hover_summary = "Aroon Up minus Aroon Down.",
+        .hover_indication = "Positive values favor bullish trend pressure; negative values favor bearish pressure.",
+    },
+};
+
+const cxta_indicator_plot_descriptor cxta_aroon_plot_descriptor = {
+    "aroon",
+    NULL,
+    cxta_aroon_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_aroon_plot_fields),
+};
+
 static int cxta_aroon_descriptor_period_arg(const double* args,
                                              size_t nargs,
                                              size_t index,
@@ -60,6 +103,8 @@ const cxta_indicator_descriptor cxta_aroon_descriptor = {
     NULL,
     cxta_aroon_params,
     CXTA_ARRAY_COUNT(cxta_aroon_params),
+    "aroon",
+    &cxta_aroon_plot_descriptor,
 };
 
 cxta_aroon_output cxta_aroon(const cxta_series_bar_view* view, int period) {

@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/mfi.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_mfi_scalar_plot =
+    CXTA_SCALAR_PLOT("MFI", "rsi", "#22d3ee", "line", "rsi",
+                     "Money Flow Index bounded volume-price oscillator.",
+                     "Use overbought/oversold levels and divergences with price.");
+
+static const cxta_indicator_plot_descriptor cxta_mfi_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("mfi", cxta_mfi_scalar_plot);
 
 static int cxta_mfi_descriptor_period_arg(const double* args,
                                             size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_mfi_descriptor = {
     NULL,
     cxta_mfi_params,
     CXTA_ARRAY_COUNT(cxta_mfi_params),
+    "rsi",
+    &cxta_mfi_plot_descriptor,
 };
 
 double cxta_mfi(const cxta_series_bar_view* view, int period) {

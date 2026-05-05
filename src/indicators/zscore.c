@@ -4,10 +4,19 @@
  */
 
 #include <limits.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/zscore.h>
 #include <cxta/ts/smoothing.h>
 #include <cxta/ts/rolling.h>
 #include <math.h>
+
+static const cxta_scalar_plot_descriptor cxta_zscore_scalar_plot =
+    CXTA_SCALAR_PLOT("Z-Score", "momentum", "#22d3ee", "line", "momentum",
+                     "Rolling close z-score relative to its mean.",
+                     "Use positive/negative extremes for mean-reversion or breakout context.");
+
+static const cxta_indicator_plot_descriptor cxta_zscore_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("zscore", cxta_zscore_scalar_plot);
 
 static int cxta_zscore_descriptor_period_arg(const double* args,
                                              size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_zscore_descriptor = {
     NULL,
     cxta_zscore_params,
     CXTA_ARRAY_COUNT(cxta_zscore_params),
+    "momentum",
+    &cxta_zscore_plot_descriptor,
 };
 
 double cxta_zscore(const cxta_series_bar_view* view, int period) {

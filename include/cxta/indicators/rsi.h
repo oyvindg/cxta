@@ -19,6 +19,7 @@ static const cxta_bridge_fn_spec cxta_rsi_bridge_fn_spec =
 
 /** @brief Expression-facing descriptor for RSI. */
 extern const cxta_indicator_descriptor cxta_rsi_descriptor;
+extern const cxta_indicator_plot_descriptor cxta_rsi_plot_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

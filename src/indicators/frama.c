@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/frama.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_frama_scalar_plot =
+    CXTA_SCALAR_PLOT("FRAMA", "price", "#0284c7", "line", "price",
+                     "Fractal Adaptive Moving Average price overlay.",
+                     "Adapts to trend/range structure; use slope and price distance as trend context.");
+
+static const cxta_indicator_plot_descriptor cxta_frama_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("frama", cxta_frama_scalar_plot);
 
 static int cxta_frama_descriptor_period_arg(const double* args,
                                             size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_frama_descriptor = {
     NULL,
     cxta_frama_params,
     CXTA_ARRAY_COUNT(cxta_frama_params),
+    "price",
+    &cxta_frama_plot_descriptor,
 };
 
 static double cxta_frama_range(const cxta_series_bar_view* view, size_t a, size_t b) {

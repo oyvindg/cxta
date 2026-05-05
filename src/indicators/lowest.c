@@ -4,12 +4,21 @@
  */
 
 #include <cxta/indicators/lowest.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/series/bar.h>
 #include <cxta/ts/smoothing.h>
 
 #include <limits.h>
 #include <math.h>
 #include <stddef.h>
+
+static const cxta_scalar_plot_descriptor cxta_lowest_scalar_plot =
+    CXTA_SCALAR_PLOT("Lowest", "price", "#ef4444", "line", "price",
+                     "Rolling lowest low or source minimum.",
+                     "Use as support, breakdown reference, or trailing lower boundary.");
+
+static const cxta_indicator_plot_descriptor cxta_lowest_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("lowest", cxta_lowest_scalar_plot);
 
 static int cxta_lowest_period_arg(const double* args, size_t nargs, int fallback) {
     double raw;
@@ -86,4 +95,6 @@ const cxta_indicator_descriptor cxta_lowest_descriptor = {
     NULL,
     cxta_lowest_params,
     CXTA_ARRAY_COUNT(cxta_lowest_params),
+    "price",
+    &cxta_lowest_plot_descriptor,
 };

@@ -8,6 +8,14 @@
 #include <cxta/ts/smoothing.h>
 #include <math.h>
 
+static const cxta_scalar_plot_descriptor cxta_realized_volatility_scalar_plot =
+    CXTA_SCALAR_PLOT("Realized Volatility", "volatility", "#f59e0b", "line", "volatility",
+                     "Realized volatility from squared log returns.",
+                     "Use for current risk regime and volatility expansion/contraction filters.");
+
+static const cxta_indicator_plot_descriptor cxta_realized_volatility_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("realized_volatility", cxta_realized_volatility_scalar_plot);
+
 double cxta_rvol(const cxta_series_bar_view* view, int period) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
 
@@ -51,4 +59,6 @@ const cxta_indicator_descriptor cxta_realized_volatility_descriptor = {
     NULL,
     cxta_realized_volatility_params,
     CXTA_ARRAY_COUNT(cxta_realized_volatility_params),
+    "volatility",
+    &cxta_realized_volatility_plot_descriptor,
 };

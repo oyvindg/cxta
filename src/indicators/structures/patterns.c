@@ -93,6 +93,17 @@ static const cxta_param_descriptor cxta_swing_anchor_vwap_params[] = {
     {"max_apt"},
 };
 
+/** Default strings match `CXTA_STRUCT_VWAP_DEFAULT_*_STR` in `cxta/structure/vwap.h`. */
+static const cxta_expr_arg_descriptor cxta_swing_anchor_vwap_expr_args[] = {
+    {"swing_period", CXTA_EXPR_ARG_NUMERIC, CXTA_STRUCT_VWAP_DEFAULT_SWING_PERIOD_STR},
+    {"apt", CXTA_EXPR_ARG_NUMERIC, CXTA_STRUCT_VWAP_DEFAULT_APT_STR},
+    {"use_adapt", CXTA_EXPR_ARG_NUMERIC, CXTA_STRUCT_VWAP_DEFAULT_USE_ADAPT_STR},
+    {"vol_bias", CXTA_EXPR_ARG_NUMERIC, CXTA_STRUCT_VWAP_DEFAULT_VOL_BIAS_STR},
+    {"atr_period", CXTA_EXPR_ARG_NUMERIC, CXTA_STRUCT_VWAP_DEFAULT_ATR_PERIOD_STR},
+    {"min_apt", CXTA_EXPR_ARG_NUMERIC, CXTA_STRUCT_VWAP_DEFAULT_MIN_APT_STR},
+    {"max_apt", CXTA_EXPR_ARG_NUMERIC, CXTA_STRUCT_VWAP_DEFAULT_MAX_APT_STR},
+};
+
 static const cxta_param_descriptor cxta_wedge_params[] = {
     {"left"},
     {"right"},
@@ -100,8 +111,13 @@ static const cxta_param_descriptor cxta_wedge_params[] = {
     {"max_width_ratio"},
 };
 
-const cxta_bridge_fn_spec cxta_swing_anchor_vwap_bridge_fn_spec =
-    CXTA_BRIDGE_FN_SPEC("swing_anchor_vwap", 0u, 7u, cxta_swing_anchor_vwap_params, 1);
+const cxta_bridge_fn_spec cxta_swing_anchor_vwap_bridge_fn_spec = CXTA_BRIDGE_FN_SPEC_EXPR(
+    "swing_anchor_vwap",
+    0u,
+    7u,
+    cxta_swing_anchor_vwap_params,
+    cxta_swing_anchor_vwap_expr_args,
+    1);
 const cxta_bridge_fn_spec cxta_wedge_bridge_fn_spec =
     CXTA_BRIDGE_FN_SPEC("wedge", 2u, 4u, cxta_wedge_params, 1);
 

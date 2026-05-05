@@ -6,6 +6,14 @@
 #include <cxta/indicators/macros.h>
 #include <cxta/indicators/fisher.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_fisher_scalar_plot =
+    CXTA_SCALAR_PLOT("Fisher Transform", "momentum", "#22d3ee", "line", "momentum",
+                     "Fisher Transform normalized price oscillator.",
+                     "Use sign, extremes, and turns to identify momentum inflection points.");
+
+static const cxta_indicator_plot_descriptor cxta_fisher_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("fisher_transform", cxta_fisher_scalar_plot);
 #include <math.h>
 
 static double cxta_fisher_clamp(double x, double lo, double hi) {
@@ -64,4 +72,6 @@ const cxta_indicator_descriptor cxta_fisher_transform_descriptor = {
     NULL,
     cxta_fisher_transform_params,
     CXTA_ARRAY_COUNT(cxta_fisher_transform_params),
+    "momentum",
+    &cxta_fisher_plot_descriptor,
 };

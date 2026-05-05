@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/williamsr.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_williams_r_scalar_plot =
+    CXTA_SCALAR_PLOT("Williams %R", "rsi", "#22d3ee", "line", "rsi",
+                     "Williams %R bounded momentum oscillator.",
+                     "Use overbought/oversold zones and reversals near range extremes.");
+
+static const cxta_indicator_plot_descriptor cxta_williams_r_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("williams_r", cxta_williams_r_scalar_plot);
 
 static int cxta_williams_r_descriptor_period_arg(const double* args,
                                                  size_t nargs,
@@ -50,6 +59,8 @@ const cxta_indicator_descriptor cxta_williams_r_descriptor = {
     NULL,
     cxta_williams_r_params,
     CXTA_ARRAY_COUNT(cxta_williams_r_params),
+    "rsi",
+    &cxta_williams_r_plot_descriptor,
 };
 
 double cxta_williamsr(const cxta_series_bar_view* view, int period) {

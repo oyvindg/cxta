@@ -39,7 +39,6 @@ void cxta_test_wma(void);
 void cxta_test_dema(void);
 void cxta_test_tema(void);
 void cxta_test_hma(void);
-void cxta_test_roc(void);
 void cxta_test_linreg(void);
 void cxta_test_stddev(void);
 void cxta_test_hvol(void);
@@ -137,7 +136,6 @@ int main(void) {
     cxta_test_dema();
     cxta_test_tema();
     cxta_test_hma();
-    cxta_test_roc();
     cxta_test_linreg();
     cxta_test_stddev();
     cxta_test_hvol();

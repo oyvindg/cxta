@@ -44,7 +44,6 @@ add_library(cxta STATIC
     src/indicators/dema.c
     src/indicators/tema.c
     src/indicators/hma.c
-    src/indicators/roc.c
     src/indicators/rolling_extrema.c
     src/indicators/linreg.c
     src/indicators/stddev.c
@@ -103,7 +102,6 @@ add_library(cxta STATIC
     src/indicators/highest.c
     src/indicators/lowest.c
     src/indicators/divergence.c
-    src/indicators/structure.c
     src/indicators/structures/pivots.c
     src/indicators/structures/trend.c
     src/indicators/structures/zones.c
@@ -164,7 +162,6 @@ if(CXTA_BUILD_TESTS)
         tests/indicators/dema.test.c
         tests/indicators/tema.test.c
         tests/indicators/hma.test.c
-        tests/indicators/roc.test.c
         tests/indicators/linreg.test.c
         tests/indicators/stddev.test.c
         tests/indicators/hvol.test.c

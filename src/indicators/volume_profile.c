@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/volume_profile.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
@@ -16,6 +17,20 @@ static const cxta_field_descriptor cxta_volume_profile_fields[] = {
     {"val", offsetof(cxta_vp_output, val), true},
     {"range_high", offsetof(cxta_vp_output, range_high), true},
     {"range_low", offsetof(cxta_vp_output, range_low), true},
+};
+
+static const cxta_plot_field_descriptor cxta_volume_profile_plot_fields[] = {
+    CXTA_FIELD_PLOT("poc", true, "POC", "price", "#f59e0b", "line", "price", "Point of Control price level.", "Use as high-volume fair-value reference."),
+    CXTA_FIELD_PLOT("vah", true, "VAH", "price", "#22c55e", "line", "price", "Value Area High price level.", "Use as upper value boundary and acceptance/rejection reference."),
+    CXTA_FIELD_PLOT("val", true, "VAL", "price", "#ef4444", "line", "price", "Value Area Low price level.", "Use as lower value boundary and acceptance/rejection reference."),
+    CXTA_FIELD_PLOT("range_high", false, "Profile Range High", "price", "#94a3b8", "line", "price", "High price of the profile window.", "Use to understand the profile calculation range."),
+    CXTA_FIELD_PLOT("range_low", false, "Profile Range Low", "price", "#94a3b8", "line", "price", "Low price of the profile window.", "Use to understand the profile calculation range."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_volume_profile_plot_descriptor = {
+    .indicator_name = "volume_profile",
+    .fields = cxta_volume_profile_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_volume_profile_plot_fields),
 };
 
 static int cxta_volume_profile_descriptor_int_arg(const double* args,
@@ -81,6 +96,8 @@ const cxta_indicator_descriptor cxta_volume_profile_descriptor = {
     NULL,
     cxta_volume_profile_params,
     CXTA_ARRAY_COUNT(cxta_volume_profile_params),
+    "price",
+    &cxta_volume_profile_plot_descriptor,
 };
 
 static double cxta_volume_profile_max2(double a, double b) {

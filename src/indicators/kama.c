@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/kama.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_kama_scalar_plot =
+    CXTA_SCALAR_PLOT("KAMA", "price", "#0ea5e9", "line", "price",
+                     "Kaufman Adaptive Moving Average price overlay.",
+                     "Adapts smoothing to efficiency; use slope and distance from price for regime context.");
+
+static const cxta_indicator_plot_descriptor cxta_kama_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("kama", cxta_kama_scalar_plot);
 
 static int cxta_kama_descriptor_period_arg(const double* args,
                                            size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_kama_descriptor = {
     NULL,
     cxta_kama_params,
     CXTA_ARRAY_COUNT(cxta_kama_params),
+    "price",
+    &cxta_kama_plot_descriptor,
 };
 
 double cxta_kama(const cxta_series_bar_view* view, int period) {

@@ -15,7 +15,7 @@
 
 **Moving averages:** SMA, EMA, WMA, DEMA, TEMA, HMA, RMA, KAMA, FRAMA, VIDYA, MAMA
 
-**Momentum:** RSI, Stochastic, StochRSI, MACD, ROC, CCI, CMO, TSI, Williams %R, Connors RSI, RVI, KST, TRIX, PPO, Coppock, Awesome Oscillator
+**Momentum:** RSI, Stochastic, StochRSI, MACD, CCI, CMO, TSI, Williams %R, Connors RSI, RVI, KST, TRIX, PPO, Coppock, Awesome Oscillator
 
 **Volatility:** ATR, True Range, Bollinger Bands, Keltner Channel, Std Dev, Ulcer, Choppiness, TTM Squeeze
 

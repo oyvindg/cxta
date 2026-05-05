@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/mama.h>
+#include <cxta/indicators/macros.h>
 #include <math.h>
 #include <stddef.h>
 #include <string.h>
@@ -11,6 +12,17 @@
 static const cxta_field_descriptor cxta_mama_fields[] = {
     {"mama", offsetof(cxta_mama_output, mama), true},
     {"fama", offsetof(cxta_mama_output, fama), true},
+};
+
+static const cxta_plot_field_descriptor cxta_mama_plot_fields[] = {
+    CXTA_FIELD_PLOT("mama", true, "MAMA", "price", "#22d3ee", "line", "price", "Mesa Adaptive Moving Average line.", "Use crosses against FAMA and price to detect adaptive trend turns."),
+    CXTA_FIELD_PLOT("fama", true, "FAMA", "price", "#f97316", "line", "price", "Following Adaptive Moving Average signal line.", "Use as slower reference for MAMA crosses."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_mama_plot_descriptor = {
+    .indicator_name = "mama",
+    .fields = cxta_mama_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_mama_plot_fields),
 };
 
 static double cxta_mama_descriptor_double_arg(const double* args,
@@ -60,6 +72,8 @@ const cxta_indicator_descriptor cxta_mama_descriptor = {
     NULL,
     cxta_mama_params,
     CXTA_ARRAY_COUNT(cxta_mama_params),
+    "price",
+    &cxta_mama_plot_descriptor,
 };
 
 static double cxta_mama_clamp(double x, double lo, double hi) {

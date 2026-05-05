@@ -16,6 +16,24 @@ typedef struct {
     double samples_seen;
 } cxta_rsi_descriptor_state;
 
+static const cxta_scalar_plot_descriptor cxta_rsi_scalar_plot = {
+    .auto_plot = true,
+    .label = "RSI",
+    .pane = "rsi",
+    .color = "#22d3ee",
+    .style = "line",
+    .scale = "rsi",
+    .hover_summary = "Relative Strength Index oscillator.",
+    .hover_indication = "Use overbought/oversold zones, center-line behavior, and divergences rather than raw value alone.",
+};
+
+const cxta_indicator_plot_descriptor cxta_rsi_plot_descriptor = {
+    "rsi",
+    &cxta_rsi_scalar_plot,
+    NULL,
+    0u,
+};
+
 static double cxta_rsi_from_averages(double avg_gain, double avg_loss);
 
 static int cxta_rsi_descriptor_period_arg(const double* args,
@@ -129,6 +147,8 @@ const cxta_indicator_descriptor cxta_rsi_descriptor = {
     NULL,
     cxta_rsi_params,
     CXTA_ARRAY_COUNT(cxta_rsi_params),
+    "rsi",
+    &cxta_rsi_plot_descriptor,
 };
 
 static double cxta_rsi_from_averages(double avg_gain, double avg_loss) {

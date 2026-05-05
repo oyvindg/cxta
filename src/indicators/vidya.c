@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/vidya.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_vidya_scalar_plot =
+    CXTA_SCALAR_PLOT("VIDYA", "price", "#2563eb", "line", "price",
+                     "Variable Index Dynamic Average price overlay.",
+                     "Adapts smoothing to directional movement; watch slope and price crosses.");
+
+static const cxta_indicator_plot_descriptor cxta_vidya_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("vidya", cxta_vidya_scalar_plot);
 
 static int cxta_vidya_descriptor_period_arg(const double* args,
                                             size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_vidya_descriptor = {
     NULL,
     cxta_vidya_params,
     CXTA_ARRAY_COUNT(cxta_vidya_params),
+    "price",
+    &cxta_vidya_plot_descriptor,
 };
 
 double cxta_vidya(const cxta_series_bar_view* view, int period) {

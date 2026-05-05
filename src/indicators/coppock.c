@@ -4,7 +4,16 @@
  */
 
 #include <cxta/indicators/coppock.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_coppock_scalar_plot =
+    CXTA_SCALAR_PLOT("Coppock Curve", "momentum", "#22d3ee", "line", "momentum",
+                     "Weighted long-horizon ROC momentum curve.",
+                     "Use zero-line and slope turns to identify broad momentum shifts.");
+
+static const cxta_indicator_plot_descriptor cxta_coppock_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("coppock_curve", cxta_coppock_scalar_plot);
 #include <math.h>
 
 static double cxta_coppock_roc_at(const cxta_series_bar_view* view, size_t idx, int period) {
@@ -72,4 +81,6 @@ const cxta_indicator_descriptor cxta_coppock_curve_descriptor = {
     NULL,
     cxta_coppock_curve_params,
     CXTA_ARRAY_COUNT(cxta_coppock_curve_params),
+    "momentum",
+    &cxta_coppock_plot_descriptor,
 };

@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/stochrsi.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/rsi.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
@@ -14,6 +15,17 @@
 static const cxta_field_descriptor cxta_stoch_rsi_fields[] = {
     {"k", offsetof(cxta_stochrsi_output, k), true},
     {"d", offsetof(cxta_stochrsi_output, d), true},
+};
+
+static const cxta_plot_field_descriptor cxta_stoch_rsi_plot_fields[] = {
+    CXTA_FIELD_PLOT("k", true, "Stoch RSI %K", "rsi", "#22d3ee", "line", "rsi", "Fast Stochastic RSI line.", "Use overbought/oversold zones and crosses against %D."),
+    CXTA_FIELD_PLOT("d", true, "Stoch RSI %D", "rsi", "#f97316", "line", "rsi", "Smoothed Stochastic RSI signal line.", "Use %K/%D crosses to confirm oscillator turns."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_stoch_rsi_plot_descriptor = {
+    .indicator_name = "stoch_rsi",
+    .fields = cxta_stoch_rsi_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_stoch_rsi_plot_fields),
 };
 
 static int cxta_stoch_rsi_descriptor_period_arg(const double* args,
@@ -62,6 +74,8 @@ const cxta_indicator_descriptor cxta_stoch_rsi_descriptor = {
     NULL,
     cxta_stoch_rsi_params,
     CXTA_ARRAY_COUNT(cxta_stoch_rsi_params),
+    "rsi",
+    &cxta_stoch_rsi_plot_descriptor,
 };
 
 static double cxta_stochrsi_rsi_at(const cxta_series_bar_view* view, size_t idx, int period) {

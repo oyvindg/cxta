@@ -9,6 +9,14 @@
 #include <limits.h>
 #include <math.h>
 
+static const cxta_scalar_plot_descriptor cxta_historical_volatility_scalar_plot =
+    CXTA_SCALAR_PLOT("Historical Volatility", "volatility", "#f97316", "line", "volatility",
+                     "Annualized historical volatility from log returns.",
+                     "Use rising values as expanding risk/regime context and falling values as compression.");
+
+static const cxta_indicator_plot_descriptor cxta_historical_volatility_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("historical_volatility", cxta_historical_volatility_scalar_plot);
+
 double cxta_hvol(const cxta_series_bar_view* view, int period) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
 
@@ -66,4 +74,6 @@ const cxta_indicator_descriptor cxta_historical_volatility_descriptor = {
     NULL,
     cxta_historical_volatility_params,
     CXTA_ARRAY_COUNT(cxta_historical_volatility_params),
+    "volatility",
+    &cxta_historical_volatility_plot_descriptor,
 };

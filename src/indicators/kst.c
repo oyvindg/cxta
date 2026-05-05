@@ -6,6 +6,14 @@
 #include <cxta/indicators/macros.h>
 #include <cxta/indicators/kst.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_kst_scalar_plot =
+    CXTA_SCALAR_PLOT("KST", "momentum", "#22d3ee", "line", "momentum",
+                     "Know Sure Thing multi-rate momentum oscillator.",
+                     "Use zero-line behavior and slope to confirm broader momentum turns.");
+
+static const cxta_indicator_plot_descriptor cxta_kst_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("kst", cxta_kst_scalar_plot);
 #include <math.h>
 
 static double cxta_kst_roc(const cxta_series_bar_view* view, size_t idx, int period) {
@@ -65,4 +73,6 @@ const cxta_indicator_descriptor cxta_kst_descriptor = {
     NULL,
     cxta_kst_params,
     CXTA_ARRAY_COUNT(cxta_kst_params),
+    "momentum",
+    &cxta_kst_plot_descriptor,
 };

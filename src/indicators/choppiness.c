@@ -6,6 +6,14 @@
 #include <cxta/indicators/macros.h>
 #include <cxta/indicators/choppiness.h>
 #include <cxta/ts/range.h>
+
+static const cxta_scalar_plot_descriptor cxta_choppiness_scalar_plot =
+    CXTA_SCALAR_PLOT("Choppiness", "regime", "#f59e0b", "line", "regime",
+                     "Choppiness Index trend/range regime oscillator.",
+                     "High values indicate range-bound conditions; low values indicate directional trend.");
+
+static const cxta_indicator_plot_descriptor cxta_choppiness_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("choppiness_index", cxta_choppiness_scalar_plot);
 #include <cxta/ts/smoothing.h>
 #include <math.h>
 
@@ -63,4 +71,6 @@ const cxta_indicator_descriptor cxta_choppiness_index_descriptor = {
     NULL,
     cxta_choppiness_index_params,
     CXTA_ARRAY_COUNT(cxta_choppiness_index_params),
+    "regime",
+    &cxta_choppiness_plot_descriptor,
 };

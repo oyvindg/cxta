@@ -5,7 +5,7 @@
 Utvide `cxta` med et konsistent sett indikatorer som ofte etterspørres utenfor dagens dekningsflate, med:
 
 - ren C11-implementasjon og descriptor/bridge-metadata (`CXTA_BRIDGE_FN_SPEC_EXPR` der delvis navngiving trengs),
-- registrering i `cxpr`/`cxpr-bridge-cxta-adapter` (uttrykksnavn og standardverdier),
+- registrering i `cxpr`/`cxpr-cxta-adapter` (uttrykksnavn og standardverdier),
 - **røyk- eller feature-YAML** i Dynasty under `tests/configs/strategies/` når indikatoren er registrert (kopier fra malene i `strategy-yaml-templates/`).
 
 Malene ligger som `*.yaml.example` i denne mappen slik at `cmake` **ikke** plukker dem opp før de kopieres uten `.example`.

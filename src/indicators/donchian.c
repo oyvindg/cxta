@@ -5,6 +5,8 @@
 
 #include <cxta/indicators/channel.h>
 #include <cxta/indicators/donchian.h>
+#include <cxta/indicators/extrema.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
@@ -16,6 +18,19 @@ const cxta_field_descriptor cxta_channel_output_fields[] = {
     {"lower", offsetof(cxta_channel_output, lower), true},
     {"middle", offsetof(cxta_channel_output, middle), true},
     {"width", offsetof(cxta_channel_output, width), true},
+};
+
+static const cxta_plot_field_descriptor cxta_donchian_plot_fields[] = {
+    CXTA_FIELD_PLOT("upper", true, "Donchian Upper", "price", "#22c55e", "line", "price", "Rolling highest high channel boundary.", "Use as breakout resistance or trailing upper boundary."),
+    CXTA_FIELD_PLOT("lower", true, "Donchian Lower", "price", "#ef4444", "line", "price", "Rolling lowest low channel boundary.", "Use as breakdown support or trailing lower boundary."),
+    CXTA_FIELD_PLOT("middle", true, "Donchian Middle", "price", "#f59e0b", "line", "price", "Midpoint between channel boundaries.", "Use as mean/reference inside the channel."),
+    CXTA_FIELD_PLOT("width", false, "Donchian Width", "channel", "#38bdf8", "line", "channel", "Distance between upper and lower channel.", "Expansion indicates wider range; contraction indicates compression."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_donchian_plot_descriptor = {
+    .indicator_name = "donchian",
+    .fields = cxta_donchian_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_donchian_plot_fields),
 };
 
 static int cxta_donchian_descriptor_period_arg(const double* args,
@@ -62,24 +77,20 @@ const cxta_indicator_descriptor cxta_donchian_descriptor = {
     NULL,
     cxta_donchian_params,
     CXTA_ARRAY_COUNT(cxta_donchian_params),
+    "price",
+    &cxta_donchian_plot_descriptor,
 };
 
 cxta_channel_output cxta_donchian(const cxta_series_bar_view* view, int period) {
     cxta_channel_output out = {0.0, 0.0, 0.0, 0.0};
+    cxta_extrema_output extrema;
+
     if (!view || !cxta_series_bar_view_valid(view)) return out;
 
-    const size_t idx = cxta_series_clamp_index(view->size, view->index);
-    const size_t p = (size_t)cxta_ts_clamp_period(period);
-    const size_t window = (p < (idx + 1)) ? p : (idx + 1);
-    const size_t start = idx + 1 - window;
-
-    out.upper = view->bars[start].high;
-    out.lower = view->bars[start].low;
-    for (size_t i = start + 1; i <= idx; ++i) {
-        if (view->bars[i].high > out.upper) out.upper = view->bars[i].high;
-        if (view->bars[i].low < out.lower) out.lower = view->bars[i].low;
-    }
-    out.middle = (out.upper + out.lower) * 0.5;
+    extrema = cxta_extrema(view, period);
+    out.upper = extrema.high;
+    out.lower = extrema.low;
+    out.middle = extrema.mid;
     out.width = out.upper - out.lower;
     return out;
 }

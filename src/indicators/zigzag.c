@@ -27,6 +27,18 @@ static const cxta_field_descriptor cxta_zigzag_fields[] = {
     {"is_high", offsetof(cxta_zigzag_output, is_high), false},
 };
 
+static const cxta_plot_field_descriptor cxta_zigzag_plot_fields[] = {
+    {"line", true, "ZigZag", "zigzag", "#f59e0b", "zigzag", NULL, NULL, NULL,
+     "last", "pivot_index", "active", "active_index", true, true, NULL, NULL, true},
+};
+
+const cxta_indicator_plot_descriptor cxta_zigzag_plot_descriptor = {
+    "zigzag",
+    NULL,
+    cxta_zigzag_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_zigzag_plot_fields),
+};
+
 typedef struct {
     double price;
     size_t index;
@@ -114,6 +126,8 @@ const cxta_indicator_descriptor cxta_zigzag_descriptor = {
     NULL,
     cxta_zigzag_params,
     CXTA_ARRAY_COUNT(cxta_zigzag_params),
+    "zigzag",
+    &cxta_zigzag_plot_descriptor,
 };
 
 static void cxta_zigzag_push_pivot(cxta_zigzag_pivot* pivots,

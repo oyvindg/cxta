@@ -8,6 +8,14 @@
 #include <cxta/ts/smoothing.h>
 #include <math.h>
 
+static const cxta_scalar_plot_descriptor cxta_hma_scalar_plot =
+    CXTA_SCALAR_PLOT("HMA", "price", "#06b6d4", "line", "price",
+                     "Hull Moving Average price overlay.",
+                     "A low-lag smoother; use slope turns and price crosses for trend shifts.");
+
+static const cxta_indicator_plot_descriptor cxta_hma_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("hma", cxta_hma_scalar_plot);
+
 /* WMA over bars[start..end] (inclusive) on close prices. */
 static double wma_range(const cxta_series_bar* bars, size_t start, size_t end) {
     double weighted = 0.0, weights = 0.0;
@@ -89,4 +97,6 @@ const cxta_indicator_descriptor cxta_hma_descriptor = {
     NULL,
     cxta_hma_params,
     CXTA_ARRAY_COUNT(cxta_hma_params),
+    "price",
+    &cxta_hma_plot_descriptor,
 };

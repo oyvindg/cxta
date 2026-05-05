@@ -6,6 +6,14 @@
 #include <cxta/indicators/macros.h>
 #include <cxta/indicators/schaff.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_schaff_scalar_plot =
+    CXTA_SCALAR_PLOT("Schaff Trend Cycle", "rsi", "#22d3ee", "line", "rsi",
+                     "Schaff Trend Cycle bounded momentum oscillator.",
+                     "Use overbought/oversold turns and center-line behavior for trend-cycle timing.");
+
+static const cxta_indicator_plot_descriptor cxta_schaff_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("schaff_trend_cycle", cxta_schaff_scalar_plot);
 #include <stdlib.h>
 
 static double cxta_schaff_stoch_of(const double* values, size_t i, int cycle) {
@@ -112,4 +120,6 @@ const cxta_indicator_descriptor cxta_schaff_trend_cycle_descriptor = {
     NULL,
     cxta_schaff_trend_cycle_params,
     CXTA_ARRAY_COUNT(cxta_schaff_trend_cycle_params),
+    "rsi",
+    &cxta_schaff_plot_descriptor,
 };

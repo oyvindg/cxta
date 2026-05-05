@@ -6,6 +6,14 @@
 #include <cxta/indicators/macros.h>
 #include <cxta/indicators/bop.h>
 
+static const cxta_scalar_plot_descriptor cxta_bop_scalar_plot =
+    CXTA_SCALAR_PLOT("BOP", "momentum", "#22d3ee", "line", "momentum",
+                     "Balance of Power candle pressure oscillator.",
+                     "Positive values favor close strength inside the range; negative values favor weakness.");
+
+static const cxta_indicator_plot_descriptor cxta_bop_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("bop", cxta_bop_scalar_plot);
+
 double cxta_bop(const cxta_series_bar_view* view) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
     const cxta_series_bar* b = cxta_series_bar_view_current(view);
@@ -47,4 +55,6 @@ const cxta_indicator_descriptor cxta_bop_descriptor = {
     NULL,
     NULL,
     0u,
+    "momentum",
+    &cxta_bop_plot_descriptor,
 };

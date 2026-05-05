@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/ema.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_ema_scalar_plot =
+    CXTA_SCALAR_PLOT("EMA", "price", "#38bdf8", "line", "price",
+                     "Exponential Moving Average price overlay.",
+                     "Use slope and price/MA crosses to read trend and pullbacks.");
+
+static const cxta_indicator_plot_descriptor cxta_ema_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("ema", cxta_ema_scalar_plot);
 
 static int cxta_ema_descriptor_period_arg(const double* args,
                                           size_t nargs,
@@ -79,6 +88,8 @@ const cxta_indicator_descriptor cxta_ema_descriptor = {
     NULL,
     cxta_ema_params,
     CXTA_ARRAY_COUNT(cxta_ema_params),
+    "price",
+    &cxta_ema_plot_descriptor,
 };
 
 double cxta_ema_step(double close, int period, cxta_ema_state* st) {

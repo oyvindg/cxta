@@ -19,6 +19,71 @@ static const cxta_field_descriptor cxta_bollinger_fields[] = {
     {"width", offsetof(cxta_bollinger_output, bandwidth), true},
 };
 
+static const cxta_plot_field_descriptor cxta_bollinger_plot_fields[] = {
+    {
+        .field_name = "upper",
+        .auto_plot = true,
+        .label = "Upper Band",
+        .pane = "price",
+        .color = "#60a5fa",
+        .style = "line",
+        .scale = "price",
+        .hover_summary = "Upper Bollinger band.",
+        .hover_indication = "Touches or breaks can indicate extension; compare with middle band and bandwidth.",
+    },
+    {
+        .field_name = "lower",
+        .auto_plot = true,
+        .label = "Lower Band",
+        .pane = "price",
+        .color = "#60a5fa",
+        .style = "line",
+        .scale = "price",
+        .hover_summary = "Lower Bollinger band.",
+        .hover_indication = "Touches or breaks can indicate downside extension; compare with middle band and bandwidth.",
+    },
+    {
+        .field_name = "middle",
+        .auto_plot = true,
+        .label = "Middle Band",
+        .pane = "price",
+        .color = "#f59e0b",
+        .style = "line",
+        .scale = "price",
+        .hover_summary = "Middle moving-average band.",
+        .hover_indication = "Often used as mean reference inside the Bollinger envelope.",
+    },
+    {
+        .field_name = "percentB",
+        .auto_plot = false,
+        .label = "Percent B",
+        .pane = "price",
+        .color = "#a78bfa",
+        .style = "line",
+        .scale = "price",
+        .hover_summary = "Relative position inside the Bollinger envelope.",
+        .hover_indication = "Values below 0 or above 1 indicate price outside the lower or upper band.",
+    },
+    {
+        .field_name = "width",
+        .auto_plot = false,
+        .label = "Band Width",
+        .pane = "price",
+        .color = "#34d399",
+        .style = "line",
+        .scale = "price",
+        .hover_summary = "Width of the Bollinger envelope.",
+        .hover_indication = "Contracting width suggests compression; expansion suggests volatility release.",
+    },
+};
+
+const cxta_indicator_plot_descriptor cxta_bollinger_plot_descriptor = {
+    "bollinger",
+    NULL,
+    cxta_bollinger_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_bollinger_plot_fields),
+};
+
 static int cxta_bollinger_descriptor_period_arg(const double* args,
                                                 size_t nargs,
                                                 size_t index,
@@ -85,6 +150,8 @@ const cxta_indicator_descriptor cxta_bollinger_descriptor = {
     NULL,
     cxta_bollinger_params,
     CXTA_ARRAY_COUNT(cxta_bollinger_params),
+    "price",
+    &cxta_bollinger_plot_descriptor,
 };
 
 cxta_bollinger_output cxta_bollinger(const cxta_series_bar_view* view,

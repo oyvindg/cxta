@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/trix.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_trix_scalar_plot =
+    CXTA_SCALAR_PLOT("TRIX", "momentum", "#22d3ee", "line", "momentum",
+                     "Triple-smoothed rate-of-change oscillator.",
+                     "Use zero-line crosses and slope changes for smoothed momentum shifts.");
+
+static const cxta_indicator_plot_descriptor cxta_trix_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("trix", cxta_trix_scalar_plot);
 
 static int cxta_trix_descriptor_period_arg(const double* args,
                                            size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_trix_descriptor = {
     NULL,
     cxta_trix_params,
     CXTA_ARRAY_COUNT(cxta_trix_params),
+    "momentum",
+    &cxta_trix_plot_descriptor,
 };
 
 double cxta_trix_step(double close, int period, cxta_trix_state* st) {

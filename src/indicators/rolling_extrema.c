@@ -4,12 +4,41 @@
  */
 
 #include <cxta/indicators/rolling_extrema.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/series/bar.h>
 #include <cxta/ts/smoothing.h>
 
 #include <limits.h>
 #include <math.h>
 #include <stddef.h>
+
+static const cxta_scalar_plot_descriptor cxta_rolling_max_scalar_plot =
+    CXTA_SCALAR_PLOT("Rolling Max", "price", "#22c55e", "line", "price",
+                     "Rolling maximum over the selected series.",
+                     "Use as dynamic resistance or breakout threshold.");
+static const cxta_indicator_plot_descriptor cxta_rolling_max_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("rolling_max", cxta_rolling_max_scalar_plot);
+
+static const cxta_scalar_plot_descriptor cxta_rolling_min_scalar_plot =
+    CXTA_SCALAR_PLOT("Rolling Min", "price", "#ef4444", "line", "price",
+                     "Rolling minimum over the selected series.",
+                     "Use as dynamic support or breakdown threshold.");
+static const cxta_indicator_plot_descriptor cxta_rolling_min_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("rolling_min", cxta_rolling_min_scalar_plot);
+
+static const cxta_scalar_plot_descriptor cxta_rolling_max_close_scalar_plot =
+    CXTA_SCALAR_PLOT("Rolling Max Close", "price", "#16a34a", "line", "price",
+                     "Rolling maximum close over the selected window.",
+                     "Use as close-confirmed resistance or breakout threshold.");
+static const cxta_indicator_plot_descriptor cxta_rolling_max_close_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("rolling_max_close", cxta_rolling_max_close_scalar_plot);
+
+static const cxta_scalar_plot_descriptor cxta_rolling_min_close_scalar_plot =
+    CXTA_SCALAR_PLOT("Rolling Min Close", "price", "#dc2626", "line", "price",
+                     "Rolling minimum close over the selected window.",
+                     "Use as close-confirmed support or breakdown threshold.");
+static const cxta_indicator_plot_descriptor cxta_rolling_min_close_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("rolling_min_close", cxta_rolling_min_close_scalar_plot);
 
 static int cxta_rolling_extrema_period_arg(const double* args, size_t nargs, int fallback) {
     double raw;
@@ -144,6 +173,8 @@ const cxta_indicator_descriptor cxta_rolling_max_descriptor = {
     NULL,
     cxta_rolling_extrema_params,
     CXTA_ARRAY_COUNT(cxta_rolling_extrema_params),
+    "price",
+    &cxta_rolling_max_plot_descriptor,
 };
 
 const cxta_indicator_descriptor cxta_rolling_min_descriptor = {
@@ -166,6 +197,8 @@ const cxta_indicator_descriptor cxta_rolling_min_descriptor = {
     NULL,
     cxta_rolling_extrema_params,
     CXTA_ARRAY_COUNT(cxta_rolling_extrema_params),
+    "price",
+    &cxta_rolling_min_plot_descriptor,
 };
 
 const cxta_indicator_descriptor cxta_rolling_max_close_descriptor = {
@@ -188,6 +221,8 @@ const cxta_indicator_descriptor cxta_rolling_max_close_descriptor = {
     NULL,
     cxta_rolling_extrema_params,
     CXTA_ARRAY_COUNT(cxta_rolling_extrema_params),
+    "price",
+    &cxta_rolling_max_close_plot_descriptor,
 };
 
 const cxta_indicator_descriptor cxta_rolling_min_close_descriptor = {
@@ -210,4 +245,6 @@ const cxta_indicator_descriptor cxta_rolling_min_close_descriptor = {
     NULL,
     cxta_rolling_extrema_params,
     CXTA_ARRAY_COUNT(cxta_rolling_extrema_params),
+    "price",
+    &cxta_rolling_min_close_plot_descriptor,
 };

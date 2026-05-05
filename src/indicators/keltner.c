@@ -5,6 +5,7 @@
 
 #include <cxta/indicators/channel.h>
 #include <cxta/indicators/keltner.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/atr.h>
 #include <cxta/indicators/ema.h>
 #include <cxta/ts/smoothing.h>
@@ -12,6 +13,19 @@
 #include <math.h>
 #include <stddef.h>
 #include <string.h>
+
+static const cxta_plot_field_descriptor cxta_keltner_plot_fields[] = {
+    CXTA_FIELD_PLOT("upper", true, "Keltner Upper", "price", "#22c55e", "line", "price", "ATR envelope upper boundary.", "Use as volatility-adjusted resistance or breakout reference."),
+    CXTA_FIELD_PLOT("lower", true, "Keltner Lower", "price", "#ef4444", "line", "price", "ATR envelope lower boundary.", "Use as volatility-adjusted support or breakdown reference."),
+    CXTA_FIELD_PLOT("middle", true, "Keltner Middle", "price", "#f59e0b", "line", "price", "EMA center line for the Keltner channel.", "Use as trend baseline inside the envelope."),
+    CXTA_FIELD_PLOT("width", false, "Keltner Width", "volatility", "#38bdf8", "line", "volatility", "Distance between Keltner upper and lower bands.", "Wider values indicate expanded volatility envelope."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_keltner_plot_descriptor = {
+    .indicator_name = "keltner",
+    .fields = cxta_keltner_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_keltner_plot_fields),
+};
 
 static int cxta_keltner_descriptor_int_arg(const double* args,
                                            size_t nargs,
@@ -77,6 +91,8 @@ const cxta_indicator_descriptor cxta_keltner_descriptor = {
     NULL,
     cxta_keltner_params,
     CXTA_ARRAY_COUNT(cxta_keltner_params),
+    "price",
+    &cxta_keltner_plot_descriptor,
 };
 
 cxta_channel_output cxta_keltner(const cxta_series_bar_view* view,

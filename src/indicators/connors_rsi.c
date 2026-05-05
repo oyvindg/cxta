@@ -4,8 +4,17 @@
  */
 
 #include <cxta/indicators/connors_rsi.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <stdlib.h>
+
+static const cxta_scalar_plot_descriptor cxta_crsi_scalar_plot =
+    CXTA_SCALAR_PLOT("Connors RSI", "rsi", "#22d3ee", "line", "rsi",
+                     "Connors RSI composite bounded oscillator.",
+                     "Use overbought/oversold zones and reversals with trend/regime confirmation.");
+
+static const cxta_indicator_plot_descriptor cxta_crsi_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("crsi", cxta_crsi_scalar_plot);
 
 static double cxta_connors_rsi_from_series(const double* values, size_t count, int period) {
     const int p = cxta_ts_clamp_period(period);
@@ -125,4 +134,6 @@ const cxta_indicator_descriptor cxta_crsi_descriptor = {
     NULL,
     cxta_crsi_params,
     CXTA_ARRAY_COUNT(cxta_crsi_params),
+    "rsi",
+    &cxta_crsi_plot_descriptor,
 };

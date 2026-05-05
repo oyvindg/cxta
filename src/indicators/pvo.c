@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/pvo.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
@@ -14,6 +15,18 @@ static const cxta_field_descriptor cxta_pvo_fields[] = {
     {"line", offsetof(cxta_pvo_output, line), true},
     {"signal", offsetof(cxta_pvo_output, signal), true},
     {"histogram", offsetof(cxta_pvo_output, histogram), true},
+};
+
+static const cxta_plot_field_descriptor cxta_pvo_plot_fields[] = {
+    CXTA_FIELD_PLOT("line", true, "PVO Line", "volume", "#22d3ee", "line", "volume", "Percentage Volume Oscillator line.", "Positive values show fast volume average above slow volume average."),
+    CXTA_FIELD_PLOT("signal", true, "PVO Signal", "volume", "#f97316", "line", "volume", "Signal line for PVO.", "Use line/signal crosses to detect volume momentum turns."),
+    CXTA_FIELD_PLOT("histogram", true, "PVO Histogram", "volume", "#a855f7", "histogram", "volume", "PVO line minus signal.", "Histogram expansion shows increasing spread between PVO and signal."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_pvo_plot_descriptor = {
+    .indicator_name = "pvo",
+    .fields = cxta_pvo_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_pvo_plot_fields),
 };
 
 static int cxta_pvo_descriptor_int_arg(const double* args,
@@ -76,6 +89,8 @@ const cxta_indicator_descriptor cxta_pvo_descriptor = {
     NULL,
     cxta_pvo_params,
     CXTA_ARRAY_COUNT(cxta_pvo_params),
+    "volume",
+    &cxta_pvo_plot_descriptor,
 };
 
 cxta_pvo_output cxta_pvo_step(double volume,

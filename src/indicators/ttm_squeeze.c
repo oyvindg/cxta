@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/ttm_squeeze.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/bollinger.h>
 #include <cxta/indicators/keltner.h>
 #include <cxta/indicators/sma.h>
@@ -17,6 +18,18 @@ static const cxta_field_descriptor cxta_ttm_squeeze_fields[] = {
     {"squeeze_on", offsetof(cxta_squeeze_output, squeeze_on), true},
     {"squeeze_off", offsetof(cxta_squeeze_output, squeeze_off), true},
     {"momentum", offsetof(cxta_squeeze_output, momentum), true},
+};
+
+static const cxta_plot_field_descriptor cxta_ttm_squeeze_plot_fields[] = {
+    CXTA_FIELD_PLOT("squeeze_on", true, "Squeeze On", "squeeze", "#ef4444", "hidden", "squeeze", "Compression state where Bollinger Bands are inside Keltner Channels.", "Use transitions out of squeeze to watch for volatility release."),
+    CXTA_FIELD_PLOT("squeeze_off", true, "Squeeze Off", "squeeze", "#22c55e", "hidden", "squeeze", "Release state after squeeze compression.", "Use with momentum direction to qualify breakout bias."),
+    CXTA_FIELD_PLOT("momentum", true, "Squeeze Momentum", "squeeze", "#22d3ee", "histogram", "squeeze", "Momentum component for TTM squeeze.", "Histogram direction and expansion show post-compression bias."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_ttm_squeeze_plot_descriptor = {
+    .indicator_name = "ttm_squeeze",
+    .fields = cxta_ttm_squeeze_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_ttm_squeeze_plot_fields),
 };
 
 static int cxta_ttm_squeeze_descriptor_int_arg(const double* args,
@@ -85,6 +98,8 @@ const cxta_indicator_descriptor cxta_ttm_squeeze_descriptor = {
     NULL,
     cxta_ttm_squeeze_params,
     CXTA_ARRAY_COUNT(cxta_ttm_squeeze_params),
+    "squeeze",
+    &cxta_ttm_squeeze_plot_descriptor,
 };
 
 cxta_squeeze_output cxta_ttm_squeeze(const cxta_series_bar_view* view,

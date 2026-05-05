@@ -20,6 +20,8 @@ static const cxta_bridge_fn_spec cxta_zigzag_bridge_fn_spec =
 
 /** @brief Expression-facing descriptor for ZigZag. */
 extern const cxta_indicator_descriptor cxta_zigzag_descriptor;
+/** @brief Default GUI plot metadata for ZigZag. */
+extern const cxta_indicator_plot_descriptor cxta_zigzag_plot_descriptor;
 
 #ifdef __cplusplus
 extern "C" {

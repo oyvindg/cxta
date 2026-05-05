@@ -4,8 +4,17 @@
  */
 
 #include <cxta/indicators/dominant_cycle.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <math.h>
+
+static const cxta_scalar_plot_descriptor cxta_dominant_cycle_scalar_plot =
+    CXTA_SCALAR_PLOT("Dominant Cycle Period", "cycle", "#a78bfa", "line", "cycle",
+                     "Estimated dominant cycle length.",
+                     "Use rising/falling cycle length to adapt lookbacks or identify rhythm changes.");
+
+static const cxta_indicator_plot_descriptor cxta_dominant_cycle_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("dominant_cycle_period", cxta_dominant_cycle_scalar_plot);
 
 static double cxta_dominant_cycle_abs(double x) {
     return (x < 0.0) ? -x : x;
@@ -105,4 +114,6 @@ const cxta_indicator_descriptor cxta_dominant_cycle_period_descriptor = {
     NULL,
     cxta_dominant_cycle_period_params,
     CXTA_ARRAY_COUNT(cxta_dominant_cycle_period_params),
+    "cycle",
+    &cxta_dominant_cycle_plot_descriptor,
 };

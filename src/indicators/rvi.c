@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/rvi.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_rvi_scalar_plot =
+    CXTA_SCALAR_PLOT("RVI", "momentum", "#22d3ee", "line", "momentum",
+                     "Relative Vigor Index oscillator.",
+                     "Use zero-line behavior and turns to compare close/open vigor against range.");
+
+static const cxta_indicator_plot_descriptor cxta_rvi_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("rvi", cxta_rvi_scalar_plot);
 
 static int cxta_rvi_descriptor_period_arg(const double* args,
                                           size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_rvi_descriptor = {
     NULL,
     cxta_rvi_params,
     CXTA_ARRAY_COUNT(cxta_rvi_params),
+    "momentum",
+    &cxta_rvi_plot_descriptor,
 };
 
 double cxta_rvi(const cxta_series_bar_view* view, int period) {

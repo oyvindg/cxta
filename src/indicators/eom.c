@@ -4,6 +4,15 @@
  */
 
 #include <cxta/indicators/eom.h>
+#include <cxta/indicators/macros.h>
+
+static const cxta_scalar_plot_descriptor cxta_eom_scalar_plot =
+    CXTA_SCALAR_PLOT("Ease of Movement", "volume", "#22d3ee", "line", "volume",
+                     "Volume-adjusted price movement oscillator.",
+                     "Positive values favor easier upward movement; negative values favor easier downward movement.");
+
+static const cxta_indicator_plot_descriptor cxta_eom_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("ease_of_movement", cxta_eom_scalar_plot);
 
 double cxta_eom(const cxta_series_bar_view* view) {
     if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
@@ -70,4 +79,6 @@ const cxta_indicator_descriptor cxta_ease_of_movement_descriptor = {
     NULL,
     cxta_ease_of_movement_params,
     CXTA_ARRAY_COUNT(cxta_ease_of_movement_params),
+    "volume",
+    &cxta_eom_plot_descriptor,
 };

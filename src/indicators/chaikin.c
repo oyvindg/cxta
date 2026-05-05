@@ -4,9 +4,18 @@
  */
 
 #include <cxta/indicators/chaikin.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
 #include <limits.h>
 #include <math.h>
+
+static const cxta_scalar_plot_descriptor cxta_chaikin_scalar_plot =
+    CXTA_SCALAR_PLOT("Chaikin Oscillator", "volume", "#22d3ee", "line", "volume",
+                     "Accumulation/distribution momentum oscillator.",
+                     "Use zero-line crosses and divergences to confirm volume-backed price pressure.");
+
+static const cxta_indicator_plot_descriptor cxta_chaikin_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("chaikin_oscillator", cxta_chaikin_scalar_plot);
 
 static int cxta_chaikin_descriptor_int_arg(const double* args,
                                            size_t nargs,
@@ -65,6 +74,8 @@ const cxta_indicator_descriptor cxta_chaikin_oscillator_descriptor = {
     NULL,
     cxta_chaikin_oscillator_params,
     CXTA_ARRAY_COUNT(cxta_chaikin_oscillator_params),
+    "volume",
+    &cxta_chaikin_plot_descriptor,
 };
 
 static double cxta_chaikin_mfm(double high, double low, double close) {

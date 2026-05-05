@@ -4,6 +4,7 @@
  */
 
 #include <cxta/indicators/fair_value_gap.h>
+#include <cxta/indicators/macros.h>
 
 #include <math.h>
 #include <stddef.h>
@@ -65,6 +66,20 @@ static const cxta_field_descriptor cxta_fair_value_gap_fields[] = {
     {"fill_pct", offsetof(cxta_fair_value_gap_output, fill_pct), true},
 };
 
+static const cxta_plot_field_descriptor cxta_fair_value_gap_plot_fields[] = {
+    CXTA_FIELD_PLOT("gap_high", false, "FVG High", "fvg", "#22c55e", "line", "price", "High boundary of the active fair value gap.", "Use with gap_low to draw the imbalance zone."),
+    CXTA_FIELD_PLOT("gap_low", false, "FVG Low", "fvg", "#ef4444", "line", "price", "Low boundary of the active fair value gap.", "Use with gap_high to draw the imbalance zone."),
+    CXTA_FIELD_PLOT("direction", true, "FVG Direction", "fvg", "#38bdf8", "hidden", "fvg", "Fair value gap direction.", "Positive is bullish imbalance; negative is bearish imbalance."),
+    CXTA_FIELD_PLOT("mitigated", true, "FVG Mitigated", "fvg", "#f59e0b", "hidden", "fvg", "Mitigation state for the active gap.", "Use transitions to detect filled or invalidated imbalance zones."),
+    CXTA_FIELD_PLOT("fill_pct", true, "FVG Fill %", "fvg", "#a78bfa", "line", "fvg", "Current fill percentage of the active gap.", "Higher values indicate more of the imbalance has been filled."),
+};
+
+static const cxta_indicator_plot_descriptor cxta_fair_value_gap_plot_descriptor = {
+    .indicator_name = "fair_value_gap",
+    .fields = cxta_fair_value_gap_plot_fields,
+    .field_count = CXTA_ARRAY_COUNT(cxta_fair_value_gap_plot_fields),
+};
+
 static void cxta_fair_value_gap_descriptor_eval(const cxta_series_bar_view* view,
                                                 const double* args,
                                                 size_t nargs,
@@ -101,6 +116,8 @@ const cxta_indicator_descriptor cxta_fair_value_gap_descriptor = {
     NULL,
     NULL,
     0u,
+    "fvg",
+    &cxta_fair_value_gap_plot_descriptor,
 };
 
 cxta_fair_value_gap_output cxta_fair_value_gap(const cxta_series_bar_view* view) {

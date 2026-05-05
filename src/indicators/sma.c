@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/sma.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_sma_scalar_plot =
+    CXTA_SCALAR_PLOT("SMA", "price", "#93c5fd", "line", "price",
+                     "Simple Moving Average price overlay.",
+                     "Use as trend baseline, support/resistance reference, or crossover component.");
+
+static const cxta_indicator_plot_descriptor cxta_sma_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("sma", cxta_sma_scalar_plot);
 
 static int cxta_sma_descriptor_period_arg(const double* args,
                                           size_t nargs,
@@ -102,6 +111,8 @@ const cxta_indicator_descriptor cxta_sma_descriptor = {
     NULL,
     cxta_sma_params,
     CXTA_ARRAY_COUNT(cxta_sma_params),
+    "price",
+    &cxta_sma_plot_descriptor,
 };
 
 double cxta_sma_from_sum(double sum, size_t window) {

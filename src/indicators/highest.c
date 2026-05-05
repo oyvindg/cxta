@@ -4,12 +4,21 @@
  */
 
 #include <cxta/indicators/highest.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/series/bar.h>
 #include <cxta/ts/smoothing.h>
 
 #include <limits.h>
 #include <math.h>
 #include <stddef.h>
+
+static const cxta_scalar_plot_descriptor cxta_highest_scalar_plot =
+    CXTA_SCALAR_PLOT("Highest", "price", "#22c55e", "line", "price",
+                     "Rolling highest high or source maximum.",
+                     "Use as resistance, breakout reference, or trailing upper boundary.");
+
+static const cxta_indicator_plot_descriptor cxta_highest_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("highest", cxta_highest_scalar_plot);
 
 static int cxta_highest_period_arg(const double* args, size_t nargs, int fallback) {
     double raw;
@@ -86,4 +95,6 @@ const cxta_indicator_descriptor cxta_highest_descriptor = {
     NULL,
     cxta_highest_params,
     CXTA_ARRAY_COUNT(cxta_highest_params),
+    "price",
+    &cxta_highest_plot_descriptor,
 };

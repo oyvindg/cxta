@@ -7,7 +7,16 @@
 #include <math.h>
 
 #include <cxta/indicators/ulcer.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/ts/smoothing.h>
+
+static const cxta_scalar_plot_descriptor cxta_ulcer_scalar_plot =
+    CXTA_SCALAR_PLOT("Ulcer Index", "volatility", "#f97316", "line", "volatility",
+                     "Drawdown-depth risk indicator.",
+                     "Rising values indicate deeper or more persistent downside pressure.");
+
+static const cxta_indicator_plot_descriptor cxta_ulcer_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("ulcer_index", cxta_ulcer_scalar_plot);
 
 static int cxta_ulcer_index_descriptor_period_arg(const double* args,
                                                   size_t nargs,
@@ -50,6 +59,8 @@ const cxta_indicator_descriptor cxta_ulcer_index_descriptor = {
     NULL,
     cxta_ulcer_index_params,
     CXTA_ARRAY_COUNT(cxta_ulcer_index_params),
+    "volatility",
+    &cxta_ulcer_plot_descriptor,
 };
 
 double cxta_ulcer(const cxta_series_bar_view* view, int period) {

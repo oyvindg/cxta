@@ -4,10 +4,19 @@
  */
 
 #include <limits.h>
+#include <cxta/indicators/macros.h>
 #include <cxta/indicators/stddev.h>
 #include <cxta/ts/smoothing.h>
 #include <cxta/ts/rolling.h>
 #include <math.h>
+
+static const cxta_scalar_plot_descriptor cxta_stddev_scalar_plot =
+    CXTA_SCALAR_PLOT("StdDev", "volatility", "#f97316", "line", "volatility",
+                     "Rolling standard deviation of close.",
+                     "Use to detect compression and expansion; often paired with bands or z-score.");
+
+static const cxta_indicator_plot_descriptor cxta_stddev_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("stddev", cxta_stddev_scalar_plot);
 
 static int cxta_stddev_descriptor_period_arg(const double* args,
                                              size_t nargs,
@@ -49,6 +58,8 @@ const cxta_indicator_descriptor cxta_stddev_descriptor = {
     NULL,
     cxta_stddev_params,
     CXTA_ARRAY_COUNT(cxta_stddev_params),
+    "volatility",
+    &cxta_stddev_plot_descriptor,
 };
 
 double cxta_stddev(const cxta_series_bar_view* view, int period) {

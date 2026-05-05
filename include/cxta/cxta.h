@@ -48,7 +48,6 @@
 #include "indicators/dema.h"            // IWYU pragma: export
 #include "indicators/tema.h"            // IWYU pragma: export
 #include "indicators/hma.h"             // IWYU pragma: export
-#include "indicators/roc.h"             // IWYU pragma: export
 #include "indicators/rolling_extrema.h" // IWYU pragma: export
 #include "indicators/linreg.h"          // IWYU pragma: export
 #include "indicators/stddev.h"          // IWYU pragma: export

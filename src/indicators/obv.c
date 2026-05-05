@@ -6,6 +6,14 @@
 #include <cxta/indicators/macros.h>
 #include <cxta/indicators/obv.h>
 
+static const cxta_scalar_plot_descriptor cxta_obv_scalar_plot =
+    CXTA_SCALAR_PLOT("OBV", "volume", "#38bdf8", "line", "volume",
+                     "On Balance Volume cumulative flow line.",
+                     "Use divergence and trend in OBV to confirm or question price moves.");
+
+static const cxta_indicator_plot_descriptor cxta_obv_plot_descriptor =
+    CXTA_INDICATOR_SCALAR_PLOT("obv", cxta_obv_scalar_plot);
+
 double cxta_obv_step(double close, double volume, cxta_obv_state* st) {
     if (!st) return 0.0;
     if (st->initialized == 0.0) {
@@ -63,4 +71,6 @@ const cxta_indicator_descriptor cxta_obv_descriptor = {
     NULL,
     NULL,
     0u,
+    "volume",
+    &cxta_obv_plot_descriptor,
 };

@@ -90,6 +90,29 @@ static const cxta_field_descriptor cxta_supertrend_output_fields[] = {
     CXTA_DESC_FIELD("strength", offsetof(cxta_supertrend_output, strength)),
 };
 
+static const cxta_plot_field_descriptor cxta_supertrend_plot_fields[] = {
+    {"value", true, "Supertrend", "supertrend", "#22c55e", "line", "price", "#22c55e", "#ef4444",
+     NULL, NULL, NULL, NULL, false, false,
+     "Active Supertrend trailing line for the current direction.",
+     "In bullish regimes this follows the final lower band; in bearish regimes it follows the final upper band.",
+     true},
+    {"direction", true, "Supertrend Direction", "supertrend", "#38bdf8", "hidden", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "Trend direction state: positive for bullish, negative for bearish.",
+     "Use direction crosses or sign checks as regime filters and exit triggers."},
+    {"strength", true, "Supertrend Strength", "supertrend", "#f59e0b", "line", NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, false, false,
+     "Normalized distance between close and the active Supertrend line.",
+     "Higher values indicate price is farther from the trailing stop relative to close."},
+};
+
+const cxta_indicator_plot_descriptor cxta_supertrend_plot_descriptor = {
+    "supertrend",
+    NULL,
+    cxta_supertrend_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_supertrend_plot_fields),
+};
+
 static void cxta_supertrend_desc_eval_struct(const cxta_series_bar_view* view,
                                              const double* args,
                                              size_t nargs,
@@ -120,4 +143,6 @@ const cxta_indicator_descriptor cxta_supertrend_descriptor = {
     NULL,
     cxta_supertrend_params,
     CXTA_ARRAY_COUNT(cxta_supertrend_params),
+    "supertrend",
+    &cxta_supertrend_plot_descriptor,
 };

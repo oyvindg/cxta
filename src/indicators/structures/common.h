@@ -45,6 +45,8 @@
         (step_fn),                                          \
         (params_array),                                     \
         CXTA_ARRAY_COUNT(params_array),                     \
+        "price",                                            \
+        NULL,                                               \
     }
 
 #define CXTA_STRUCTURE_DESCRIPTOR_NO_PARAMS(name_literal,   \
@@ -76,4 +78,6 @@
         (step_fn),                                          \
         NULL,                                               \
         0u,                                                 \
+        "price",                                            \
+        NULL,                                               \
     }

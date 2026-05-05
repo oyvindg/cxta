@@ -12,8 +12,40 @@
 #include <string.h>
 
 static const cxta_field_descriptor cxta_vortex_fields[] = {
-    {"plusVI", offsetof(cxta_vortex_output, vi_plus), true},
-    {"minusVI", offsetof(cxta_vortex_output, vi_minus), true},
+    {"plusVI", offsetof(cxta_vortex_output, vi_plus), false},
+    {"minusVI", offsetof(cxta_vortex_output, vi_minus), false},
+};
+
+static const cxta_plot_field_descriptor cxta_vortex_plot_fields[] = {
+    {
+        .field_name = "plusVI",
+        .auto_plot = true,
+        .label = "+VI",
+        .pane = "vortex",
+        .color = "#22c55e",
+        .style = "line",
+        .scale = "vortex",
+        .hover_summary = "Positive Vortex movement line.",
+        .hover_indication = "A +VI lead over -VI favors bullish trend pressure.",
+    },
+    {
+        .field_name = "minusVI",
+        .auto_plot = true,
+        .label = "-VI",
+        .pane = "vortex",
+        .color = "#ef4444",
+        .style = "line",
+        .scale = "vortex",
+        .hover_summary = "Negative Vortex movement line.",
+        .hover_indication = "A -VI lead over +VI favors bearish trend pressure.",
+    },
+};
+
+const cxta_indicator_plot_descriptor cxta_vortex_plot_descriptor = {
+    "vortex",
+    NULL,
+    cxta_vortex_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_vortex_plot_fields),
 };
 
 static int cxta_vortex_descriptor_period_arg(const double* args,
@@ -60,6 +92,8 @@ const cxta_indicator_descriptor cxta_vortex_descriptor = {
     NULL,
     cxta_vortex_params,
     CXTA_ARRAY_COUNT(cxta_vortex_params),
+    "vortex",
+    &cxta_vortex_plot_descriptor,
 };
 
 cxta_vortex_output cxta_vortex(const cxta_series_bar_view* view, int period) {

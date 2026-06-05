@@ -51,7 +51,7 @@ void cxta_test_pair(void) {
     double expected_hv_ratio;
     double expected_tracking_error;
     double expected_relative_strength;
-    double expected_z_score;
+    double expected_zscore;
     size_t i;
 
     for (i = 0u; i < 3u; ++i) {
@@ -100,9 +100,9 @@ void cxta_test_pair(void) {
         const double mean = (50.0 + 51.0 + 52.0 + 53.0) / 4.0;
         const double mean_sq =
             ((50.0 * 50.0) + (51.0 * 51.0) + (52.0 * 52.0) + (53.0 * 53.0)) / 4.0;
-        expected_z_score = (spreads[3] - mean) / sqrt(mean_sq - (mean * mean));
+        expected_zscore = (spreads[3] - mean) / sqrt(mean_sq - (mean * mean));
     }
-    assert(fabs(cxta_ts_z_score_pair(&view_a, &view_b, 4u) - expected_z_score) < 1e-12);
+    assert(fabs(cxta_ts_zscore_pair(&view_a, &view_b, 4u) - expected_zscore) < 1e-12);
 
     printf("  ✓ test_pair\n");
 }

@@ -38,6 +38,11 @@ static const cxta_field_descriptor cxta_wedge_fields[] = {
     CXTA_STRUCT_FIELD_HIDDEN("breakout", cxta_struct_wedge_state, breakout),
 };
 
+static const cxta_indicator_plot_descriptor cxta_swing_anchor_vwap_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("swing_anchor_vwap");
+static const cxta_indicator_plot_descriptor cxta_wedge_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("wedge");
+
 static void cxta_swing_anchor_vwap_descriptor_eval(const cxta_series_bar_view* view,
                                                    const double* args,
                                                    size_t nargs,
@@ -120,27 +125,28 @@ const cxta_bridge_fn_spec cxta_swing_anchor_vwap_bridge_fn_spec = CXTA_BRIDGE_FN
     1);
 const cxta_bridge_fn_spec cxta_wedge_bridge_fn_spec =
     CXTA_BRIDGE_FN_SPEC("wedge", 2u, 4u, cxta_wedge_params, 1);
-
 const cxta_indicator_descriptor cxta_swing_anchor_vwap_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("swing_anchor_vwap",
-                              0,
-                              7,
-                              0,
-                              cxta_struct_vwap_result,
-                              sizeof(cxta_struct_vwap_state),
-                              cxta_swing_anchor_vwap_fields,
-                              cxta_swing_anchor_vwap_descriptor_eval,
-                              cxta_swing_anchor_vwap_descriptor_step,
-                              cxta_swing_anchor_vwap_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("swing_anchor_vwap",
+                                        0,
+                                        7,
+                                        0,
+                                        cxta_struct_vwap_result,
+                                        sizeof(cxta_struct_vwap_state),
+                                        cxta_swing_anchor_vwap_fields,
+                                        cxta_swing_anchor_vwap_descriptor_eval,
+                                        cxta_swing_anchor_vwap_descriptor_step,
+                                        cxta_swing_anchor_vwap_params,
+                                        &cxta_swing_anchor_vwap_plot_descriptor);
 
 const cxta_indicator_descriptor cxta_wedge_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("wedge",
-                              2,
-                              4,
-                              5,
-                              cxta_struct_wedge_state,
-                              0u,
-                              cxta_wedge_fields,
-                              cxta_wedge_descriptor_eval,
-                              NULL,
-                              cxta_wedge_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("wedge",
+                                        2,
+                                        4,
+                                        5,
+                                        cxta_struct_wedge_state,
+                                        0u,
+                                        cxta_wedge_fields,
+                                        cxta_wedge_descriptor_eval,
+                                        NULL,
+                                        cxta_wedge_params,
+                                        &cxta_wedge_plot_descriptor);

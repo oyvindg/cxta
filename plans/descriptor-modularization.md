@@ -20,8 +20,8 @@ Each migrated indicator should follow this shape:
 3. Export `extern const cxta_indicator_descriptor cxta_<name>_descriptor;` from the header.
 4. Define `cxta_<name>_descriptor` in `src/indicators/<name>.c`.
 5. Move any indicator-specific descriptor eval wrappers into `<name>.c`.
-6. Remove the inline descriptor entry from `kCoreDescriptors[]`.
-7. Add `&cxta_<name>_descriptor` to `kExternalDescriptors[]`.
+6. Remove the inline descriptor entry from `core_descriptors[]`.
+7. Add `&cxta_<name>_descriptor` to `external_descriptors[]`.
 8. If the indicator should expose named args through `cxpr`, register its local `cxta_<name>_bridge_fn_spec` in `cxpr/src/bridge/registry.c`.
 9. Compile-check `cxta` and `cxpr` consumers after the move.
 
@@ -38,8 +38,8 @@ Use this checklist for every migration:
 - [ ] Move step adapters into the indicator module if present.
 - [ ] Move dynamic state-slot helpers into the indicator module if present.
 - [ ] Define `cxta_<name>_descriptor` in the indicator `.c` file.
-- [ ] Remove the inline descriptor entry from `kCoreDescriptors[]`.
-- [ ] Add the descriptor pointer to `kExternalDescriptors[]`.
+- [ ] Remove the inline descriptor entry from `core_descriptors[]`.
+- [ ] Add the descriptor pointer to `external_descriptors[]`.
 - [ ] Remove dead indicator-specific helper code from `descriptor.c`.
 - [ ] Register the indicator through `cxpr_register_cxta_fn_spec(...)` if named args should be exposed.
 - [ ] Compile-check `src/indicators/<name>.c`.
@@ -141,8 +141,8 @@ Keep in `descriptor.c`:
 - shared numeric arg parsing
 - shared period-clamp helpers
 - shared struct-copy helper
-- `kCoreDescriptors[]`
-- `kExternalDescriptors[]`
+- `core_descriptors[]`
+- `external_descriptors[]`
 - inventory lookup functions
 - fallback parameter-spec table for not-yet-migrated indicators
 
@@ -151,15 +151,15 @@ Keep in `descriptor.c`:
 After most named-arg-capable indicators are migrated:
 
 - remove central param-name duplication where `descriptor->params` already exists
-- shrink `kParamSpecTable[]` to only legacy or not-yet-migrated indicators
+- shrink `param_spec_table[]` to only legacy or not-yet-migrated indicators
 - prefer `descriptor->params` as the source of truth
 
 ### Stage 3
 
 After most descriptors are local:
 
-- reduce `kCoreDescriptors[]` to only trivial builtins or leave it empty
-- keep only `kExternalDescriptors[]` as the main registry list
+- reduce `core_descriptors[]` to only trivial builtins or leave it empty
+- keep only `external_descriptors[]` as the main registry list
 - move large field arrays and adapters fully out of `descriptor.c`
 
 ## Bridge Simplification Targets
@@ -198,7 +198,7 @@ A migration is complete when all of these are true:
 - bridge-facing metadata, if needed, is defined in the indicator header
 - `descriptor.c` no longer contains indicator-specific eval logic for that indicator
 - `descriptor.c` no longer contains an inline descriptor entry for that indicator
-- the descriptor is listed through `kExternalDescriptors[]`
+- the descriptor is listed through `external_descriptors[]`
 - `cxpr` uses local bridge metadata when named args should be exposed
 - compile-checks pass for the touched `cxta` and `cxpr` files
 
@@ -206,8 +206,8 @@ A migration is complete when all of these are true:
 
 Wave 1 single-period scalars listed above are complete. Good next targets:
 
-1. `adx` — struct-output indicator; removes `kAdxFields` and struct eval wiring from `descriptor.c`.
-2. `fisher_transform` or `cmo` — remaining simple scalars still using central `CXTA_WRAP_BAR_SCALAR_1I` / `kParamSpecTable`.
+1. `adx` — struct-output indicator; removes `adx_fields` and struct eval wiring from `descriptor.c`.
+2. `fisher_transform` or `cmo` — remaining simple scalars still using central `CXTA_WRAP_BAR_SCALAR_1I` / `param_spec_table`.
 
 Reasoning:
 

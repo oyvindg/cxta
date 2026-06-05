@@ -28,6 +28,11 @@ static const cxta_field_descriptor cxta_bos_fields[] = {
     CXTA_STRUCT_FIELD("choch_down", cxta_struct_bos_state, choch_down),
 };
 
+static const cxta_indicator_plot_descriptor cxta_structure_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("structure");
+static const cxta_indicator_plot_descriptor cxta_bos_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("bos");
+
 static void cxta_structure_descriptor_eval(const cxta_series_bar_view* view,
                                            const double* args,
                                            size_t nargs,
@@ -76,25 +81,27 @@ const cxta_bridge_fn_spec cxta_bos_bridge_fn_spec =
     CXTA_BRIDGE_FN_SPEC("bos", 2u, 3u, cxta_bos_params, 1);
 
 const cxta_indicator_descriptor cxta_structure_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("structure",
-                              2,
-                              3,
-                              6,
-                              cxta_struct_structure_state,
-                              0u,
-                              cxta_structure_fields,
-                              cxta_structure_descriptor_eval,
-                              NULL,
-                              cxta_structure_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("structure",
+                                        2,
+                                        3,
+                                        6,
+                                        cxta_struct_structure_state,
+                                        0u,
+                                        cxta_structure_fields,
+                                        cxta_structure_descriptor_eval,
+                                        NULL,
+                                        cxta_structure_params,
+                                        &cxta_structure_plot_descriptor);
 
 const cxta_indicator_descriptor cxta_bos_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("bos",
-                              2,
-                              3,
-                              0,
-                              cxta_struct_bos_state,
-                              0u,
-                              cxta_bos_fields,
-                              cxta_bos_descriptor_eval,
-                              NULL,
-                              cxta_bos_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("bos",
+                                        2,
+                                        3,
+                                        0,
+                                        cxta_struct_bos_state,
+                                        0u,
+                                        cxta_bos_fields,
+                                        cxta_bos_descriptor_eval,
+                                        NULL,
+                                        cxta_bos_params,
+                                        &cxta_bos_plot_descriptor);

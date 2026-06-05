@@ -134,7 +134,6 @@ Indicators that ship expression defaults in-tree (multi-slot optional APIs) incl
 |----------|----------------------------------------|
 | `swing_anchor_vwap` | See `CXTA_STRUCT_VWAP_DEFAULT_*_STR` in `include/cxta/structure/vwap.h` |
 | `ttm_squeeze` | `20`, `2`, `20`, `1.5`, `20` |
-| `kst` | `10`, `15`, `20`, `30` |
 | `coppock_curve` | `10`, `14`, `11` |
 | `crsi` | `3`, `2`, `100` |
 | `mama` | `0.5`, `0.05` |

@@ -4,11 +4,12 @@
  */
 
 #include <cxta/ts/smoothing.h>
+#include <cxta/ts/wilder_step_math.h>
 #include <cxta/math/math.h>
 #include <math.h>
 
 int cxta_ts_clamp_period(int period) {
-    return (period < 1) ? 1 : period;
+    return cxta_wilder_step_math_clamp_period(period);
 }
 
 double cxta_ts_ema_alpha(int period) {
@@ -21,8 +22,7 @@ double cxta_ts_ema_step(double prev, double x, int period) {
 }
 
 double cxta_ts_wilder_step(double prev, double x, int period) {
-    const int p = cxta_ts_clamp_period(period);
-    return ((prev * (double)(p - 1)) + x) / (double)p;
+    return cxta_wilder_step_math_step(prev, x, period);
 }
 
 void cxta_ts_gain_loss(double diff, double* gain, double* loss) {
@@ -38,4 +38,3 @@ void cxta_ts_update_gain_loss(double* avg_gain, double* avg_loss, double diff, i
     *avg_gain = cxta_ts_wilder_step(*avg_gain, gain, period);
     *avg_loss = cxta_ts_wilder_step(*avg_loss, loss, period);
 }
-

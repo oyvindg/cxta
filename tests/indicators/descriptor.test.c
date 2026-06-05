@@ -35,6 +35,7 @@ void cxta_test_descriptor(void) {
     const cxta_indicator_descriptor* rsi = cxta_indicator_descriptor_find("rsi");
     const cxta_indicator_descriptor* ao = cxta_indicator_descriptor_find("awesome_oscillator");
     const cxta_indicator_descriptor* bollinger = cxta_indicator_descriptor_find("bollinger");
+    const cxta_indicator_descriptor* kst = cxta_indicator_descriptor_find("kst");
     const cxta_indicator_descriptor* divergence = cxta_indicator_descriptor_find("divergence");
     const cxta_indicator_descriptor* eom = cxta_indicator_descriptor_find("ease_of_movement");
     const cxta_indicator_descriptor* vwap = cxta_indicator_descriptor_find("vwap");
@@ -55,14 +56,21 @@ void cxta_test_descriptor(void) {
     const cxta_indicator_descriptor* swing_anchor_vwap =
         cxta_indicator_descriptor_find("swing_anchor_vwap");
     const cxta_indicator_descriptor* wedge = cxta_indicator_descriptor_find("wedge");
+    const cxta_indicator_descriptor* broadening = cxta_indicator_descriptor_find("broadening");
     const cxta_scalar_plot_descriptor* volume_plot =
         cxta_builtin_plot_descriptor_find("volume");
     char generated_name[64] = {0};
     const cxta_field_descriptor* percent_b = NULL;
+    const cxta_field_descriptor* kst_line = NULL;
+    const cxta_field_descriptor* kst_histogram = NULL;
     const cxta_field_descriptor* vwap_value = NULL;
     const cxta_field_descriptor* pivot_points_pp = NULL;
     const cxta_field_descriptor* wedge_upper = NULL;
     const cxta_field_descriptor* wedge_breakdown = NULL;
+    const cxta_field_descriptor* broadening_resistance = NULL;
+    const cxta_field_descriptor* broadening_breakout = NULL;
+    const cxta_field_descriptor* broadening_direction = NULL;
+    const cxta_field_descriptor* broadening_strength = NULL;
     const cxta_series_bar bars[] = {
         {0, 0.0, 10.0, 8.0, 9.0, 100.0},
         {0, 0.0, 11.0, 9.0, 10.0, 100.0},
@@ -112,6 +120,7 @@ void cxta_test_descriptor(void) {
     const double fvg_args[] = {20.0};
     const double savwap_args[] = {2.0, 20.0, 0.0, 10.0};
     cxta_bollinger_output bollinger_out = {0};
+    cxta_kst_output kst_out = {0};
     cxta_struct_pivot_args parsed_pivots = {0};
     cxta_struct_pivot_state expected_pivots = {0};
     cxta_struct_pivot_state pivot_out = {0};
@@ -128,11 +137,11 @@ void cxta_test_descriptor(void) {
     const cxta_bollinger_output expected_bollinger = cxta_bollinger(&view, 3, 2.0);
 
     assert(descriptors);
-    assert(count == 89u);
+    assert(count == 90u);
     assert(volume_plot);
     assert(volume_plot->auto_plot);
     assert(strcmp(volume_plot->label, "Volume") == 0);
-    assert(strcmp(volume_plot->pane, "volume") == 0);
+    assert(strcmp(volume_plot->pane, "price") == 0);
     assert(strcmp(volume_plot->style, "histogram") == 0);
     assert(strcmp(volume_plot->scale, "volume") == 0);
     assert(strcmp(volume_plot->positive_color, "#22c55e") == 0);
@@ -295,6 +304,36 @@ void cxta_test_descriptor(void) {
     assert(fabs(bollinger_out.middle - expected_bollinger.middle) < 1e-12);
     assert(fabs(bollinger_out.upper - expected_bollinger.upper) < 1e-12);
     assert(fabs(bollinger_out.lower - expected_bollinger.lower) < 1e-12);
+
+    assert(kst);
+    assert(kst->min_args == 5);
+    assert(kst->max_args == 5);
+    assert(kst->primary_field_index == 0);
+    assert((kst->flags & CXTA_INDICATOR_STRUCT) != 0u);
+    assert(kst->output_size == sizeof(cxta_kst_output));
+    assert(kst->eval_struct != NULL);
+    assert(kst->field_count == 3u);
+    assert(strcmp(kst->default_pane, "kst") == 0);
+    kst_line = cxta_find_field(kst, "line");
+    kst_histogram = cxta_find_field(kst, "histogram");
+    assert(kst_line);
+    assert(kst_line->offset == offsetof(cxta_kst_output, line));
+    assert(kst_histogram);
+    assert(kst_histogram->offset == offsetof(cxta_kst_output, histogram));
+    assert(cxta_indicator_field_auto_plot(kst, kst_line));
+    {
+        const cxta_indicator_plot_descriptor* kst_plot =
+            cxta_indicator_plot_descriptor_find("kst");
+        const cxta_plot_field_descriptor* kst_signal =
+            cxta_indicator_plot_field_descriptor_find("kst", "signal");
+        assert(kst_plot);
+        assert(kst_plot->field_count == 3u);
+        assert(kst_signal);
+        assert(strcmp(kst_signal->pane, "kst") == 0);
+        assert(strcmp(kst_signal->style, "line") == 0);
+    }
+    kst->eval_struct(&view, (const double[]){2.0, 3.0, 4.0, 5.0, 3.0}, 5u, &kst_out);
+    assert(fabs(kst_out.histogram - (kst_out.line - kst_out.signal)) < 1e-12);
 
     assert(divergence);
     assert(divergence->min_args == 2);
@@ -459,6 +498,24 @@ void cxta_test_descriptor(void) {
     assert(wedge_breakdown);
     assert(wedge_upper->auto_plot);
     assert(!wedge_breakdown->auto_plot);
+
+    assert(broadening);
+    assert(broadening->min_args == 0);
+    assert(broadening->max_args == 10);
+    assert(broadening->primary_field_index == 10);
+    assert(broadening->field_count == 19u);
+    broadening_resistance = cxta_find_field(broadening, "resistance");
+    broadening_breakout = cxta_find_field(broadening, "breakout");
+    broadening_direction = cxta_find_field(broadening, "direction");
+    broadening_strength = cxta_find_field(broadening, "strength");
+    assert(broadening_resistance);
+    assert(broadening_breakout);
+    assert(broadening_direction);
+    assert(broadening_strength);
+    assert(broadening_resistance->auto_plot);
+    assert(!broadening_breakout->auto_plot);
+    assert(!broadening_direction->auto_plot);
+    assert(!broadening_strength->auto_plot);
 
     assert(cxta_struct_pivot_args_parse(pivot_args, 2u, structured_view.index, &parsed_pivots) == 1);
     assert(cxta_struct_pivot_state_compute(&structured_view, &parsed_pivots, &expected_pivots) == 1);

@@ -12,8 +12,8 @@
 
 static const cxta_scalar_plot_descriptor cxta_ema_scalar_plot =
     CXTA_SCALAR_PLOT("EMA", "price", "#38bdf8", "line", "price",
-                     "Exponential Moving Average price overlay.",
-                     "Use slope and price/MA crosses to read trend and pullbacks.");
+                     "Exponential Moving Average of the selected source, weighted toward recent bars.",
+                     "Use slope, price/EMA crosses, and fast/slow EMA relationships to read trend direction, pullbacks, and momentum shifts.");
 
 static const cxta_indicator_plot_descriptor cxta_ema_plot_descriptor =
     CXTA_INDICATOR_SCALAR_PLOT("ema", cxta_ema_scalar_plot);

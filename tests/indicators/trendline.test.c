@@ -20,5 +20,10 @@ void cxta_test_trendline(void) {
     assert(fabs(out.lower - 5.5) < 1e-12);
     assert(fabs(out.upper_slope - 0.5) < 1e-12);
     assert(fabs(out.lower_slope + 0.5) < 1e-12);
+    assert(fabs(out.upper_pivot - 16.0) < 1e-12);
+    assert(fabs(out.upper_pivot_index - 3.0) < 1e-12);
+    assert(fabs(out.lower_pivot - 6.0) < 1e-12);
+    assert(fabs(out.lower_pivot_index - 4.0) < 1e-12);
+    assert(fabs(out.active_index - 5.0) < 1e-12);
     printf("  ✓ test_trendline\n");
 }

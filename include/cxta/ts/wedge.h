@@ -20,6 +20,17 @@ typedef struct cxta_ts_wedge_result {
     double falling;
 } cxta_ts_wedge_result;
 
+typedef struct cxta_ts_broadening_result {
+    double resistance;
+    double support;
+    double width;
+    double resistance_slope;
+    double support_slope;
+    double active;
+    double rising;
+    double falling;
+} cxta_ts_broadening_result;
+
 /**
  * @brief Compute the slope of a line segment.
  * @param[in] x1 X coordinate of the first point.
@@ -65,6 +76,31 @@ cxta_ts_wedge_result cxta_ts_wedge_from_lines(double upper_x1,
                                         double lower_y2,
                                         double eval_x,
                                         double max_width_ratio);
+
+/**
+ * @brief Classify a broadening channel from resistance and support guide lines.
+ * @param[in] resistance_x1 First resistance-line x coordinate.
+ * @param[in] resistance_y1 First resistance-line y coordinate.
+ * @param[in] resistance_x2 Second resistance-line x coordinate.
+ * @param[in] resistance_y2 Second resistance-line y coordinate.
+ * @param[in] support_x1 First support-line x coordinate.
+ * @param[in] support_y1 First support-line y coordinate.
+ * @param[in] support_x2 Second support-line x coordinate.
+ * @param[in] support_y2 Second support-line y coordinate.
+ * @param[in] eval_x X coordinate where the channel width is evaluated.
+ * @param[in] min_width_ratio Minimum required end/start width ratio; non-positive values use the default.
+ * @return Populated broadening-channel classification result.
+ */
+cxta_ts_broadening_result cxta_ts_broadening_from_lines(double resistance_x1,
+                                                        double resistance_y1,
+                                                        double resistance_x2,
+                                                        double resistance_y2,
+                                                        double support_x1,
+                                                        double support_y1,
+                                                        double support_x2,
+                                                        double support_y2,
+                                                        double eval_x,
+                                                        double min_width_ratio);
 
 #ifdef __cplusplus
 }

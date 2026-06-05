@@ -33,6 +33,13 @@ static const cxta_field_descriptor cxta_sfp_fields[] = {
     CXTA_STRUCT_FIELD("level", cxta_struct_sfp_state, level),
 };
 
+static const cxta_indicator_plot_descriptor cxta_swing_pivots_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("swing_pivots");
+static const cxta_indicator_plot_descriptor cxta_pivot_points_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("pivot_points");
+static const cxta_indicator_plot_descriptor cxta_sfp_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("sfp");
+
 static void cxta_swing_pivots_descriptor_eval(const cxta_series_bar_view* view,
                                               const double* args,
                                               size_t nargs,
@@ -104,36 +111,39 @@ const cxta_bridge_fn_spec cxta_sfp_bridge_fn_spec =
     CXTA_BRIDGE_FN_SPEC("sfp", 2u, 3u, cxta_sfp_params, 1);
 
 const cxta_indicator_descriptor cxta_swing_pivots_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("swing_pivots",
-                              2,
-                              3,
-                              0,
-                              cxta_struct_pivot_state,
-                              0u,
-                              cxta_swing_pivots_fields,
-                              cxta_swing_pivots_descriptor_eval,
-                              NULL,
-                              cxta_swing_pivots_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("swing_pivots",
+                                        2,
+                                        3,
+                                        0,
+                                        cxta_struct_pivot_state,
+                                        0u,
+                                        cxta_swing_pivots_fields,
+                                        cxta_swing_pivots_descriptor_eval,
+                                        NULL,
+                                        cxta_swing_pivots_params,
+                                        &cxta_swing_pivots_plot_descriptor);
 
 const cxta_indicator_descriptor cxta_pivot_points_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR_NO_PARAMS("pivot_points",
-                                        0,
-                                        0,
-                                        0,
-                                        cxta_struct_pivot_points_result,
-                                        0u,
-                                        cxta_pivot_points_fields,
-                                        cxta_pivot_points_descriptor_eval,
-                                        NULL);
+    CXTA_STRUCTURE_DESCRIPTOR_NO_PARAMS_WITH_PLOT("pivot_points",
+                                                  0,
+                                                  0,
+                                                  0,
+                                                  cxta_struct_pivot_points_result,
+                                                  0u,
+                                                  cxta_pivot_points_fields,
+                                                  cxta_pivot_points_descriptor_eval,
+                                                  NULL,
+                                                  &cxta_pivot_points_plot_descriptor);
 
 const cxta_indicator_descriptor cxta_sfp_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("sfp",
-                              2,
-                              3,
-                              0,
-                              cxta_struct_sfp_state,
-                              0u,
-                              cxta_sfp_fields,
-                              cxta_sfp_descriptor_eval,
-                              NULL,
-                              cxta_sfp_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("sfp",
+                                        2,
+                                        3,
+                                        0,
+                                        cxta_struct_sfp_state,
+                                        0u,
+                                        cxta_sfp_fields,
+                                        cxta_sfp_descriptor_eval,
+                                        NULL,
+                                        cxta_sfp_params,
+                                        &cxta_sfp_plot_descriptor);

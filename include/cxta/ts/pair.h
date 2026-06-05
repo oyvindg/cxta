@@ -72,7 +72,7 @@ double cxta_ts_relative_strength_pair(
     const cxta_series_bar_view* b,
     size_t period);
 
-double cxta_ts_z_score_pair(
+double cxta_ts_zscore_pair(
     const cxta_series_bar_view* a,
     const cxta_series_bar_view* b,
     size_t period);

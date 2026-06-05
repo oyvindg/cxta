@@ -7,6 +7,7 @@
 
 #include "../series/bar.h"
 #include "../indicators/descriptor.h"
+#include "../indicators/adx_math.h"
 
 /** @brief Named parameters for ADX. */
 static const cxta_param_descriptor cxta_adx_params[] = {
@@ -23,25 +24,6 @@ extern const cxta_indicator_descriptor cxta_adx_descriptor;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * @brief ADX output payload.
- */
-typedef struct {
-    double adx;
-    double plus_di;
-    double minus_di;
-} cxta_adx_output;
-
-/**
- * @brief ADX state for incremental updates.
- */
-typedef struct {
-    double plus_dm_sm;
-    double minus_dm_sm;
-    double tr_sm;
-    double adx;
-} cxta_adx_state;
 
 /**
  * @brief Perform one ADX update.

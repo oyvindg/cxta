@@ -30,6 +30,11 @@ typedef struct {
     double lower;
     double upper_slope;
     double lower_slope;
+    double upper_pivot;
+    double upper_pivot_index;
+    double lower_pivot;
+    double lower_pivot_index;
+    double active_index;
 } cxta_trendline_output;
 
 /**

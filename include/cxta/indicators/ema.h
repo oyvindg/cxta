@@ -13,9 +13,14 @@ static const cxta_param_descriptor cxta_ema_params[] = {
     {"period"},
 };
 
+static const cxta_expr_arg_descriptor cxta_ema_expr_args[] = {
+    {"source", CXTA_EXPR_ARG_SCALAR_SOURCE, "close", "Optional input price/series to smooth; implicit close when omitted."},
+    {"period", CXTA_EXPR_ARG_NUMERIC, "20", "EMA smoothing period. Lower values react faster; higher values smooth more noise."},
+};
+
 /** @brief Bridge-facing signature metadata for EMA. */
 static const cxta_bridge_fn_spec cxta_ema_bridge_fn_spec =
-    CXTA_BRIDGE_FN_SPEC("ema", 1u, 1u, cxta_ema_params, 1);
+    CXTA_BRIDGE_FN_SPEC_EXPR("ema", 1u, 1u, cxta_ema_params, cxta_ema_expr_args, 1);
 
 /** @brief Expression-facing descriptor for EMA. */
 extern const cxta_indicator_descriptor cxta_ema_descriptor;

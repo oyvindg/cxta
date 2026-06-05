@@ -15,6 +15,9 @@
 #define CXTA_STRUCT_FIELD_HIDDEN(name_literal, type_name, member_name) \
     {(name_literal), offsetof(type_name, member_name), false}
 
+#define CXTA_STRUCTURE_PLOT_DESCRIPTOR(name_literal) \
+    {(name_literal), NULL, NULL, 0u}
+
 #define CXTA_STRUCTURE_DESCRIPTOR(name_literal,             \
                                   min_arg_count,            \
                                   max_arg_count,            \
@@ -25,6 +28,29 @@
                                   eval_fn,                  \
                                   step_fn,                  \
                                   params_array)             \
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT(name_literal,        \
+                                        min_arg_count,       \
+                                        max_arg_count,       \
+                                        primary_field,       \
+                                        output_type,         \
+                                        state_size_value,    \
+                                        fields_array,        \
+                                        eval_fn,             \
+                                        step_fn,             \
+                                        params_array,        \
+                                        NULL)
+
+#define CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT(name_literal,    \
+                                            min_arg_count,   \
+                                            max_arg_count,   \
+                                            primary_field,   \
+                                            output_type,     \
+                                            state_size_value, \
+                                            fields_array,    \
+                                            eval_fn,         \
+                                            step_fn,         \
+                                            params_array,    \
+                                            plot_descriptor) \
     {                                                       \
         (name_literal),                                     \
         (min_arg_count),                                    \
@@ -46,7 +72,7 @@
         (params_array),                                     \
         CXTA_ARRAY_COUNT(params_array),                     \
         "price",                                            \
-        NULL,                                               \
+        (plot_descriptor),                                  \
     }
 
 #define CXTA_STRUCTURE_DESCRIPTOR_NO_PARAMS(name_literal,   \
@@ -58,6 +84,27 @@
                                             fields_array,   \
                                             eval_fn,        \
                                             step_fn)        \
+    CXTA_STRUCTURE_DESCRIPTOR_NO_PARAMS_WITH_PLOT(name_literal, \
+                                                  min_arg_count, \
+                                                  max_arg_count, \
+                                                  primary_field, \
+                                                  output_type, \
+                                                  state_size_value, \
+                                                  fields_array, \
+                                                  eval_fn, \
+                                                  step_fn, \
+                                                  NULL)
+
+#define CXTA_STRUCTURE_DESCRIPTOR_NO_PARAMS_WITH_PLOT(name_literal, \
+                                                      min_arg_count, \
+                                                      max_arg_count, \
+                                                      primary_field, \
+                                                      output_type, \
+                                                      state_size_value, \
+                                                      fields_array, \
+                                                      eval_fn, \
+                                                      step_fn, \
+                                                      plot_descriptor) \
     {                                                       \
         (name_literal),                                     \
         (min_arg_count),                                    \
@@ -79,5 +126,5 @@
         NULL,                                               \
         0u,                                                 \
         "price",                                            \
-        NULL,                                               \
+        (plot_descriptor),                                  \
     }

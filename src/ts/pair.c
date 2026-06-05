@@ -7,7 +7,7 @@
 
 #include <math.h>
 
-static const double kCxtaPairEpsilon = 1e-12;
+static const double cxta_pair_epsilon = 1e-12;
 
 static int cxta_ts_pair_valid(const cxta_series_bar_view* view) {
     return view != NULL && cxta_series_bar_view_valid(view) != 0;
@@ -20,7 +20,7 @@ static size_t cxta_ts_pair_index(const cxta_series_bar_view* view) {
 static double cxta_ts_pair_simple_return(const cxta_series_bar_view* view, size_t curr_index) {
     if (curr_index == 0u || curr_index >= view->size) return 0.0;
     const double prev_close = view->bars[curr_index - 1u].close;
-    if (fabs(prev_close) <= kCxtaPairEpsilon) return 0.0;
+    if (fabs(prev_close) <= cxta_pair_epsilon) return 0.0;
     return (view->bars[curr_index].close - prev_close) / prev_close;
 }
 
@@ -78,9 +78,9 @@ cxta_ts_pair_moments cxta_ts_pair_return_moments(
         out.var_diff = (sum_diff_sq / n) - (out.mean_diff * out.mean_diff);
     }
 
-    if (out.var_a < 0.0 && fabs(out.var_a) <= kCxtaPairEpsilon) out.var_a = 0.0;
-    if (out.var_b < 0.0 && fabs(out.var_b) <= kCxtaPairEpsilon) out.var_b = 0.0;
-    if (out.var_diff < 0.0 && fabs(out.var_diff) <= kCxtaPairEpsilon) out.var_diff = 0.0;
+    if (out.var_a < 0.0 && fabs(out.var_a) <= cxta_pair_epsilon) out.var_a = 0.0;
+    if (out.var_b < 0.0 && fabs(out.var_b) <= cxta_pair_epsilon) out.var_b = 0.0;
+    if (out.var_diff < 0.0 && fabs(out.var_diff) <= cxta_pair_epsilon) out.var_diff = 0.0;
     return out;
 }
 
@@ -101,7 +101,7 @@ double cxta_ts_pair_spread_pair(
     const size_t idx_b = cxta_ts_pair_index(b);
     const double close_a = a->bars[idx_a].close;
     const double close_b = b->bars[idx_b].close;
-    if (close_a <= kCxtaPairEpsilon || close_b <= kCxtaPairEpsilon) return 0.0;
+    if (close_a <= cxta_pair_epsilon || close_b <= cxta_pair_epsilon) return 0.0;
     return log(close_a / close_b);
 }
 
@@ -119,7 +119,7 @@ double cxta_ts_rolling_corr_pair(
     size_t period) {
     const cxta_ts_pair_moments moments = cxta_ts_pair_return_moments(a, b, period);
     const double denom = sqrt(moments.var_a * moments.var_b);
-    if (moments.n == 0u || denom <= kCxtaPairEpsilon) return 0.0;
+    if (moments.n == 0u || denom <= cxta_pair_epsilon) return 0.0;
     return moments.cov / denom;
 }
 
@@ -128,7 +128,7 @@ double cxta_ts_rolling_beta_pair(
     const cxta_series_bar_view* b,
     size_t period) {
     const cxta_ts_pair_moments moments = cxta_ts_pair_return_moments(a, b, period);
-    if (moments.n == 0u || moments.var_b <= kCxtaPairEpsilon) return 0.0;
+    if (moments.n == 0u || moments.var_b <= cxta_pair_epsilon) return 0.0;
     return moments.cov / moments.var_b;
 }
 
@@ -138,7 +138,7 @@ double cxta_ts_rolling_alpha_pair(
     size_t period) {
     const cxta_ts_pair_moments moments = cxta_ts_pair_return_moments(a, b, period);
     const double beta =
-        moments.var_b <= kCxtaPairEpsilon ? 0.0 : (moments.cov / moments.var_b);
+        moments.var_b <= cxta_pair_epsilon ? 0.0 : (moments.cov / moments.var_b);
     if (moments.n == 0u) return 0.0;
     return moments.mean_a - (beta * moments.mean_b);
 }
@@ -149,7 +149,7 @@ double cxta_ts_hv_ratio_pair(
     size_t period) {
     const cxta_ts_pair_moments moments = cxta_ts_pair_return_moments(a, b, period);
     const double std_b = sqrt(fmax(0.0, moments.var_b));
-    if (moments.n == 0u || std_b <= kCxtaPairEpsilon) return 0.0;
+    if (moments.n == 0u || std_b <= cxta_pair_epsilon) return 0.0;
     return sqrt(fmax(0.0, moments.var_a)) / std_b;
 }
 
@@ -158,7 +158,7 @@ double cxta_ts_tracking_error_pair(
     const cxta_series_bar_view* b,
     size_t period) {
     const cxta_ts_pair_moments moments = cxta_ts_pair_return_moments(a, b, period);
-    if (moments.n == 0u || moments.var_diff <= kCxtaPairEpsilon) return 0.0;
+    if (moments.n == 0u || moments.var_diff <= cxta_pair_epsilon) return 0.0;
     return sqrt(fmax(0.0, moments.var_diff));
 }
 
@@ -185,15 +185,15 @@ double cxta_ts_relative_strength_pair(
 
     start_a = a->bars[idx_a - lookback].close;
     start_b = b->bars[idx_b - lookback].close;
-    if (fabs(start_a) <= kCxtaPairEpsilon || fabs(start_b) <= kCxtaPairEpsilon) return 0.0;
+    if (fabs(start_a) <= cxta_pair_epsilon || fabs(start_b) <= cxta_pair_epsilon) return 0.0;
 
     perf_a = (a->bars[idx_a].close - start_a) / start_a;
     perf_b = (b->bars[idx_b].close - start_b) / start_b;
-    if (fabs(perf_b) <= kCxtaPairEpsilon) return 0.0;
+    if (fabs(perf_b) <= cxta_pair_epsilon) return 0.0;
     return perf_a / perf_b;
 }
 
-double cxta_ts_z_score_pair(
+double cxta_ts_zscore_pair(
     const cxta_series_bar_view* a,
     const cxta_series_bar_view* b,
     size_t period) {
@@ -226,8 +226,8 @@ double cxta_ts_z_score_pair(
 
     mean = sum / (double)points;
     var = (sum_sq / (double)points) - (mean * mean);
-    if (var < 0.0 && fabs(var) <= kCxtaPairEpsilon) var = 0.0;
-    if (var <= kCxtaPairEpsilon) return 0.0;
+    if (var < 0.0 && fabs(var) <= cxta_pair_epsilon) var = 0.0;
+    if (var <= cxta_pair_epsilon) return 0.0;
 
     current_spread = a->bars[idx_a].close - b->bars[idx_b].close;
     return (current_spread - mean) / sqrt(var);

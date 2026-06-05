@@ -15,7 +15,7 @@ Malene ligger som `*.yaml.example` i denne mappen slik at `cmake` **ikke** plukk
 - [ ] Implementer kjerne-API i `libs/cxta/src/indicators/<name>.c` + header `include/cxta/indicators/<name>.h`.
 - [ ] Legg inn `cxta_<name>_descriptor`, felt-metadata og `eval`/`step` etter eksisterende mønster.
 - [ ] Legg inn `cxta_<name>_params[]` og **`CXTA_BRIDGE_FN_SPEC_EXPR`** med `default_value`-strenger som matcher descriptor-fallback (se README: *Named arguments and default strings*).
-- [ ] Registrer i `descriptor.c` (`kExternalDescriptors[]`, `kBridgeFnSpecs[]` ved behov).
+- [ ] Registrer i `descriptor.c` (`external_descriptors[]`, `bridge_fn_specs[]` ved behov).
 - [ ] Eksport i `include/cxta/cxta.h` hvis offentlig overflate.
 - [ ] Enhetstester i `libs/cxta/tests/indicators/<name>.test.c` (og eventuelt `ctest`).
 - [ ] Verifiser `cxta_adapter_expr_param_spec_for("<expr_name>", …)` i adapter-test eller ny test.

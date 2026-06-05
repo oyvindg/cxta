@@ -7,6 +7,7 @@
 
 #include "../series/bar.h"
 #include "../indicators/descriptor.h"
+#include "../indicators/bollinger_math.h"
 
 /** @brief Named parameters for the Bollinger indicator. */
 static const cxta_param_descriptor cxta_bollinger_params[] = {
@@ -32,17 +33,6 @@ extern const cxta_indicator_plot_descriptor cxta_bollinger_plot_descriptor;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * @brief Bollinger output payload.
- */
-typedef struct {
-    double upper;
-    double lower;
-    double middle;
-    double bandwidth;
-    double percent_b;
-} cxta_bollinger_output;
 
 /**
  * @brief Compute Bollinger bands at the current view index.

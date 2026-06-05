@@ -29,6 +29,7 @@ add_library(cxta STATIC
     src/structure/sfp.c
     src/structure/vwap.c
     src/structure/wedge.c
+    src/structure/broadening.c
     src/indicators/sma.c
     src/indicators/ema.c
     src/indicators/atr.c
@@ -106,8 +107,12 @@ add_library(cxta STATIC
     src/indicators/structures/trend.c
     src/indicators/structures/zones.c
     src/indicators/structures/patterns.c
+    src/indicators/structures/patterns/broadening.c
     src/indicators/anchored_vwap.c
-    src/indicators/descriptor.c
+    src/indicators/descriptor/args.c
+    src/indicators/descriptor/names.c
+    src/indicators/descriptor/plot.c
+    src/indicators/descriptor/registry.c
 )
 
 target_include_directories(cxta PUBLIC

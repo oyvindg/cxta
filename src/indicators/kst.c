@@ -3,76 +3,128 @@
  * @brief KST helpers.
  */
 
-#include <cxta/indicators/macros.h>
-#include <cxta/indicators/kst.h>
-#include <cxta/ts/smoothing.h>
-
-static const cxta_scalar_plot_descriptor cxta_kst_scalar_plot =
-    CXTA_SCALAR_PLOT("KST", "momentum", "#22d3ee", "line", "momentum",
-                     "Know Sure Thing multi-rate momentum oscillator.",
-                     "Use zero-line behavior and slope to confirm broader momentum turns.");
-
-static const cxta_indicator_plot_descriptor cxta_kst_plot_descriptor =
-    CXTA_INDICATOR_SCALAR_PLOT("kst", cxta_kst_scalar_plot);
+#include <limits.h>
 #include <math.h>
+#include <stddef.h>
+#include <string.h>
 
-static double cxta_kst_roc(const cxta_series_bar_view* view, size_t idx, int period) {
-    const size_t p = (size_t)cxta_ts_clamp_period(period);
-    if (idx < p) return 0.0;
+#include <cxta/indicators/kst.h>
 
-    {
-        const double prev = view->bars[idx - p].close;
-        if (fabs(prev) <= 1e-12) return 0.0;
-        return 100.0 * ((view->bars[idx].close - prev) / prev);
-    }
+static const cxta_field_descriptor cxta_kst_fields[] = {
+    {"line", offsetof(cxta_kst_output, line), false},
+    {"signal", offsetof(cxta_kst_output, signal), false},
+    {"histogram", offsetof(cxta_kst_output, histogram), false},
+};
+
+static const cxta_plot_field_descriptor cxta_kst_plot_fields[] = {
+    {"line", true, "KST Line", "kst", "#22d3ee", "line", "momentum",
+     NULL, NULL, NULL, NULL, NULL, NULL, false, false,
+     "Weighted sum of four smoothed ROC windows.",
+     "Use zero-line behavior, slope, and line/signal crosses to confirm broader momentum turns.",
+     false},
+    {"signal", true, "KST Signal", "kst", "#f97316", "line", "momentum",
+     NULL, NULL, NULL, NULL, NULL, NULL, false, false,
+     "SMA-smoothed KST line.",
+     "Use as the trigger/reference line for KST momentum crosses.",
+     false},
+    {"histogram", true, "KST Histogram", "kst", "#a855f7", "histogram", "momentum",
+     "#22c55e", "#ef4444", NULL, NULL, NULL, NULL, false, false,
+     "Difference between the KST line and signal line.",
+     "Expanding bars show increasing momentum spread; zero-line crosses mark line/signal crossovers.",
+     false},
+};
+
+static const cxta_indicator_plot_descriptor cxta_kst_plot_descriptor = {
+    "kst",
+    NULL,
+    cxta_kst_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_kst_plot_fields),
+};
+
+static int cxta_kst_descriptor_int_arg(const double* args,
+                                       size_t nargs,
+                                       size_t index,
+                                       int fallback) {
+    double raw;
+
+    if (!args || index >= nargs) return fallback;
+    raw = args[index];
+    if (!isfinite(raw)) return fallback;
+    if (raw >= (double)INT_MAX) return INT_MAX;
+    if (raw <= (double)INT_MIN) return INT_MIN;
+    return (int)llround(raw);
 }
 
-static double cxta_kst_sma_roc(const cxta_series_bar_view* view, size_t idx, int roc_p, int sma_p) {
-    const size_t sp = (size_t)cxta_ts_clamp_period(sma_p);
-    const size_t window = (sp < (idx + 1)) ? sp : (idx + 1);
-    const size_t start = idx + 1 - window;
-    double sum = 0.0;
-    for (size_t i = start; i <= idx; ++i) {
-        sum += cxta_kst_roc(view, i, roc_p);
-    }
-    return sum / (double)window;
+static int cxta_kst_descriptor_period_arg(const double* args,
+                                          size_t nargs,
+                                          size_t index,
+                                          int fallback) {
+    return cxta_kst_math_clamp_period(
+        cxta_kst_descriptor_int_arg(args, nargs, index, fallback));
 }
 
-double cxta_kst(const cxta_series_bar_view* view, int p1, int p2, int p3, int p4) {
-    if (!view || !cxta_series_bar_view_valid(view)) return 0.0;
+static void cxta_kst_descriptor_eval(const cxta_series_bar_view* view,
+                                     const double* args,
+                                     size_t nargs,
+                                     void* out) {
+    cxta_kst_output value;
 
-    {
-        const size_t idx = cxta_series_clamp_index(view->size, view->index);
-        const double rcma1 = cxta_kst_sma_roc(view, idx, p1, 10);
-        const double rcma2 = cxta_kst_sma_roc(view, idx, p2, 10);
-        const double rcma3 = cxta_kst_sma_roc(view, idx, p3, 10);
-        const double rcma4 = cxta_kst_sma_roc(view, idx, p4, 15);
-        return rcma1 + 2.0 * rcma2 + 3.0 * rcma3 + 4.0 * rcma4;
-    }
+    if (!out) return;
+    value = cxta_kst(
+        view,
+        cxta_kst_descriptor_period_arg(args, nargs, 0u, 10),
+        cxta_kst_descriptor_period_arg(args, nargs, 1u, 15),
+        cxta_kst_descriptor_period_arg(args, nargs, 2u, 20),
+        cxta_kst_descriptor_period_arg(args, nargs, 3u, 30),
+        cxta_kst_descriptor_period_arg(args, nargs, 4u, 9));
+    memcpy(out, &value, sizeof(value));
 }
-
-CXTA_WRAP_BAR_SCALAR_4I(cxta_kst_desc_eval, cxta_kst, 10, 15, 20, 30)
 
 const cxta_indicator_descriptor cxta_kst_descriptor = {
     "kst",
+    5,
+    5,
+    -1,
+    -1,
     0,
-    4,
-    -1,
-    -1,
-    -1,
-    CXTA_INDICATOR_SCALAR,
+    CXTA_INDICATOR_SCALAR | CXTA_INDICATOR_STRUCT,
+    sizeof(cxta_kst_output),
     0u,
-    0u,
+    cxta_kst_fields,
+    CXTA_ARRAY_COUNT(cxta_kst_fields),
     NULL,
-    0u,
-    cxta_kst_desc_eval,
-    NULL,
+    cxta_kst_descriptor_eval,
     NULL,
     NULL,
     NULL,
     NULL,
     cxta_kst_params,
     CXTA_ARRAY_COUNT(cxta_kst_params),
-    "momentum",
+    "kst",
     &cxta_kst_plot_descriptor,
 };
+
+cxta_kst_output cxta_kst(const cxta_series_bar_view* view,
+                         int p1,
+                         int p2,
+                         int p3,
+                         int p4,
+                         int signal_period) {
+    cxta_kst_output out = {0.0, 0.0, 0.0};
+    size_t idx;
+
+    if (!view || !cxta_series_bar_view_valid(view)) return out;
+    idx = cxta_series_clamp_index(view->size, view->index);
+    out = cxta_kst_math_eval_rows(
+        view->bars,
+        view->size,
+        idx,
+        sizeof(view->bars[0]),
+        offsetof(cxta_series_bar, close),
+        p1,
+        p2,
+        p3,
+        p4,
+        signal_period);
+    return out;
+}

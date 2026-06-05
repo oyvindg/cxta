@@ -7,6 +7,7 @@
 
 #include "../series/bar.h"
 #include "../indicators/descriptor.h"
+#include "../indicators/macd_math.h"
 
 /** @brief Named parameters for the MACD indicator. */
 static const cxta_param_descriptor cxta_macd_params[] = {
@@ -32,24 +33,6 @@ extern const cxta_indicator_descriptor cxta_macd_descriptor;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/**
- * @brief MACD output payload.
- */
-typedef struct {
-    double line;
-    double signal;
-    double histogram;
-} cxta_macd_output;
-
-/**
- * @brief MACD state for incremental updates.
- */
-typedef struct {
-    double ema_fast;
-    double ema_slow;
-    double signal;
-} cxta_macd_state;
 
 /**
  * @brief Perform one MACD update.

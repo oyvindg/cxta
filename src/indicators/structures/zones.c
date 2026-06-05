@@ -71,6 +71,13 @@ static const cxta_indicator_plot_descriptor cxta_liquidity_pools_plot_descriptor
     .field_count = CXTA_ARRAY_COUNT(cxta_liquidity_pools_plot_fields),
 };
 
+static const cxta_indicator_plot_descriptor cxta_fvg_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("fvg");
+static const cxta_indicator_plot_descriptor cxta_order_block_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("order_block");
+static const cxta_indicator_plot_descriptor cxta_liquidity_plot_descriptor =
+    CXTA_STRUCTURE_PLOT_DESCRIPTOR("liquidity");
+
 static void cxta_fvg_descriptor_eval(const cxta_series_bar_view* view,
                                      const double* args,
                                      size_t nargs,
@@ -312,40 +319,43 @@ const cxta_bridge_fn_spec cxta_liquidity_pools_bridge_fn_spec =
     CXTA_BRIDGE_FN_SPEC("liquidity_pools", 0u, 3u, cxta_liquidity_pools_params, 1);
 
 const cxta_indicator_descriptor cxta_fvg_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("fvg",
-                              0,
-                              1,
-                              0,
-                              cxta_struct_fvg_state,
-                              0u,
-                              cxta_fvg_fields,
-                              cxta_fvg_descriptor_eval,
-                              NULL,
-                              cxta_fvg_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("fvg",
+                                        0,
+                                        1,
+                                        0,
+                                        cxta_struct_fvg_state,
+                                        0u,
+                                        cxta_fvg_fields,
+                                        cxta_fvg_descriptor_eval,
+                                        NULL,
+                                        cxta_fvg_params,
+                                        &cxta_fvg_plot_descriptor);
 
 const cxta_indicator_descriptor cxta_order_block_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("order_block",
-                              2,
-                              3,
-                              0,
-                              cxta_struct_order_block_state,
-                              0u,
-                              cxta_order_block_fields,
-                              cxta_order_block_descriptor_eval,
-                              NULL,
-                              cxta_order_block_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("order_block",
+                                        2,
+                                        3,
+                                        0,
+                                        cxta_struct_order_block_state,
+                                        0u,
+                                        cxta_order_block_fields,
+                                        cxta_order_block_descriptor_eval,
+                                        NULL,
+                                        cxta_order_block_params,
+                                        &cxta_order_block_plot_descriptor);
 
 const cxta_indicator_descriptor cxta_liquidity_descriptor =
-    CXTA_STRUCTURE_DESCRIPTOR("liquidity",
-                              2,
-                              4,
-                              0,
-                              cxta_struct_liquidity_state,
-                              0u,
-                              cxta_liquidity_fields,
-                              cxta_liquidity_descriptor_eval,
-                              NULL,
-                              cxta_liquidity_params);
+    CXTA_STRUCTURE_DESCRIPTOR_WITH_PLOT("liquidity",
+                                        2,
+                                        4,
+                                        0,
+                                        cxta_struct_liquidity_state,
+                                        0u,
+                                        cxta_liquidity_fields,
+                                        cxta_liquidity_descriptor_eval,
+                                        NULL,
+                                        cxta_liquidity_params,
+                                        &cxta_liquidity_plot_descriptor);
 
 const cxta_indicator_descriptor cxta_liquidity_pools_descriptor =
     {

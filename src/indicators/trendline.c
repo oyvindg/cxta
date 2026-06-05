@@ -16,11 +16,48 @@ static const cxta_field_descriptor cxta_trendline_fields[] = {
     {"lower", offsetof(cxta_trendline_output, lower), true},
     {"upperSlope", offsetof(cxta_trendline_output, upper_slope), true},
     {"lowerSlope", offsetof(cxta_trendline_output, lower_slope), true},
+    {"upperPivot", offsetof(cxta_trendline_output, upper_pivot), false},
+    {"upperPivotIndex", offsetof(cxta_trendline_output, upper_pivot_index), false},
+    {"lowerPivot", offsetof(cxta_trendline_output, lower_pivot), false},
+    {"lowerPivotIndex", offsetof(cxta_trendline_output, lower_pivot_index), false},
+    {"activeIndex", offsetof(cxta_trendline_output, active_index), false},
 };
 
 static const cxta_plot_field_descriptor cxta_trendline_plot_fields[] = {
-    CXTA_FIELD_PLOT("upper", true, "Upper Trendline", "price", "#22c55e", "line", "price", "Projected upper pivot trendline.", "Use as dynamic resistance and breakout reference."),
-    CXTA_FIELD_PLOT("lower", true, "Lower Trendline", "price", "#ef4444", "line", "price", "Projected lower pivot trendline.", "Use as dynamic support and breakdown reference."),
+    {
+        .field_name = "upper",
+        .auto_plot = true,
+        .label = "Upper Trendline",
+        .pane = "price",
+        .color = "#22c55e",
+        .style = "zigzag",
+        .scale = "price",
+        .pivot_value_field = "upperPivot",
+        .pivot_index_field = "upperPivotIndex",
+        .active_value_field = "upper",
+        .active_index_field = "activeIndex",
+        .pivot_zero_is_missing = true,
+        .active_zero_is_missing = true,
+        .hover_summary = "Projected upper pivot trendline.",
+        .hover_indication = "Use as dynamic resistance and breakout reference.",
+    },
+    {
+        .field_name = "lower",
+        .auto_plot = true,
+        .label = "Lower Trendline",
+        .pane = "price",
+        .color = "#ef4444",
+        .style = "zigzag",
+        .scale = "price",
+        .pivot_value_field = "lowerPivot",
+        .pivot_index_field = "lowerPivotIndex",
+        .active_value_field = "lower",
+        .active_index_field = "activeIndex",
+        .pivot_zero_is_missing = true,
+        .active_zero_is_missing = true,
+        .hover_summary = "Projected lower pivot trendline.",
+        .hover_indication = "Use as dynamic support and breakdown reference.",
+    },
     CXTA_FIELD_PLOT("upperSlope", false, "Upper Slope", "trendline", "#22c55e", "line", "trendline", "Slope of the upper trendline.", "Use slope sign/magnitude to classify trendline pressure."),
     CXTA_FIELD_PLOT("lowerSlope", false, "Lower Slope", "trendline", "#ef4444", "line", "trendline", "Slope of the lower trendline.", "Use slope sign/magnitude to classify trendline pressure."),
 };
@@ -124,7 +161,7 @@ static int cxta_trendline_is_pivot_low(const cxta_series_bar_view* view,
 cxta_trendline_output cxta_trendline(const cxta_series_bar_view* view,
                                      int left,
                                      int right) {
-    cxta_trendline_output out = {0.0, 0.0, 0.0, 0.0};
+    cxta_trendline_output out = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     if (!view || !cxta_series_bar_view_valid(view)) return out;
 
     left = cxta_ts_clamp_period(left);
@@ -150,6 +187,7 @@ cxta_trendline_output cxta_trendline(const cxta_series_bar_view* view,
         if (idx < (size_t)(left + right)) {
             out.upper = view->bars[idx].high;
             out.lower = view->bars[idx].low;
+            out.active_index = (double)idx;
             return out;
         }
 
@@ -175,8 +213,12 @@ cxta_trendline_output cxta_trendline(const cxta_series_bar_view* view,
         if (has_high1 && has_high2) {
             out.upper_slope = cxta_trendline_slope_between(hi1x, hi1y, hi2x, hi2y);
             out.upper = cxta_trendline_project_at(hi1x, hi1y, hi2x, hi2y, idx);
+            out.upper_pivot = hi2y;
+            out.upper_pivot_index = (double)hi2x;
         } else if (has_high2) {
             out.upper = hi2y;
+            out.upper_pivot = hi2y;
+            out.upper_pivot_index = (double)hi2x;
         } else {
             out.upper = view->bars[idx].high;
         }
@@ -184,11 +226,16 @@ cxta_trendline_output cxta_trendline(const cxta_series_bar_view* view,
         if (has_low1 && has_low2) {
             out.lower_slope = cxta_trendline_slope_between(lo1x, lo1y, lo2x, lo2y);
             out.lower = cxta_trendline_project_at(lo1x, lo1y, lo2x, lo2y, idx);
+            out.lower_pivot = lo2y;
+            out.lower_pivot_index = (double)lo2x;
         } else if (has_low2) {
             out.lower = lo2y;
+            out.lower_pivot = lo2y;
+            out.lower_pivot_index = (double)lo2x;
         } else {
             out.lower = view->bars[idx].low;
         }
+        out.active_index = (double)idx;
     }
     return out;
 }

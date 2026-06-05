@@ -13,9 +13,11 @@ extern "C" {
 
 extern const cxta_indicator_descriptor cxta_swing_anchor_vwap_descriptor;
 extern const cxta_indicator_descriptor cxta_wedge_descriptor;
+extern const cxta_indicator_descriptor cxta_broadening_descriptor;
 
 extern const cxta_bridge_fn_spec cxta_swing_anchor_vwap_bridge_fn_spec;
 extern const cxta_bridge_fn_spec cxta_wedge_bridge_fn_spec;
+extern const cxta_bridge_fn_spec cxta_broadening_bridge_fn_spec;
 
 #ifdef __cplusplus
 }

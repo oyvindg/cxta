@@ -20,11 +20,6 @@ static const cxta_field_descriptor* cxta_find_field(const cxta_indicator_descrip
     return NULL;
 }
 
-static int cxta_descriptor_is_dispatch_exception(const cxta_indicator_descriptor* descriptor) {
-    assert(descriptor);
-    return strcmp(descriptor->name, "divergence") == 0;
-}
-
 void cxta_test_descriptor(void) {
     size_t count = 0;
     size_t i;
@@ -36,7 +31,6 @@ void cxta_test_descriptor(void) {
     const cxta_indicator_descriptor* ao = cxta_indicator_descriptor_find("awesome_oscillator");
     const cxta_indicator_descriptor* bollinger = cxta_indicator_descriptor_find("bollinger");
     const cxta_indicator_descriptor* kst = cxta_indicator_descriptor_find("kst");
-    const cxta_indicator_descriptor* divergence = cxta_indicator_descriptor_find("divergence");
     const cxta_indicator_descriptor* eom = cxta_indicator_descriptor_find("ease_of_movement");
     const cxta_indicator_descriptor* vwap = cxta_indicator_descriptor_find("vwap");
     const cxta_indicator_descriptor* rolling_max =
@@ -137,7 +131,7 @@ void cxta_test_descriptor(void) {
     const cxta_bollinger_output expected_bollinger = cxta_bollinger(&view, 3, 2.0);
 
     assert(descriptors);
-    assert(count == 90u);
+    assert(count == 89u);
     assert(volume_plot);
     assert(volume_plot->auto_plot);
     assert(strcmp(volume_plot->label, "Volume") == 0);
@@ -160,9 +154,7 @@ void cxta_test_descriptor(void) {
 
         if (is_struct) {
             assert(descriptor->output_size > 0u);
-            if (!cxta_descriptor_is_dispatch_exception(descriptor)) {
-                assert(descriptor->eval_struct != NULL);
-            }
+            assert(descriptor->eval_struct != NULL);
         } else {
             assert(descriptor->output_size == 0u);
         }
@@ -171,9 +163,7 @@ void cxta_test_descriptor(void) {
             assert(descriptor->eval_scalar_src != NULL);
         }
 
-        if (!cxta_descriptor_is_dispatch_exception(descriptor)) {
-            assert(descriptor->eval_scalar != NULL || descriptor->eval_struct != NULL);
-        }
+        assert(descriptor->eval_scalar != NULL || descriptor->eval_struct != NULL);
 
         if (!descriptor->plot) {
             fprintf(stderr, "missing plot descriptor: %s\n", descriptor->name);
@@ -295,10 +285,12 @@ void cxta_test_descriptor(void) {
         assert(bollinger_plot->field_count == 5u);
         assert(bollinger_upper);
         assert(bollinger_upper->auto_plot);
-        assert(strcmp(bollinger_upper->pane, "price") == 0);
+        assert(strcmp(bollinger_upper->pane, "bollinger") == 0);
+        assert(bollinger_upper->show_price);
         assert(bollinger_percent_b);
         assert(!bollinger_percent_b->auto_plot);
-        assert(strcmp(bollinger_percent_b->pane, "price") == 0);
+        assert(strcmp(bollinger_percent_b->pane, "bollinger_percent_b") == 0);
+        assert(strcmp(bollinger_percent_b->scale, "oscillator") == 0);
     }
     bollinger->eval_struct(&view, (const double[]){3.0, 2.0}, 2u, &bollinger_out);
     assert(fabs(bollinger_out.middle - expected_bollinger.middle) < 1e-12);
@@ -334,16 +326,6 @@ void cxta_test_descriptor(void) {
     }
     kst->eval_struct(&view, (const double[]){2.0, 3.0, 4.0, 5.0, 3.0}, 5u, &kst_out);
     assert(fabs(kst_out.histogram - (kst_out.line - kst_out.signal)) < 1e-12);
-
-    assert(divergence);
-    assert(divergence->min_args == 2);
-    assert(divergence->max_args == 3);
-    assert(divergence->primary_field_index == 0);
-    assert(divergence->output_size == sizeof(cxta_divergence_output));
-    assert(divergence->eval_scalar == NULL);
-    assert(divergence->eval_struct == NULL);
-    assert(divergence->field_count == 4u);
-    assert(cxta_find_field(divergence, "bull_segment"));
 
     assert(eom);
     assert(eom->eval_scalar != NULL);
@@ -428,7 +410,7 @@ void cxta_test_descriptor(void) {
     assert(swing_pivots->min_args == 2);
     assert(swing_pivots->max_args == 3);
     assert(swing_pivots->primary_field_index == 0);
-    assert(swing_pivots->field_count == 4u);
+    assert(swing_pivots->field_count == 6u);
 
     assert(pivot_points);
     assert(pivot_points->min_args == 0);

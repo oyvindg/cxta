@@ -71,6 +71,8 @@ int cxta_struct_pivot_state_compute(const cxta_series_bar_view* view, const cxta
     out->low = 0.0;
     out->is_high = 0.0;
     out->is_low = 0.0;
+    out->line = 0.0;
+    out->pivot_index = 0.0;
     out->prev_high = 0.0;
     out->prev_low = 0.0;
     out->has_prev_high = 0;
@@ -99,6 +101,8 @@ int cxta_struct_pivot_state_compute(const cxta_series_bar_view* view, const cxta
             const cxta_series_bar* b = cxta_series_bar_view_at(view, pivot_idx);
             if (!b) continue;
             out->high = b->high;
+            out->line = b->high;
+            out->pivot_index = (double)pivot_idx;
             out->has_last_high = 1;
             if (pivot_idx == end_confirmed) out->is_high = 1.0;
         }
@@ -111,10 +115,11 @@ int cxta_struct_pivot_state_compute(const cxta_series_bar_view* view, const cxta
             const cxta_series_bar* b = cxta_series_bar_view_at(view, pivot_idx);
             if (!b) continue;
             out->low = b->low;
+            out->line = b->low;
+            out->pivot_index = (double)pivot_idx;
             out->has_last_low = 1;
             if (pivot_idx == end_confirmed) out->is_low = 1.0;
         }
     }
     return 1;
 }
-

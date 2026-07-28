@@ -93,7 +93,6 @@ void cxta_test_trendline(void);
 void cxta_test_volume_profile(void);
 void cxta_test_zigzag(void);
 void cxta_test_fair_value_gap(void);
-void cxta_test_divergence(void);
 void cxta_test_anchored_vwap(void);
 void cxta_test_descriptor(void);
 int main(void) {
@@ -190,7 +189,6 @@ int main(void) {
     cxta_test_volume_profile();
     cxta_test_zigzag();
     cxta_test_fair_value_gap();
-    cxta_test_divergence();
     cxta_test_anchored_vwap();
     cxta_test_descriptor();
     printf("cxta.test: all tests passed\n");

@@ -28,6 +28,8 @@ typedef struct {
     double low;
     double is_high;
     double is_low;
+    double line;
+    double pivot_index;
     double prev_high;
     double prev_low;
     int has_prev_high;

@@ -21,8 +21,8 @@ static const cxta_field_descriptor cxta_ttm_squeeze_fields[] = {
 };
 
 static const cxta_plot_field_descriptor cxta_ttm_squeeze_plot_fields[] = {
-    CXTA_FIELD_PLOT("squeeze_on", true, "Squeeze On", "squeeze", "#ef4444", "hidden", "squeeze", "Compression state where Bollinger Bands are inside Keltner Channels.", "Use transitions out of squeeze to watch for volatility release."),
-    CXTA_FIELD_PLOT("squeeze_off", true, "Squeeze Off", "squeeze", "#22c55e", "hidden", "squeeze", "Release state after squeeze compression.", "Use with momentum direction to qualify breakout bias."),
+    CXTA_FIELD_PLOT("squeeze_on", true, "Squeeze On", "squeeze", "#ef4444", "line", "squeeze", "Compression state where Bollinger Bands are inside Keltner Channels.", "Use transitions out of squeeze to watch for volatility release."),
+    CXTA_FIELD_PLOT("squeeze_off", true, "Squeeze Off", "squeeze", "#22c55e", "line", "squeeze", "Release state after squeeze compression.", "Use with momentum direction to qualify breakout bias."),
     CXTA_FIELD_PLOT("momentum", true, "Squeeze Momentum", "squeeze", "#22d3ee", "histogram", "squeeze", "Momentum component for TTM squeeze.", "Histogram direction and expansion show post-compression bias."),
 };
 

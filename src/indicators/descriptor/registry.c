@@ -130,7 +130,6 @@ static const cxta_indicator_descriptor* const external_descriptors[] = {
     &cxta_swing_anchor_vwap_descriptor,
     &cxta_wedge_descriptor,
     &cxta_broadening_descriptor,
-    &cxta_divergence_descriptor,
 };
 
 static const cxta_bridge_fn_spec* const bridge_fn_specs[] = {
@@ -195,7 +194,6 @@ static const cxta_bridge_fn_spec* const bridge_fn_specs[] = {
     &cxta_swing_anchor_vwap_bridge_fn_spec,
     &cxta_wedge_bridge_fn_spec,
     &cxta_broadening_bridge_fn_spec,
-    &cxta_divergence_bridge_fn_spec,
     &cxta_supertrend_bridge_fn_spec,
     &cxta_dema_bridge_fn_spec,
     &cxta_tema_bridge_fn_spec,

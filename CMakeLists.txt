@@ -102,7 +102,6 @@ add_library(cxta STATIC
     src/indicators/fair_value_gap.c
     src/indicators/highest.c
     src/indicators/lowest.c
-    src/indicators/divergence.c
     src/indicators/structures/pivots.c
     src/indicators/structures/trend.c
     src/indicators/structures/zones.c
@@ -221,7 +220,6 @@ if(CXTA_BUILD_TESTS)
         tests/indicators/volume_profile.test.c
         tests/indicators/zigzag.test.c
         tests/indicators/fair_value_gap.test.c
-        tests/indicators/divergence.test.c
         tests/indicators/anchored_vwap.test.c
         tests/indicators/descriptor.test.c
     )

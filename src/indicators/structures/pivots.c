@@ -15,6 +15,8 @@ static const cxta_field_descriptor cxta_swing_pivots_fields[] = {
     CXTA_STRUCT_FIELD("low", cxta_struct_pivot_state, low),
     CXTA_STRUCT_FIELD("is_high", cxta_struct_pivot_state, is_high),
     CXTA_STRUCT_FIELD("is_low", cxta_struct_pivot_state, is_low),
+    CXTA_STRUCT_FIELD("line", cxta_struct_pivot_state, line),
+    CXTA_STRUCT_FIELD("pivot_index", cxta_struct_pivot_state, pivot_index),
 };
 
 static const cxta_field_descriptor cxta_pivot_points_fields[] = {
@@ -33,8 +35,18 @@ static const cxta_field_descriptor cxta_sfp_fields[] = {
     CXTA_STRUCT_FIELD("level", cxta_struct_sfp_state, level),
 };
 
-static const cxta_indicator_plot_descriptor cxta_swing_pivots_plot_descriptor =
-    CXTA_STRUCTURE_PLOT_DESCRIPTOR("swing_pivots");
+static const cxta_plot_field_descriptor cxta_swing_pivots_plot_fields[] = {
+    {"line", true, "Swing Pivots", "swing_pivots", "#f59e0b", "zigzag",
+     "price", NULL, NULL, "line", "pivot_index", NULL, NULL, true, false,
+     "Confirmed swing-high/low geometry.", NULL, true},
+};
+
+static const cxta_indicator_plot_descriptor cxta_swing_pivots_plot_descriptor = {
+    "swing_pivots",
+    NULL,
+    cxta_swing_pivots_plot_fields,
+    CXTA_ARRAY_COUNT(cxta_swing_pivots_plot_fields),
+};
 static const cxta_indicator_plot_descriptor cxta_pivot_points_plot_descriptor =
     CXTA_STRUCTURE_PLOT_DESCRIPTOR("pivot_points");
 static const cxta_indicator_plot_descriptor cxta_sfp_plot_descriptor =

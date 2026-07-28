@@ -103,6 +103,5 @@
 #include "indicators/volume_profile.h"  // IWYU pragma: export
 #include "indicators/zigzag.h"          // IWYU pragma: export
 #include "indicators/fair_value_gap.h"  // IWYU pragma: export
-#include "indicators/divergence.h"      // IWYU pragma: export
 #include "indicators/structure.h"       // IWYU pragma: export
 #include "indicators/anchored_vwap.h"   // IWYU pragma: export

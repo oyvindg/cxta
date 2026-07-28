@@ -21,10 +21,28 @@ const cxta_field_descriptor cxta_channel_output_fields[] = {
 };
 
 static const cxta_plot_field_descriptor cxta_donchian_plot_fields[] = {
-    CXTA_FIELD_PLOT("upper", true, "Donchian Upper", "price", "#22c55e", "line", "price", "Rolling highest high channel boundary.", "Use as breakout resistance or trailing upper boundary."),
-    CXTA_FIELD_PLOT("lower", true, "Donchian Lower", "price", "#ef4444", "line", "price", "Rolling lowest low channel boundary.", "Use as breakdown support or trailing lower boundary."),
-    CXTA_FIELD_PLOT("middle", true, "Donchian Middle", "price", "#f59e0b", "line", "price", "Midpoint between channel boundaries.", "Use as mean/reference inside the channel."),
-    CXTA_FIELD_PLOT("width", false, "Donchian Width", "channel", "#38bdf8", "line", "channel", "Distance between upper and lower channel.", "Expansion indicates wider range; contraction indicates compression."),
+    {
+        .field_name = "upper", .auto_plot = true, .label = "Donchian Upper",
+        .pane = "donchian", .color = "#22c55e", .style = "line", .scale = "price",
+        .show_price = true,
+        .hover_summary = "Rolling highest high channel boundary.",
+        .hover_indication = "Use as breakout resistance or trailing upper boundary.",
+    },
+    {
+        .field_name = "lower", .auto_plot = true, .label = "Donchian Lower",
+        .pane = "donchian", .color = "#ef4444", .style = "line", .scale = "price",
+        .show_price = true,
+        .hover_summary = "Rolling lowest low channel boundary.",
+        .hover_indication = "Use as breakdown support or trailing lower boundary.",
+    },
+    {
+        .field_name = "middle", .auto_plot = true, .label = "Donchian Middle",
+        .pane = "donchian", .color = "#f59e0b", .style = "line", .scale = "price",
+        .show_price = true,
+        .hover_summary = "Midpoint between channel boundaries.",
+        .hover_indication = "Use as mean/reference inside the channel.",
+    },
+    CXTA_FIELD_PLOT("width", false, "Donchian Width", "donchian_width", "#38bdf8", "line", "volatility", "Distance between upper and lower channel.", "Expansion indicates wider range; contraction indicates compression."),
 };
 
 static const cxta_indicator_plot_descriptor cxta_donchian_plot_descriptor = {

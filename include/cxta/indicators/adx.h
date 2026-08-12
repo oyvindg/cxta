@@ -14,9 +14,14 @@ static const cxta_param_descriptor cxta_adx_params[] = {
     {"period"},
 };
 
+static const cxta_expr_arg_descriptor cxta_adx_expr_args[] = {
+    {"source", CXTA_EXPR_ARG_SCALAR_SOURCE, "bars", "Optional OHLC bar-series source."},
+    {"period", CXTA_EXPR_ARG_NUMERIC, "14", "ADX smoothing period."},
+};
+
 /** @brief Bridge-facing signature metadata for ADX. */
 static const cxta_bridge_fn_spec cxta_adx_bridge_fn_spec =
-    CXTA_BRIDGE_FN_SPEC("adx", 1u, 1u, cxta_adx_params, 1);
+    CXTA_BRIDGE_FN_SPEC_EXPR("adx", 1u, 1u, cxta_adx_params, cxta_adx_expr_args, 1);
 
 /** @brief Expression-facing descriptor for ADX. */
 extern const cxta_indicator_descriptor cxta_adx_descriptor;

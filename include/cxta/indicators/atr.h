@@ -13,9 +13,14 @@ static const cxta_param_descriptor cxta_atr_params[] = {
     {"period"},
 };
 
+static const cxta_expr_arg_descriptor cxta_atr_expr_args[] = {
+    {"source", CXTA_EXPR_ARG_SCALAR_SOURCE, "bars", "Optional OHLC bar-series source."},
+    {"period", CXTA_EXPR_ARG_NUMERIC, "14", "ATR smoothing period."},
+};
+
 /** @brief Bridge-facing signature metadata for ATR. */
 static const cxta_bridge_fn_spec cxta_atr_bridge_fn_spec =
-    CXTA_BRIDGE_FN_SPEC("atr", 1u, 1u, cxta_atr_params, 1);
+    CXTA_BRIDGE_FN_SPEC_EXPR("atr", 1u, 1u, cxta_atr_params, cxta_atr_expr_args, 1);
 
 /** @brief Expression-facing descriptor for ATR. */
 extern const cxta_indicator_descriptor cxta_atr_descriptor;
